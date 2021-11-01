@@ -1,4 +1,5 @@
 import discord, asyncpg, os, aiohttp, random
+import ast, re, inspect
 import core.utils.help as help
 from discord.ext import commands
 
@@ -110,6 +111,26 @@ async def blacklisted(ctx:commands.Context):
     blacklist = await bot.postgres.fetchval("SELECT user_id FROM blacklist WHERE user_id=$1", ctx.author.id)
     if not blacklist: return True
     raise commands.CheckAnyFailure
+
+def source(o):
+    s = inspect.getsource(o).split("\n")
+    indent = len(s[0]) - len(s[0].lstrip())
+    return "\n".join(i[indent:] for i in s)
+
+
+def ready():
+    source_ = source(discord.gateway.DiscordWebSocket.identify)
+    patched = re.sub(
+        r'([\'"]\$browser[\'"]:\s?[\'"]).+([\'"])',
+        r"\1Discord Android\2",
+        source_
+    )
+    loc = {}
+    exec(compile(ast.parse(patched), "<string>", "exec"),
+        discord.gateway.__dict__, loc)
+    discord.gateway.DiscordWebSocket.identify = loc["identify"]
+
+ready()
 
 bot.loop.run_until_complete(create_pool_postgres())
 bot.loop.create_task(create_session_aiohttp())
