@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from core.views.confirm import Confirm
 
 class Settings(commands.Cog, description="Setting up the bot with these!"):
     def __init__(self, bot):
@@ -193,6 +194,23 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             byemsgmbed.title = "Goodbye message has been changed to:"
             byemsgmbed.description = F"{msg}"
         await ctx.send(embed=byemsgmbed)
+
+    # Leave
+    @commands.command(name="leave", aliases=["lae"], help="Will make the bot leave")
+    @commands.has_guild_permissions(administrator=True)
+    async def leave(self, ctx:commands.Context):
+        laembed = discord.Embed(
+            color=self.bot.color,
+            timestamp=ctx.message.created_at
+        )
+        laembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        view = Confirm(ctx)
+        view.message = await ctx.send(content="Are you sure you want the bot to leave:", view=view)
+        await view.wait()
+        if view.value:
+            laembed.title = F"{self.bot.user} has successfully left"
+            await ctx.send(embed=laembed, delete_after=2.5)
+            await ctx.me.guild.leave()
 
 def setup(bot):
     bot.add_cog(Settings(bot))
