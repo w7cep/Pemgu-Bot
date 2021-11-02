@@ -195,6 +195,23 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             byemsgmbed.description = F"{msg}"
         await ctx.send(embed=byemsgmbed)
 
+    # Nickname
+    @commands.command(name="nickname", aliases=["nick"], help="Will change the bot's nickname to the given nickname or the original nickname")
+    @commands.guild_only()
+    @commands.has_guild_permissions(manage_nicknames=True)
+    @commands.bot_has_guild_permissions(change_nickname=True)
+    async def nickname(self, ctx:commands.Context, *, name:str=None):
+        name = self.bot.user.name if not name else name
+        nickmbed = discord.Embed(
+            color=self.bot.color,
+            title="Changed bot's nickname:",
+            description=name,
+            timestamp=ctx.message.created_at
+        )
+        nickmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.guild.me.edit(nick=name)
+        await ctx.send(embed=nickmbed)
+
     # Leave
     @commands.command(name="leave", aliases=["lae"], help="Will make the bot leave")
     @commands.has_guild_permissions(administrator=True)
