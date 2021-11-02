@@ -7,7 +7,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         self.bot = bot
 
     # Prefix
-    @commands.group(name="prefix", aliases=["pf"], help="Consider using subcommands", invoke_without_command=True)
+    @commands.group(name="prefix", aliases=["pf"], help="Setting up the prefix with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def prefix(self, ctx:commands.Context):
         await ctx.send_help("prefix")
@@ -70,7 +70,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=pfrsmbed)
 
     # Welcome
-    @commands.group(name="welcome", aliases=["wel"], help="Consider using subcommands", invoke_without_command=True)
+    @commands.group(name="welcome", aliases=["wel"], help="Setting up the welcomer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def welcome(self, ctx:commands.Context):
         await ctx.send_help("welcome")
@@ -132,7 +132,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=welmsgmbed)
 
     # Goodbye
-    @commands.group(name="goodbye", aliases=["bye"], help="Consider using subcommands", invoke_without_command=True)
+    @commands.group(name="goodbye", aliases=["bye"], help="Setting up the goodbyer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def goodbye(self, ctx:commands.Context):
         await ctx.send_help("goodbye")

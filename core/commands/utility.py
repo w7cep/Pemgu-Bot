@@ -60,7 +60,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             await ctx.send(embed=afkmbed)
 
     # Notes
-    @commands.group(name="notes", aliases=["note"], help="Consider using subcommands", invoke_without_command=True)
+    @commands.group(name="notes", aliases=["note"], help="Taking notes with these, Consider using subcommands", invoke_without_command=True)
     async def notes(self, ctx:commands.Context):
         await ctx.send_help("notes")
 
