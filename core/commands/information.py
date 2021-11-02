@@ -7,7 +7,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
 
     # About
-    @commands.command(name="about", aliases=["ab"], help="Will show the bot's information")
+    @commands.command(name="about", aliases=["ab"], help="Shows the bot's information")
     async def about(self, ctx:commands.Context):
         ai = [
             F"[Source Code](https://github.com/lvlahraam/Pemgu-Bot)",
@@ -28,7 +28,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=abmbed)
 
     # Uptime
-    @commands.command(name="uptime", aliases=["up"], help="Will the bot's uptime")
+    @commands.command(name="uptime", aliases=["up"], help="Shows bot's uptime")
     async def uptime(self, ctx:commands.Context):
         upmbed = discord.Embed(
             color=self.bot.color,
@@ -39,7 +39,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=upmbed)
 
     # ServerList
-    @commands.command(name="serverlist", aliases=["sl"], help="Will give the list of bot's servers")
+    @commands.command(name="serverlist", aliases=["sl"], help="Gives the list of bot's servers")
     async def serverlist(self, ctx:commands.Context):
         si = []
         for guild in self.bot.guilds:
@@ -55,7 +55,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=slmbed)
 
     # Invite
-    @commands.command(name="invite", aliases=["ie"], help="Will make an invite link for the bot or the given bot")
+    @commands.command(name="invite", aliases=["ie"], help="Makes an invite link for the bot or the given bot")
     async def invite(self, ctx:commands.Context, bot:discord.Member=None):
         bot = self.bot.user if not bot else bot
         iembed = discord.Embed(
@@ -76,7 +76,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=iembed)
 
     # Ping
-    @commands.command(name="ping", aliases=["pi"], help="Will show bot's ping")
+    @commands.command(name="ping", aliases=["pi"], help="Shows bot's ping")
     async def ping(self, ctx:commands.Context):
         unpimbed = discord.Embed(
             color=self.bot.color,
@@ -100,7 +100,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await unpimsg.edit(embed=dopimbed)
 
     # Source
-    @commands.command(name="source", aliases=["src"], help="Will show the bots source")
+    @commands.command(name="source", aliases=["src"], help="Shows the bots source")
     async def source(self, ctx:commands.Context, command:str=None):
         srcmbed = discord.Embed(
             color=self.bot.color,
@@ -141,7 +141,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=srcmbed)
 
     # Color
-    @commands.command(name="color", aliases=["clr"], help="Will give info about the given color")
+    @commands.command(name="color", aliases=["clr"], help="Gives info about the given color")
     async def color(self, ctx:commands.Context, *, color:discord.Color):
         hex_color = str(color)[1:] if "#" in str(color) else str(color)
         session = await self.bot.session.get(F"https://api.alexflipnote.dev/color/{hex_color}")
@@ -161,7 +161,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=clrmbed)
 
     # Colors
-    @commands.command(name="colors", aliases=["clrs"], help="Will give you the colors from the given image")
+    @commands.command(name="colors", aliases=["clrs"], help="Gives you the colors from the given image")
     @commands.bot_has_guild_permissions(attach_files=True)
     async def colors(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
@@ -178,7 +178,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(file=discord.File(fp=response, filename="colors.png"), embed=clrsmbed)
 
     # Avatar
-    @commands.command(name="avatar", aliases=["av"], help="Will show your or another user's avatar")
+    @commands.command(name="avatar", aliases=["av"], help="Shows your or another user's avatar")
     async def avatar(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
         avmbed = discord.Embed(
@@ -191,7 +191,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=avmbed)
 
     # Banner
-    @commands.command(name="banner", aliases=["br"], help="Will show your or another user's banner")
+    @commands.command(name="banner", aliases=["br"], help="Shows your or another user's banner")
     async def banner(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
         fetch = await self.bot.fetch_user(user.id)
@@ -207,7 +207,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=brmbed)
 
     # UserInfo
-    @commands.command(name="userinfo", aliases=["ui"], help="Will show user info")
+    @commands.command(name="userinfo", aliases=["ui"], help="Shows user info")
     @commands.guild_only()
     async def userinfo(self, ctx:commands.Context, member:discord.Member=None):
         member = ctx.author if not member else member
@@ -245,7 +245,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=uimbed)
 
     # Permissions
-    @commands.command(name="permissions", aliases=["perms"], help="Will show your or the given member's permissions")
+    @commands.command(name="permissions", aliases=["perms"], help="Shows your or the given member's permissions")
     @commands.guild_only()
     async def permissions(self, ctx:commands.Context, member:discord.Member=None):
         member = ctx.author if not member else member
@@ -270,7 +270,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=permsmbed)
 
     # Spotify
-    @commands.command(name="spotify", aliases=["sy"], help="Will show your or the given member's spotify activity")
+    @commands.command(name="spotify", aliases=["sy"], help="Shows your or the given member's spotify activity")
     async def spotify(self, ctx:commands.Context, member:discord.Member=None):
         member = ctx.author if not member else member
         spotifymbed = discord.Embed(
@@ -301,7 +301,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             await ctx.send(embed=spotifymbed)
 
     # Icon
-    @commands.command(name="icon", aliases=["ic"], help="Will show the server's icon")
+    @commands.command(name="icon", aliases=["ic"], help="Shows the server's icon")
     @commands.guild_only()
     async def icon(self, ctx:commands.Context):
         icmbed = discord.Embed(
@@ -316,7 +316,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=icmbed)
 
     # ServerInfo
-    @commands.command(name="serverinfo", aliases=["si"], help="Will show the server's info")
+    @commands.command(name="serverinfo", aliases=["si"], help="Shows the server's info")
     @commands.guild_only()
     async def serverinfo(self, ctx:commands.Context):
         oi = [
@@ -358,7 +358,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.send(embed=simbed)
 
     # EmojiInfo
-    @commands.command(name="emojiinfo", aliases=["ei"], help="Will give information about the given emoji")
+    @commands.command(name="emojiinfo", aliases=["ei"], help="Gives information about the given emoji")
     @commands.guild_only()
     async def emojiinfo(self, ctx:commands.Context, emoji:typing.Union[discord.Emoji, discord.PartialEmoji]):
         ei = [

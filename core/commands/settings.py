@@ -13,7 +13,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send_help("prefix")
 
     # Prefix-Status
-    @prefix.command(name="status", aliases=["st"], help="Will show the status for prefix")
+    @prefix.command(name="status", aliases=["st"], help="Shows the status for prefix")
     @commands.guild_only()
     async def prefix_status(self, ctx:commands.Context):
         pfstmbed = discord.Embed(
@@ -26,7 +26,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=pfstmbed)
 
     # Prefix-Change
-    @prefix.command(name="change", aliases=["ch"], help="Will change the prefix to the new given text")
+    @prefix.command(name="change", aliases=["ch"], help="Changes the prefix to the new given text")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def prefix_change(self, ctx:commands.Context, *, text:str):
@@ -50,7 +50,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=pfchmbed)
 
     # Prefix-Reset
-    @prefix.command(name="reset", aliases=["rs"], help="Will reset the prefix")
+    @prefix.command(name="reset", aliases=["rs"], help="Resets the prefix")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def prefix_reset(self, ctx:commands.Context):
@@ -76,7 +76,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send_help("welcome")
 
     # Welcome-Status
-    @welcome.command(name="status", aliases=["st"], help="Will show the status for welcome")
+    @welcome.command(name="status", aliases=["st"], help="Shows the status for welcome")
     @commands.guild_only()
     async def welcome_status(self, ctx:commands.Context):
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", ctx.guild.id)
@@ -94,7 +94,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=welstmbed)
 
     # Welcome-Change
-    @welcome.command(name="change", aliases=["ch"], help="Will turn off or on the welcome")
+    @welcome.command(name="change", aliases=["ch"], help="Turns off or on the welcome")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def welcome_change(self, ctx:commands.Context):
@@ -113,7 +113,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=welchmbed)
 
     # Welcome-Message
-    @welcome.command(name="message", aliases=["msg"], help="Will change the welcome message to the new given message")
+    @welcome.command(name="message", aliases=["msg"], help="Changes the welcome message to the new given message")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def welcome_message(self, ctx:commands.Context, *, msg:str):
@@ -138,7 +138,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send_help("goodbye")
 
     # Goodbye-Status
-    @goodbye.command(name="status", aliases=["st"], help="Will the status for goodbye")
+    @goodbye.command(name="status", aliases=["st"], help="Changes the status for goodbye")
     @commands.guild_only()
     async def goodbye_status(self, ctx:commands.Context):
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", ctx.guild.id)
@@ -156,7 +156,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=byestmbed)
 
     # Goodbye-Change
-    @goodbye.command(name="change", aliases=["ch"], help="Will turn off or on the goodbye")
+    @goodbye.command(name="change", aliases=["ch"], help="Turns off or on the goodbye")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def goodbye_change(self, ctx:commands.Context):
@@ -175,7 +175,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=byechmbed)
 
     # Goodbye-Message
-    @goodbye.command(name="message", aliases=["msg"], help="Will change the goodbye message to the new given message")
+    @goodbye.command(name="message", aliases=["msg"], help="Changes the goodbye message to the new given message")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def goodbye_message(self, ctx:commands.Context, *, msg:str):
@@ -196,7 +196,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=byemsgmbed)
 
     # Nickname
-    @commands.command(name="nickname", aliases=["nick"], help="Will change the bot's nickname to the given nickname or the original nickname")
+    @commands.command(name="nickname", aliases=["nick"], help="Changes the bot's nickname to the given nickname or the original nickname")
     @commands.guild_only()
     @commands.has_guild_permissions(manage_nicknames=True)
     @commands.bot_has_guild_permissions(change_nickname=True)
@@ -213,7 +213,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=nickmbed)
 
     # Leave
-    @commands.command(name="leave", aliases=["lae"], help="Will make the bot leave")
+    @commands.command(name="leave", aliases=["lae"], help="Makes the bot leave")
     @commands.has_guild_permissions(administrator=True)
     async def leave(self, ctx:commands.Context):
         laembed = discord.Embed(

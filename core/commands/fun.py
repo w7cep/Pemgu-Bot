@@ -7,17 +7,17 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
 
     # Say
-    @commands.command(name="say", help="Will say your text")
+    @commands.command(name="say", help="Says your text")
     async def say(self, ctx:commands.Context, *, text:str):
         await ctx.send(F"{text} | {ctx.author.mention}")
 
     # Sarcasm
-    @commands.command(name="sarcasm", help="Will say your text in a sarcastic way")
+    @commands.command(name="sarcasm", help="Says your text in a sarcastic way")
     async def sarcasm(self, ctx:commands.Context, *, text:str):
         await ctx.send(F"{''.join(c.upper() if i % 2 == 0 else c for i, c in enumerate(text))} | {ctx.author.mention}")
 
     # PP
-    @commands.command(name="pp", help="Will tell your or the given user's pp size")
+    @commands.command(name="pp", help="Tells your or the given user's pp size")
     async def pp(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
         ppmbed = discord.Embed(
@@ -30,7 +30,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=ppmbed)
 
     # Ship
-    @commands.command(name="ship", aliases=["sp"], help="Will ship you or the given member with the other given member")
+    @commands.command(name="ship", aliases=["sp"], help="Ships you or the given member with the other given member")
     async def ship(self, ctx:commands.Context, member1:discord.Member, member2:discord.Member=None):
         spmbed = discord.Embed(
             color=self.bot.color,
@@ -47,7 +47,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=spmbed)
 
     # Counter
-    @commands.command(name="counter", aliases=["ctr"], help="Will start an counter")
+    @commands.command(name="counter", aliases=["ctr"], help="Starts an counter")
     async def counter(self, ctx:commands.Context):
         ctrmbed = discord.Embed(
             color=self.bot.color,
@@ -59,7 +59,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         view.message = await ctx.send(embed=ctrmbed, view=view)
 
     # Nitro
-    @commands.command(name="nitro", help="Will gift free Nitro")
+    @commands.command(name="nitro", help="Gifts free Nitro")
     async def nitro(self, ctx:commands.Context):
         bnitrombed = discord.Embed(
             color=self.bot.color,
@@ -72,7 +72,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         view.message = await ctx.send(embed=bnitrombed, view=view)
 
     # Token
-    @commands.command(name="token", aliases=["tn"], help="Will send an random token")
+    @commands.command(name="token", aliases=["tn"], help="Sends an random token")
     async def token(self, ctx:commands.Context):
         session = await self.bot.session.get("https://some-random-api.ml/bottoken")
         response = await session.json()
@@ -87,7 +87,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=tnmbed)
 
     # Meme
-    @commands.command(name="meme", aliases=["me"], help="Will show a random meme")
+    @commands.command(name="meme", aliases=["me"], help="Shows a random meme")
     async def meme(self, ctx:commands.Context):
         session = await self.bot.session.get("https://some-random-api.ml/meme")
         response = await session.json()
@@ -103,7 +103,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=membed)
 
     # Joke
-    @commands.command(name="joke", aliases=["jk"], help="Will tell you a random joke")
+    @commands.command(name="joke", aliases=["jk"], help="Tells you a random joke")
     async def joke(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi_headers)
         response = await session.json()
@@ -118,7 +118,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=jkmbed)
 
     # Fact
-    @commands.command(name="fact", aliases=["fc"], help="Will tell you a random fact")
+    @commands.command(name="fact", aliases=["fc"], help="Tells you a random fact")
     async def fact(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/fact", headers=self.dagpi_headers)
         response = await session.json()
@@ -133,7 +133,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=fcmbed)
 
     # 8Ball
-    @commands.command(name="8ball", aliases=["8b"], help="Will give you a random answer")
+    @commands.command(name="8ball", aliases=["8b"], help="Gives you a random answer for your given question")
     async def _8ball(self, ctx:commands.Context, *, question:str):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/8ball", headers=self.dagpi_headers)
         response = await session.json()
@@ -149,7 +149,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=_8bmbed)
 
     # Roast
-    @commands.command(name="roast", aliases=["rt"], help="Will roast you or the given user")
+    @commands.command(name="roast", aliases=["rt"], help="Roasts you or the given user")
     async def roast(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
         session = await self.bot.session.get("https://api.dagpi.xyz/data/roast", headers=self.dagpi_headers)
@@ -165,7 +165,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         await ctx.send(embed=rtmbed)
 
     # Tweet
-    @commands.command(name="tweet", aliases=["tw"], help="Will preview your tweet")
+    @commands.command(name="tweet", aliases=["tw"], help="Sends a preview from you or the given user with the given text")
     @commands.bot_has_guild_permissions(attach_files=True)
     async def tweet(self, ctx:commands.Context, user:typing.Optional[discord.User]=None, *, text:str):
         user = ctx.author if not user else user

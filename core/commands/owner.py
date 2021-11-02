@@ -50,7 +50,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
                 await ctx.send(f"```py\n{value}{ret}\n```")
 
     # Load
-    @commands.command(name="load", help="Will load the given cog")
+    @commands.command(name="load", help="Loads the given cog")
     @commands.is_owner()
     async def load(self, ctx:commands.Context, *, cog:str):
         loadmbed = discord.Embed(
@@ -63,7 +63,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await ctx.send(embed=loadmbed)
 
     # Unload
-    @commands.command(name="unload", help="Will unload the given cog")
+    @commands.command(name="unload", help="Unloads the given cog")
     @commands.is_owner()
     async def unload(self, ctx:commands.Context, *, cog:str):
         unloadmbed = discord.Embed(
@@ -76,7 +76,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await ctx.send(embed=unloadmbed)
   
     # Reload
-    @commands.command(name="reload", help="Will reload the every or given cog")
+    @commands.command(name="reload", help="Reloads the given or every cog")
     @commands.is_owner()
     async def reload(self, ctx:commands.Context, *, cog:str=None):
         reloadmbed = discord.Embed(
@@ -108,7 +108,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await ctx.send(embed=reloadmbed)
 
     # Toggle
-    @commands.command(name="toggle", help="Will toggle on and off the given command")
+    @commands.command(name="toggle", help="Toggles on and off the given command")
     @commands.is_owner()
     async def toggle(self, ctx:commands.Context, command:str):
         command = self.bot.get_command(command)
@@ -120,7 +120,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             await ctx.send(F"Disabled {command.name} command.")
 
     # Repeat
-    @commands.command(name="repeat", help="Will repeat the given commands the amounts of given time")
+    @commands.command(name="repeat", help="Repeats the given commands the amounts of given time")
     @commands.is_owner()
     async def repeat(self, ctx:commands.Context, time:int, command:str):
         for _ in range(1, time+1):
@@ -128,7 +128,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await ctx.send(F"Successfully repeated `{command}` - `{time}` times")
 
     # Leaves
-    @commands.command(name="lives", help="Will leave from the given guilds")
+    @commands.command(name="lives", help="Leaves from the given guilds")
     @commands.is_owner()
     async def lives(self, ctx:commands.Context, *, guild:int):
         g = await self.bot.fetch_guild(guild)
@@ -145,7 +145,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             await g.leave()
 
     # Shutdown
-    @commands.command(name="shutdown",  help="Will shutdown the bot")
+    @commands.command(name="shutdown",  help="Shutdowns the bot")
     @commands.is_owner()
     async def logout(self, ctx:commands.Context):
         shutdownmbed = discord.Embed(
@@ -158,7 +158,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await self.bot.close()
 
     # Blacklist
-    @commands.command(name="blacklist", help="Will put-in or put-out the given user from blacklist")
+    @commands.command(name="blacklist", help="Puts-in or Puts-out the given user from blacklist")
     @commands.is_owner()
     async def blacklist(self, ctx:commands.Context, user:discord.User=None, *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
@@ -193,7 +193,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         await ctx.send(embed=blacklistmbed)
 
     # Screenshot
-    @commands.command(name="screenshot", aliases=["ss"], help="Will give a preview from the given website")
+    @commands.command(name="screenshot", aliases=["ss"], help="Gives a preview from the given website")
     @commands.is_owner()
     @commands.bot_has_guild_permissions(attach_files=True)
     async def screenshot(self, ctx:commands.Context, *, website:str):
