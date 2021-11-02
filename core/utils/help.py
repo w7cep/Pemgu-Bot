@@ -49,6 +49,7 @@ class CustomHelp(commands.HelpCommand):
             "Game": "🎮",
             "Information": "🔎",
             "Moderation": "🎩",
+            "Notes": "📝",
             "Owner": "👑",
             "Settings": "🔧",
             "Utility": "🧰",
