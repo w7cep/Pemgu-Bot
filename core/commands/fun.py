@@ -107,7 +107,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def quote(self, ctx:commands.Context):
         mode = random.choice(["quotes", "today", "author", "random"])
         session = await self.bot.session.get(F"https://zenquotes.io/api/{mode}")
-        response = await session.json()
+        response = await session.json(content_type=None)
         session.close()
         qembed = discord.Embed(
             color=self.bot.color,
