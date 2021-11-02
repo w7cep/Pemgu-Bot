@@ -157,10 +157,9 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         _8bmbed = discord.Embed(
             color=self.bot.color,
             title="Here is your answer",
+            description=F"**Question:** {question}\n**Answer:** {response['response']}",
             timestamp=ctx.message.created_at
         )
-        _8bmbed.add_field(name="Your Question:", value=question)
-        _8bmbed.add_field(name="Your Answer:", value=response["response"])
         _8bmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=_8bmbed)
 
