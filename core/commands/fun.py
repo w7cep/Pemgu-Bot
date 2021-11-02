@@ -102,20 +102,21 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         membed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=membed)
 
-    # Joke
-    @commands.command(name="joke", aliases=["jk"], help="Tells you a random joke")
-    async def joke(self, ctx:commands.Context):
-        session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi_headers)
+    # Quote
+    @commands.command(name="quote", aliases=["qe"], help="Tells you a random quote")
+    async def quote(self, ctx:commands.Context):
+        mode = random.choice(["quotes", "today", "author", "random"])
+        session = await self.bot.session.get(F"https://zenquotes.io/api/{mode}")
         response = await session.json()
         session.close()
-        jkmbed = discord.Embed(
+        qembed = discord.Embed(
             color=self.bot.color,
-            title="Here is a random joke",
-            description=response["joke"],
+            title="Here is a random quote",
+            description=F"**Quote:** {response['q']}\n**Author:** {response['a']}",
             timestamp=ctx.message.created_at
         )
-        jkmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=jkmbed)
+        qembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=qembed)
 
     # Fact
     @commands.command(name="fact", aliases=["fc"], help="Tells you a random fact")
@@ -131,6 +132,21 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         )
         fcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=fcmbed)
+
+    # Joke
+    @commands.command(name="joke", aliases=["jk"], help="Tells you a random joke")
+    async def joke(self, ctx:commands.Context):
+        session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi_headers)
+        response = await session.json()
+        session.close()
+        jkmbed = discord.Embed(
+            color=self.bot.color,
+            title="Here is a random joke",
+            description=response["joke"],
+            timestamp=ctx.message.created_at
+        )
+        jkmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=jkmbed)
 
     # 8Ball
     @commands.command(name="8ball", aliases=["8b"], help="Gives you a random answer for your given question")
