@@ -85,7 +85,9 @@ class SelectUI(discord.ui.Select):
         self.homepage = view.homepage
 
     def gts(self, command):
-        return F"• **{command.qualified_name}** {command.signature} - {command.help or 'No help found...'}\n"
+        if isinstance(command, commands.Group):
+            return F"(G) • **{command.qualified_name}** {command.signature} - {command.help or 'No help ...'}\n"
+        return F"(C) • **{command.qualified_name}** {command.signature} - {command.help or 'No help ...'}\n"
 
     async def callback(self, interaction:discord.Interaction):
         for cog, commands in self.mapping.items():
