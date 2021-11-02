@@ -112,7 +112,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         qembed = discord.Embed(
             color=self.bot.color,
             title="Here is a random quote",
-            description=F"**Quote:** {response['q']}\n**Author:** {response['a']}",
+            description=F"**Quote:** {response[0]['q']}\n**Author:** {response[0]['a']}",
             timestamp=ctx.message.created_at
         )
         qembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
