@@ -142,15 +142,19 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
 
     # Color
     @commands.command(name="color", aliases=["clr"], help="Will give info about the given color")
-    async def color(self, ctx:commands.Context, *, color:discord.Color):
-        hex_color = str(color)[1:] if "#" in str(color) else str(color)
-        session = await self.bot.session.get(F"https://api.alexflipnote.dev/color/{hex_color}")
+    async def color(self, ctx:commands.Context, *, color:str):
+        if color.startswith("#") or color.startswith("0x") or ("," not in color):
+            color = color[-6:]
+        elif ("," in color):
+            temp1 = color.split(",")          
+            color = "%02x%02x%02x" % (int(temp1[0]), int(temp1[1]), int(temp1[2]))
+        session = await self.bot.session.get(F"https://api.alexflipnote.dev/color/{color}")
         if session.status != 200:
             raise commands.BadColorArgument
         response = await session.json()
         session.close()
         clrmbed = discord.Embed(
-            color=color,
+            color=int(color, base=16),
             title=F"Information about: {response.get('name')}",
             description=F"**HEX:** {response.get('hex')}\n**RGB:** {response.get('rgb')[4:-2]}\n**Int:** {response.get('int')}\n**Brightness:** {response.get('brightness')}",
             timestamp=ctx.message.created_at
