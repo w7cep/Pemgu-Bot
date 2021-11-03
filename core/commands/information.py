@@ -10,16 +10,16 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="stats", aliases=["ab"], help="Shows bot's stats")
     async def stats(self, ctx:commands.Context):
         si = [
-            F"**Python:** {sys.version}",
             F"**Platform:** {sys.platform}",
+            F"**Python:** {sys.version}",
             F"**Discord.py:** {discord.__version__}",
             F"**Guilds:** {len(self.bot.guilds)}",
             F"**Commands:** {len(self.bot.commands)}",
             F"**Uptime:** {discord.utils.format_dt(self.bot.uptime, style='f')} ({discord.utils.format_dt(self.bot.uptime, style='R')})"
         ]
         view = discord.ui.View()
-        view.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
         view.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.bot.user.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
+        view.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
         abmbed = discord.Embed(
             color=self.bot.color,
             title=F"{self.bot.user.name} Stats",
