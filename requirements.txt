@@ -3,4 +3,5 @@ Pillow
 asyncpg
 git+https://github.com/jay3332/expr.py
 git+https://github.com/Gorialis/jishaku
+https://github.com/Daishiky/discord-ext-ipc
 git+https://github.com/iDevision/enhanced-discord.py
