@@ -6,37 +6,26 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         self.bot = bot
         self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
 
-    # About
-    @commands.command(name="about", aliases=["ab"], help="Shows the bot's information")
-    async def about(self, ctx:commands.Context):
-        ai = [
-            F"[Source Code](https://github.com/lvlahraam/Pemgu-Bot)",
-            F"[Invite]({discord.utils.oauth_url(client_id=self.bot.user.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))})",
-            F"[Top.gg](https://top.gg/bot/{self.bot.user.id})",
-            F"Discord.PY Version {discord.__version__}",
-            F"In {len(self.bot.guilds)} Servers",
-            F"Has {len(self.bot.commands)} Commands",
-            F"Made by <@{self.bot.owner_id}>"
+    # Stats
+    @commands.command(name="stats", aliases=["ab"], help="Shows bot's stats")
+    async def stats(self, ctx:commands.Context):
+        si = [
+            F"**Discord.py Version: {discord.__version__}",
+            F"**Guilds:** {len(self.bot.guilds)}",
+            F"**Commands:** {len(self.bot.commands)}",
+            F"**Uptime:** {discord.utils.format_dt(self.bot.uptime, style='f')} ({discord.utils.format_dt(self.bot.uptime, style='R')})"
         ]
+        view = discord.ui.View
+        view.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
+        view.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.bot.user.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
         abmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{self.bot.user.name} About",
-            description="\n".join(a for a in ai),
+            title=F"{self.bot.user.name} Stats",
+            description="\n".join(s for s in si),
             timestamp=ctx.message.created_at
         )
         abmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=abmbed)
-
-    # Uptime
-    @commands.command(name="uptime", aliases=["up"], help="Shows bot's uptime")
-    async def uptime(self, ctx:commands.Context):
-        upmbed = discord.Embed(
-            color=self.bot.color,
-            description=F"Uptime: {discord.utils.format_dt(self.bot.uptime, style='f')} ({discord.utils.format_dt(self.bot.uptime, style='R')})",
-            timestamp=ctx.message.created_at
-        )
-        upmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=upmbed)
+        await ctx.send(embed=abmbed, view=view)
 
     # ServerList
     @commands.command(name="serverlist", aliases=["sl"], help="Gives the list of bot's servers")
