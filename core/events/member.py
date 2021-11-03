@@ -7,7 +7,6 @@ class OnMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member:discord.Member):
-        if member.bot: return
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
         if welcome and not member.bot:
             channel = member.guild.system_channel or discord.utils.get(member.guild.text_channels, name="welcome")
