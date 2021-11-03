@@ -135,7 +135,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         livesmbed = discord.Embed(
             color=self.bot.color,
             title="Living the given guilds:",
-            description=F"{g.name} {g.id} {'No Owner' if not g.owner else g.owner}",
+            description=F"{g.name} {g.id} {'No Owner' or g.owner}",
             timestamp=ctx.message.created_at
         )
         view = cum.Confirm(ctx)
@@ -161,7 +161,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     @commands.command(name="blacklist", help="Puts-in or Puts-out the given user from blacklist")
     @commands.is_owner()
     async def blacklist(self, ctx:commands.Context, user:discord.User=None, *, reason:str=None):
-        reason = "Nothing was provided" if not reason else reason
+        reason = "Nothing was provided" or reason
         if not user:
             blacklistsmbed = discord.Embed(
                 color=self.bot.color,

@@ -19,7 +19,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # PP
     @commands.command(name="pp", help="Tells your or the given user's pp size")
     async def pp(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author if not user else user
+        user = ctx.author or user
         ppmbed = discord.Embed(
             color=self.bot.color,
             title=F"{user}'s PP Size:",
@@ -166,7 +166,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # Roast
     @commands.command(name="roast", aliases=["rt"], help="Roasts you or the given user")
     async def roast(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author if not user else user
+        user = ctx.author or user
         session = await self.bot.session.get("https://api.dagpi.xyz/data/roast", headers=self.dagpi_headers)
         response = await session.json()
         session.close()
@@ -183,7 +183,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     @commands.command(name="tweet", aliases=["tw"], help="Sends a preview from you or the given user with the given text")
     @commands.bot_has_guild_permissions(attach_files=True)
     async def tweet(self, ctx:commands.Context, user:typing.Optional[discord.User]=None, *, text:str):
-        user = ctx.author if not user else user
+        user = ctx.author or user
         session = await self.bot.session.get(F"https://api.dagpi.xyz/image/tweet/?url={user.avatar.with_format('png')}&username={user.name}&text={text}", headers=self.dagpi_headers)
         response = io.BytesIO(await session.read())
         session.close()
