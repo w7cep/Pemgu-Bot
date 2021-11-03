@@ -10,6 +10,7 @@ class OnMember(commands.Cog):
         if member.bot: return
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
         if welcome:
+            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="welcome") else discord.utils.get(member.guild.text_channels, name="welcome")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
@@ -33,13 +34,14 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            await member.guild.system_channel.send(embed=omjmbed)
+            await channel.send(embed=omjmbed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member:discord.Member):
         if member.bot: return
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", member.guild.id)
         if goodbye:
+            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="welcome") else discord.utils.get(member.guild.text_channels, name="welcome")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
@@ -63,7 +65,7 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            await member.guild.system_channel.send(embed=omjmbed)
+            await channel.send(embed=omjmbed)
 
 def setup(bot):
     bot.add_cog(OnMember(bot))
