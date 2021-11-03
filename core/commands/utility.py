@@ -36,8 +36,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         await ctx.send(F"{ctx.author.mention}, in {seconds} seconds:, I will remind you About: **{task}**", allowed_mentions=discord.AllowedMentions(users=True))
         await asyncio.sleep(seconds)
         view = discord.ui.View()
-        button = discord.ui.Button(label="Go to original message", url=ctx.message.jump_url)
-        view.add_item(item=button)
+        view.add_item(item=discord.ui.Button(label="Go to original message", url=ctx.message.jump_url))
         await ctx.send(F"{ctx.author.mention} Reminded you, as you said in {seconds} seconds, it's been **{discord.utils.format_dt(ctx.message.created_at, style='R')}**, About: **{task}**", view=view, allowed_mentions=discord.AllowedMentions(users=True))
 
     # AFK
@@ -53,8 +52,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         if not afk:
             afk = self.bot.afks[ctx.author.id] = {"time":discord.utils.utcnow(), "reason":reason, "jump_url":ctx.message.jump_url}
             view = discord.ui.View()
-            button = discord.ui.Button(label="Go to original message", url=afk["jump_url"])
-            view.add_item(item=button)
+            view.add_item(item=discord.ui.Button(label="Go to original message", url=afk["jump_url"]))
             afkmbed.title = "Set your AFK"
             afkmbed.description = F"Reason: **{afk['reason']}**"
             await ctx.send(embed=afkmbed)

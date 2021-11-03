@@ -19,8 +19,7 @@ class OnMessage(commands.Cog):
             await message.channel.send(embed=pfmbed)
         if self.bot.afks.get(message.author.id):
             view = discord.ui.View()
-            button = discord.ui.Button(label="Go to original message", url=self.bot.afks[message.author.id]["jump_url"])
-            view.add_item(item=button)
+            view.add_item(item=discord.ui.Button(label="Go to original message", url=self.bot.afks[message.author.id]["jump_url"]))
             omafkmbed = discord.Embed(
                 color=self.bot.color,
                 title="Removed your AFK",
