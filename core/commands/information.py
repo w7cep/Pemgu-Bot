@@ -15,7 +15,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             F"**Commands:** {len(self.bot.commands)}",
             F"**Uptime:** {discord.utils.format_dt(self.bot.uptime, style='f')} ({discord.utils.format_dt(self.bot.uptime, style='R')})"
         ]
-        view = discord.ui.View
+        view = discord.ui.View()
         view.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
         view.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.bot.user.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
         abmbed = discord.Embed(
