@@ -9,7 +9,7 @@ class OnMember(commands.Cog):
     async def on_member_join(self, member:discord.Member):
         if member.bot: return
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
-        if welcome:
+        if welcome and not member.bot:
             channel = member.guild.system_channel or discord.utils.get(member.guild.text_channels, name="welcome")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", member.guild.id)
@@ -38,9 +38,8 @@ class OnMember(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member:discord.Member):
-        if member.bot: return
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", member.guild.id)
-        if goodbye:
+        if goodbye and not member.bot:
             channel = member.guild.system_channel or discord.utils.get(member.guild.text_channels, name="goodbye")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", member.guild.id)
