@@ -10,10 +10,13 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     @commands.command(name="eval", help="Evaluates the given code")
     @commands.is_owner()
     async def _eval(self, ctx, *, body:str):
+        dad = await self.bot.fetch_user(494496285676535811)
         env = {
             "self": self,
             "discord": discord,
+            "commands": commands,
             "bot": self.bot,
+            "dad": dad,
             "ctx": ctx,
             "message": ctx.message,
             "author": ctx.author,
