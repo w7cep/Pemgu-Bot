@@ -1,4 +1,4 @@
-import discord, time, inspect, os, io, typing
+import discord, os, sys, time, inspect, io, typing
 from discord.ext import commands
 
 class Information(commands.Cog, description="Stalking people is wrong and bad!"):
@@ -10,7 +10,9 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="stats", aliases=["ab"], help="Shows bot's stats")
     async def stats(self, ctx:commands.Context):
         si = [
-            F"**Discord.py Version: {discord.__version__}",
+            F"**Python:** {sys.version}",
+            F"**Platform:** {sys.platform}",
+            F"**Discord.py:** {discord.__version__}",
             F"**Guilds:** {len(self.bot.guilds)}",
             F"**Commands:** {len(self.bot.commands)}",
             F"**Uptime:** {discord.utils.format_dt(self.bot.uptime, style='f')} ({discord.utils.format_dt(self.bot.uptime, style='R')})"
