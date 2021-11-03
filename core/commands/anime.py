@@ -7,7 +7,7 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         self.bot = bot
 
     # SFW
-    @commands.command(name="sfw", help="Sends and random SFW Waifu Image")
+    @commands.command(name="sfw", help="Sends an random SFW Waifu Image")
     async def sfw(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.waifu.im/sfw/waifu/")
         response = await session.json()
@@ -23,7 +23,7 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         await ctx.send(embed=sfwmbed)
     
     # NSFW
-    @commands.command(name="nsfw", help="Sends and random NSFW Waifu Image")
+    @commands.command(name="nsfw", help="Sends an random NSFW Waifu Image")
     @commands.is_nsfw()
     async def nsfw(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.waifu.im/nsfw/ero/")
