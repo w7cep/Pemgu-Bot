@@ -97,7 +97,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteaddmbed.title = "Is already in your notes:"
             noteaddmbed.description = F"{task}"
             return await ctx.send(embed=noteaddmbed)
-        await self.bot.postgres.execute("INSERT INTO notes(user_name,user_id,task,jump_url) VALUES($1,$2,$3,4$)", ctx.author.name, ctx.author.id, task, ctx.message.jump_url)
+        await self.bot.postgres.execute("INSERT INTO notes(user_name,user_id,task,jump_url) VALUES($1,$2,$3,$4)", ctx.author.name, ctx.author.id, task, ctx.message.jump_url)
         noteaddmbed.title = "Successfully added:"
         noteaddmbed.description = F"{task}\n**To your notes**"
         await ctx.send(embed=noteaddmbed)
