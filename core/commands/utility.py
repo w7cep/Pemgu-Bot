@@ -66,7 +66,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     @notes.command(name="list", aliases=["="], help="Shows every of your or the given user's notes")
     async def notes_list(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
-        notes = await self.bot.postgres.fetch("SELECT task FROM notes WHERE user_id=$1", user.id)
+        notes = await self.bot.postgres.fetch("SELECT * FROM notes WHERE user_id=$1", user.id)
         notelistmbed = discord.Embed(
             color=self.bot.color,
             timestamp=ctx.message.created_at
