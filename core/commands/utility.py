@@ -76,7 +76,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             notelistmbed.title = F"{user} doesn't have any note"
             return await ctx.send(embed=notelistmbed)
         notelistmbed.title=F"{user}'s notes:"
-        notelistmbed.description="".join(f"[#{n['position']}].` {n['task']}" for n in notes)
+        notelistmbed.description="".join(f"[#{n['pos']}].` {n['task']}" for n in notes)
         await ctx.send(embed=notelistmbed)
 
     # Notes-Add
@@ -88,11 +88,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             timestamp=ctx.message.created_at
         )
         noteaddmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar)
-        if task == note['task']:
-            noteaddmbed.title = "Is already in your notes:"
-            noteaddmbed.description = F"{task}"
-            return await ctx.send(embed=noteaddmbed)
-        await self.bot.postgres.execute("INSERT INTO notes(position,user_name,user_id,task) VALUES($1,$2,$3)", len(note)+1, ctx.author.name, ctx.author.id, task)
+        await self.bot.postgres.execute("INSERT INTO notes(pos,user_name,user_id,task) VALUES($1,$2,$3)", len(note)+1, ctx.author.name, ctx.author.id, task)
         noteaddmbed.title = "Successfully added:"
         noteaddmbed.description = F"{task}\n**To your notes**"
         await ctx.send(embed=noteaddmbed)
@@ -113,7 +109,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteremovembed.title = "Is not in your notes:"
             noteremovembed.description = F"{number}\n**Check your notes**"
             return await ctx.send(embed=noteremovembed)
-        await self.bot.postgres.execute("DELETE FROM notes WHERE user_id=$1 AND position=$2", ctx.author.id, number)
+        await self.bot.postgres.execute("DELETE FROM notes WHERE user_id=$1 AND pos=$2", ctx.author.id, number)
         noteremovembed.title = "Successfully removed:"
         noteremovembed.description = F"{number}\n**From your notes**"
         await ctx.send(embed=noteremovembed)
@@ -156,9 +152,9 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteeditmbed.title = "Is not in your notes:"
             noteeditmbed.description = F"{number}\n**Check your notes**"
             return await ctx.send(embed=noteeditmbed)
-        await self.bot.postgres.execute("UPDATE notes SET task=$1 WHERE user_id=$2 AND position=$3", task, ctx.author.id, number)
+        await self.bot.postgres.execute("UPDATE notes SET task=$1 WHERE user_id=$2 AND pos=$3", task, ctx.author.id, number)
         noteeditmbed.title = "Successfully edited:"
-        noteeditmbed.description = F"**Before:** {notes['task']}\n**After:** {task}"
+        noteeditmbed.description = task
         await ctx.send(embed=noteeditmbed)
 
 def setup(bot):
