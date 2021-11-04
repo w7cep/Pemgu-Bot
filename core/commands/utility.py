@@ -78,7 +78,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         tasks = []
         counter = 0
         for stuff in notes:
-            tasks.append(F"`[#{counter}].` {stuff['task']}\n")
+            tasks.append(F"[{counter}]({stuff['jump_url']}) {stuff['task']}\n")
             counter += 1
         notelistmbed.title=F"{user}'s notes:"
         notelistmbed.description="".join(task for task in tasks)
@@ -97,7 +97,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteaddmbed.title = "Is already in your notes:"
             noteaddmbed.description = F"{task}"
             return await ctx.send(embed=noteaddmbed)
-        await self.bot.postgres.execute("INSERT INTO notes(user_name,user_id,task) VALUES($1,$2,$3)", ctx.author.name, ctx.author.id, task)
+        await self.bot.postgres.execute("INSERT INTO notes(user_name,user_id,task,jump_url) VALUES($1,$2,$3,4$)", ctx.author.name, ctx.author.id, task, ctx.message.jump_url)
         noteaddmbed.title = "Successfully added:"
         noteaddmbed.description = F"{task}\n**To your notes**"
         await ctx.send(embed=noteaddmbed)
@@ -170,7 +170,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteeditmbed.title = "Is not in your notes:"
             noteeditmbed.description = F"{number}\n**Check your notes**"
             return await ctx.send(embed=noteeditmbed)
-        await self.bot.postgres.execute("UPDATE notes SET task=$1 WHERE user_id=$2 AND task=$3", task, ctx.author.id, tasks[number])
+        await self.bot.postgres.execute("UPDATE notes SET task=$1 AND jump_url=$2 WHERE user_id=$3 AND task=$4", task, ctx.message.jump_url, ctx.author.id, tasks[number])
         noteeditmbed.title = "Successfully edited:"
         noteeditmbed.description = F"**Before:** {tasks[number]}\n**After:** {task}"
         await ctx.send(embed=noteeditmbed)
