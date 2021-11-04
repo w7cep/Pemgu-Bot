@@ -78,7 +78,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         tasks = []
         counter = 0
         for stuff in notes:
-            tasks.append(F"[{counter}]({stuff['jump_url']}) {stuff['task']}\n")
+            tasks.append(F"[{counter}.]({stuff['jump_url']}) {stuff['task']}\n")
             counter += 1
         notelistmbed.title=F"{user}'s notes:"
         notelistmbed.description="".join(task for task in tasks)
