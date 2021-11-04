@@ -85,7 +85,7 @@ class SelectUI(discord.ui.Select):
         self.homepage = view.homepage
 
     def gts(self, command):
-        return F"• **{command.aliases[0] if len(command.qualified_name) > 7 else command.qualified_name}** {command.signature} - {command.help or 'No help found...'}\n"
+        return F"• **{command.aliases[0] if len(command.qualified_name) > 9 else command.qualified_name}** {command.signature} - {command.help or 'No help found...'}\n"
 
     async def callback(self, interaction:discord.Interaction):
         for cog, commands in self.mapping.items():
