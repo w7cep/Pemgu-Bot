@@ -36,10 +36,8 @@ class OnMember(commands.Cog):
             for channel in member.guild.channels:
                 if "welcome" in channel.name:
                     destination = channel
-                    break
-                else:
-                    destination = member.guild.system_channel
-                    break
+            else:
+                destination = member.guild.system_channel
             await destination.send(embed=omjmbed)
 
     @commands.Cog.listener()
@@ -73,10 +71,8 @@ class OnMember(commands.Cog):
             for channel in member.guild.channels:
                 if "goodbye" in channel.name:
                     destination = channel
-                    break
-                else:
-                    destination = member.guild.system_channel
-                    break
+            else:
+                destination = member.guild.system_channel
             await destination.send(embed=omjmbed)
 
 def setup(bot):
