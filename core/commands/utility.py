@@ -76,7 +76,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             notelistmbed.title = F"{user} doesn't have any note"
             return await ctx.send(embed=notelistmbed)
         notelistmbed.title=F"{user}'s notes:"
-        notelistmbed.description="".join(f"[#{n['pos']}].` {n['task']}" for n in notes)
+        notelistmbed.description="\n".join(f"`[#{n['pos']}].` {n['task']}" for n in notes)
         await ctx.send(embed=notelistmbed)
 
     # Notes-Add
@@ -88,7 +88,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             timestamp=ctx.message.created_at
         )
         noteaddmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar)
-        await self.bot.postgres.execute("INSERT INTO notes(pos,user_name,user_id,task) VALUES($1,$2,$3)", len(note)+1, ctx.author.name, ctx.author.id, task)
+        await self.bot.postgres.execute("INSERT INTO notes(pos,user_name,user_id,task) VALUES($1,$2,$3,$4)", len(note)+1, ctx.author.name, ctx.author.id, task)
         noteaddmbed.title = "Successfully added:"
         noteaddmbed.description = F"{task}\n**To your notes**"
         await ctx.send(embed=noteaddmbed)
