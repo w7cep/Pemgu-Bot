@@ -34,7 +34,7 @@ class OnMember(commands.Cog):
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
             for channel in member.guild.channels:
-                if channel.name.lower() in ("goodbye"):
+                if "welcome" in channel.name.lower():
                     destination = channel
                     break
                 else:
@@ -71,7 +71,7 @@ class OnMember(commands.Cog):
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
             for channel in member.guild.channels:
-                if channel.name.lower() in ("welcome"):
+                if "goodbye" in channel.name.lower():
                     destination = channel
                     break
                 else:
