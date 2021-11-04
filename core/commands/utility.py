@@ -63,7 +63,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         await ctx.send_help("notes")
 
     # Notes-List
-    @notes.command(name="list", aliases=["="], help="Shows every of your or the given user's notes")
+    @notes.command(name="list", aliases=["lt"], help="Shows every of your or the given user's notes")
     async def notes_list(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
         notes = await self.bot.postgres.fetch("SELECT * FROM notes WHERE user_id=$1", user.id)
@@ -85,7 +85,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         await ctx.send(embed=notelistmbed)
 
     # Notes-Add
-    @notes.command(name="add", aliases=["+"], help="Adds the given task to your notes")
+    @notes.command(name="add", aliases=["ad"], help="Adds the given task to your notes")
     async def notes_add(self, ctx:commands.Context, *, task:str):
         note = await self.bot.postgres.fetchval("SELECT task FROM notes WHERE task=$1 AND user_id=$2", task, ctx.author.id)
         noteaddmbed = discord.Embed(
@@ -103,7 +103,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         await ctx.send(embed=noteaddmbed)
 
     # Notes-Remove
-    @notes.command(name="remove", aliases=["-"], help="Removes the given task from your notes")
+    @notes.command(name="remove", aliases=["rm"], help="Removes the given task from your notes")
     async def notes_remove(self, ctx:commands.Context, *, number:int):
         notes = await self.bot.postgres.fetch("SELECT * FROM notes WHERE user_id=$1", ctx.author.id)
         noteremovembed = discord.Embed(
@@ -127,7 +127,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         await ctx.send(embed=noteremovembed)
 
     # Notes-Clear
-    @notes.command(name="clear", aliases=["*"], help="Clears your notes")
+    @notes.command(name="clear", aliases=["cr"], help="Clears your notes")
     async def notes_clear(self, ctx:commands.Context):
         notes = await self.bot.postgres.fetch("SELECT task FROM notes WHERE user_id=$1", ctx.author.id)
         noteclearmbed = discord.Embed(
@@ -152,7 +152,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             await ctx.send(embed=noteclearmbed)
 
     # Notes-Edit
-    @notes.command(name="edit", aliases=["~"], help="Edits the given task with the new given task")
+    @notes.command(name="edit", aliases=["ed"], help="Edits the given task with the new given task")
     async def notes_edit(self, ctx:commands.Context, number:int, *, task:str):
         notes = await self.bot.postgres.fetch("SELECT task FROM notes WHERE user_id=$1", ctx.author.id)
         noteeditmbed = discord.Embed(

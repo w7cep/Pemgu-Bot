@@ -242,12 +242,12 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             await member.add_roles(muterole, reason=F"Muted by {ctx.author}, Because: {reason}")
             await ctx.send(embed=mtmbed)
 
-    # Purge
-    @commands.command(name="purge", aliases=["pu"], help="Deletes messages with the given amount")
+    # Clear
+    @commands.command(name="clear", aliases=["cr"], help="Deletes messages with the given amount")
     @commands.guild_only()
     @commands.has_guild_permissions(manage_messages=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
-    async def purge(self, ctx:commands.Context, *, amount:int):
+    async def clear(self, ctx:commands.Context, *, amount:int):
         pumbed = discord.Embed(
             color=self.bot.color,
             timestamp=ctx.message.created_at
