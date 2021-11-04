@@ -82,7 +82,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     # Notes-Add
     @notes.command(name="add", aliases=["+"], help="Adds the given note to your notes")
     async def notes_add(self, ctx:commands.Context, *, note:str):
-        notes = await self.bot.postgres.fetch("SELECT * FROM notes WHERE user_id=$2", ctx.author.id)
+        notes = await self.bot.postgres.fetch("SELECT * FROM notes WHERE user_id=$1", ctx.author.id)
         noteaddmbed = discord.Embed(
             color=self.bot.color,
             timestamp=ctx.message.created_at
