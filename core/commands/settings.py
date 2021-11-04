@@ -89,8 +89,9 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             welstmbed.title = "Welcome is turned off"
         else:
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", ctx.guild.id)
+            ch = discord.utils.get(ctx.guild.text_channels, id=(await self.bot.postgres.fetchval("SELECT ch FROM welcome WHERE guild_id=$1", ctx.guild.id)))
             welstmbed.title = "Status for welcome"
-            welstmbed.description = F"Turned On\n{msg}"
+            welstmbed.description = F"Turned On\n{msg}\n{ch.mention}"
         await ctx.send(embed=welstmbed)
 
     # Welcome-Toggle
@@ -105,12 +106,33 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         )
         welchmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if not welcome:
-            await self.bot.postgres.execute("INSERT INTO welcome(guild_name,guild_id,msg) VALUES($1,$2,$3)", ctx.guild.name, ctx.guild.id, "Welcome to .guild .member")
+            await self.bot.postgres.execute("INSERT INTO welcome(guild_name,guild_id,msg,ch) VALUES($1,$2,$3,$4)", ctx.guild.name, ctx.guild.id, "Welcome to .guild .member", ctx.guild.system_channel.id)
             welchmbed.title = "Welcome has been turned on"
         else:
             await self.bot.postgres.execute("DELETE FROM welcome WHERE guild_id=$1", ctx.guild.id)
             welchmbed.title = "Welcome has been turned off"
         await ctx.send(embed=welchmbed)
+
+    # Welcome-Channel
+    @welcome.commands(name="channel", aliases=["ch"], help="Changes the welcome channel to the new given channel")
+    @commands.guild_only()
+    @commands.has_guild_permissions(administrator=True)
+    async def welcome_channel(self, ctx:commands.Context, channel:discord.TextChannel):
+        welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", ctx.guild.id)
+        byechmbed = discord.Embed(
+            color=self.bot.color,
+            timestamp=ctx.message.created_at
+        )
+        byechmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        if not welcome:
+            await self.bot.postgres.execute("INSERT INTO welcome(guild_name,guild_id,msg,ch) VALUES($1,$2,$3,$4)", ctx.guild.name, ctx.guild.id, "Thank you .member for being here .guild", channel.id)
+            byechmbed.title = "Welcome channel has been changed to:"
+            byechmbed.description = channel.mention
+        else:
+            await self.bot.postgres.execute("UPDATE welcome SET ch=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
+            byechmbed.title = "Welcome channel has been changed to:"
+            byechmbed.description = channel.mention
+        await ctx.send(embed=byechmbed)
 
     # Welcome-Message
     @welcome.command(name="message", aliases=["msg"], help="Changes the welcome message to the new given message")
@@ -151,8 +173,9 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             byestmbed.title = "Goodbye is turned off"
         else:
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", ctx.guild.id)
+            ch = discord.utils.get(ctx.guild.text_channels, id=(await self.bot.postgres.fetchval("SELECT ch FROM goodbye WHERE guild_id=$1", ctx.guild.id)))
             byestmbed.title = "Status for goodbye"
-            byestmbed.description = F"Turned On\n{msg}"
+            byestmbed.description = F"Turned On\n{msg}\n{ch.mention}"
         await ctx.send(embed=byestmbed)
 
     # Goodbye-Toggle
@@ -167,11 +190,32 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         )
         byechmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if not goodbye:
-            await self.bot.postgres.execute("INSERT INTO goodbye(guild_name,guild_id,msg) VALUES($1,$2,$3)", ctx.guild.name, ctx.guild.id, "Thank you .member for being here .guild")
+            await self.bot.postgres.execute("INSERT INTO goodbye(guild_name,guild_id,msg,ch) VALUES($1,$2,$3,$4)", ctx.guild.name, ctx.guild.id, "Thank you .member for being here .guild", ctx.guild.system_channel.id)
             byechmbed.title = "Goodbye has been turned on"
         else:
             await self.bot.postgres.execute("DELETE FROM goodbye WHERE guild_id=$1", ctx.guild.id)
             byechmbed.title = "Goodbye has been turned off"
+        await ctx.send(embed=byechmbed)
+
+    # Goodbye-Channel
+    @goodbye.commands(name="channel", aliases=["ch"], help="Changes the goodbye channel to the new given channel")
+    @commands.guild_only()
+    @commands.has_guild_permissions(administrator=True)
+    async def goodbye_channel(self, ctx:commands.Context, channel:discord.TextChannel):
+        goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", ctx.guild.id)
+        byechmbed = discord.Embed(
+            color=self.bot.color,
+            timestamp=ctx.message.created_at
+        )
+        byechmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        if not goodbye:
+            await self.bot.postgres.execute("INSERT INTO goodbye(guild_name,guild_id,msg,ch) VALUES($1,$2,$3,$4)", ctx.guild.name, ctx.guild.id, "Thank you .member for being here .guild", channel.id)
+            byechmbed.title = "Goodbye channel has been changed to:"
+            byechmbed.description = channel.mention
+        else:
+            await self.bot.postgres.execute("UPDATE goodbye SET ch=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
+            byechmbed.title = "Goodbye channel has been changed to:"
+            byechmbed.description = channel.mention
         await ctx.send(embed=byechmbed)
 
     # Goodbye-Message
@@ -188,11 +232,11 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         if not goodbye:
             await self.bot.postgres.execute("INSERT INTO goodbye(guild_name,guild_id,msg) VALUES($1,$2,$3)", ctx.guild.name, ctx.guild.id, msg)
             byemsgmbed.title = "Goodbye message has been changed to:"
-            byemsgmbed.description = F"{msg}"
+            byemsgmbed.description = msg
         else:
             await self.bot.postgres.execute("UPDATE goodbye SET msg=$1 WHERE guild_id=$2", msg, ctx.guild.id)
             byemsgmbed.title = "Goodbye message has been changed to:"
-            byemsgmbed.description = F"{msg}"
+            byemsgmbed.description = msg
         await ctx.send(embed=byemsgmbed)
 
     # Leave

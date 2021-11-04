@@ -11,6 +11,7 @@ class OnMember(commands.Cog):
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
         if welcome:
             fetch = await self.bot.fetch_user(member.id)
+            ch = await self.bot.postgres.fetchval("SELECT ch FROM welcome WHERE guild_id=$1", member.guild.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
             mi = [
@@ -33,12 +34,8 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            for channel in member.guild.channels:
-                if "welcome" in channel.name:
-                    destination = channel
-            else:
-                destination = member.guild.system_channel
-            await destination.send(embed=omjmbed)
+            channel = discord.utils.get(member.guild.channels, id=ch)
+            await channel.send(embed=omjmbed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member:discord.Member):
@@ -46,6 +43,7 @@ class OnMember(commands.Cog):
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", member.guild.id)
         if goodbye:
             fetch = await self.bot.fetch_user(member.id)
+            ch = await self.bot.postgres.fetchval("SELECT ch FROM goodbye WHERE guild_id=$1", member.guild.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
             mi = [
@@ -68,12 +66,8 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            for channel in member.guild.channels:
-                if "goodbye" in channel.name:
-                    destination = channel
-            else:
-                destination = member.guild.system_channel
-            await destination.send(embed=omjmbed)
+            channel = discord.utils.get(member.guild.channels, id=ch)
+            await channel.send(embed=omjmbed)
 
 def setup(bot):
     bot.add_cog(OnMember(bot))
