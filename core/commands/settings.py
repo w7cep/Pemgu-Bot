@@ -114,7 +114,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=welchmbed)
 
     # Welcome-Channel
-    @welcome.commands(name="channel", aliases=["ch"], help="Changes the welcome channel to the new given channel")
+    @welcome.command(name="channel", aliases=["ch"], help="Changes the welcome channel to the new given channel")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def welcome_channel(self, ctx:commands.Context, channel:discord.TextChannel):
@@ -198,7 +198,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=byechmbed)
 
     # Goodbye-Channel
-    @goodbye.commands(name="channel", aliases=["ch"], help="Changes the goodbye channel to the new given channel")
+    @goodbye.command(name="channel", aliases=["ch"], help="Changes the goodbye channel to the new given channel")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def goodbye_channel(self, ctx:commands.Context, channel:discord.TextChannel):
