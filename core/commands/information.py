@@ -7,7 +7,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
 
     # Stats
-    @commands.command(name="stats", aliases=["ab"], help="Shows bot's stats")
+    @commands.command(name="stats", aliases=["st"], help="Shows bot's stats")
     async def stats(self, ctx:commands.Context):
         si = [
             F"**Platform:** {sys.platform}",

@@ -93,8 +93,8 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             welstmbed.description = F"Turned On\n{msg}"
         await ctx.send(embed=welstmbed)
 
-    # Welcome-Change
-    @welcome.command(name="change", aliases=["ch"], help="Turns off or on the welcome")
+    # Welcome-Toggle
+    @welcome.command(name="change", aliases=["tg"], help="Toggles off or on the welcome")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def welcome_change(self, ctx:commands.Context):
@@ -155,8 +155,8 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             byestmbed.description = F"Turned On\n{msg}"
         await ctx.send(embed=byestmbed)
 
-    # Goodbye-Change
-    @goodbye.command(name="change", aliases=["ch"], help="Turns off or on the goodbye")
+    # Goodbye-Toggle
+    @goodbye.command(name="change", aliases=["tg"], help="Toggles off or on the goodbye")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
     async def goodbye_change(self, ctx:commands.Context):
@@ -194,23 +194,6 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             byemsgmbed.title = "Goodbye message has been changed to:"
             byemsgmbed.description = F"{msg}"
         await ctx.send(embed=byemsgmbed)
-
-    # Nickname
-    @commands.command(name="nickname", aliases=["nick"], help="Changes the bot's nickname to the given nickname or the original nickname")
-    @commands.guild_only()
-    @commands.has_guild_permissions(manage_nicknames=True)
-    @commands.bot_has_guild_permissions(change_nickname=True)
-    async def nickname(self, ctx:commands.Context, *, name:str=None):
-        name = self.bot.user.name or name
-        nickmbed = discord.Embed(
-            color=self.bot.color,
-            title="Changed bot's nickname:",
-            description=name,
-            timestamp=ctx.message.created_at
-        )
-        nickmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.guild.me.edit(nick=name)
-        await ctx.send(embed=nickmbed)
 
     # Leave
     @commands.command(name="leave", aliases=["lae"], help="Makes the bot leave")
