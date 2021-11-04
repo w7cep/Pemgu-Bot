@@ -10,7 +10,7 @@ class OnMember(commands.Cog):
         if member.bot: return
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
         if welcome:
-            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="welcome") else discord.utils.get(member.guild.text_channels, name="welcome")
+            channel = discord.utils.get(member.guild.text_channels, name="welcome") or member.guild.system_channel
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
@@ -41,7 +41,7 @@ class OnMember(commands.Cog):
         if member.bot: return
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", member.guild.id)
         if goodbye:
-            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="goodbye") else discord.utils.get(member.guild.text_channels, name="goodbye")
+            channel = discord.utils.get(member.guild.text_channels, name="goodbye") or member.guild.system_channel
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
