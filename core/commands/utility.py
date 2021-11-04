@@ -6,6 +6,17 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     def __init__(self, bot):
         self.bot = bot
 
+    # Cleanup
+    @commands.command(name="cleanup", aliases=["cu"], help="Deletes bot's messagess")
+    async def cleanup(self, ctx:commands.Context, *, amount:int):
+        cumbed = discord.Embed(
+            color=self.bot.color,
+            title=F"Cleaned-up {amount} of bot messages",
+        )
+        cumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.channel.purge(limit=amount, check=lambda m: m.author.id == self.bot.user.id, bulk=False)
+        await ctx.send(embed=cumbed, delete_after=5)
+
     # Calculator
     @commands.command(name="calculator", aliases=["calc"], help="Calculates the given math")
     async def calculator(self, ctx:commands.Context, *, math:str):
@@ -18,17 +29,6 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         )
         calcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=calcmbed)
-
-    # Cleanup
-    @commands.command(name="cleanup", aliases=["cu"], help="Deletes bot's messagess")
-    async def cleanup(self, ctx:commands.Context, *, amount:int):
-        cumbed = discord.Embed(
-            color=self.bot.color,
-            title=F"Cleaned-up {amount} of bot messages",
-        )
-        cumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.channel.purge(limit=amount, check=lambda m: m.author.id == self.bot.user.id, bulk=False)
-        await ctx.send(embed=cumbed, delete_after=5)
 
     # Remind
     @commands.command(name="remind", aliases=["rm"], help="Reminds you with the given task and seconds")
