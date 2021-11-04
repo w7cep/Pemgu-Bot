@@ -9,7 +9,7 @@ class OnMember(commands.Cog):
     async def on_member_join(self, member:discord.Member):
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", member.guild.id)
         if welcome and not member.bot:
-            channel = member.guild.system_channel or discord.utils.get(member.guild.text_channels, name="welcome")
+            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="welcome") else discord.utils.get(member.guild.text_channels, name="welcome")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM welcome WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
@@ -24,7 +24,7 @@ class OnMember(commands.Cog):
                 F"***Member-Count:*** {member.guild.member_count}"
             ]
             omjmbed = discord.Embed(
-                color=self.bot.color or fetch.accent_color,
+                color=self.bot.color if not fetch.accent_color else fetch.accent_color,
                 title="A new member has appeared",
                 description=msg,
                 timestamp=discord.utils.utcnow()
@@ -39,7 +39,7 @@ class OnMember(commands.Cog):
     async def on_member_remove(self, member:discord.Member):
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", member.guild.id)
         if goodbye and not member.bot:
-            channel = member.guild.system_channel or discord.utils.get(member.guild.text_channels, name="goodbye")
+            channel = member.guild.system_channel if not discord.utils.get(member.guild.text_channels, name="goodbye") else discord.utils.get(member.guild.text_channels, name="goodbye")
             fetch = await self.bot.fetch_user(member.id)
             msg = await self.bot.postgres.fetchval("SELECT msg FROM goodbye WHERE guild_id=$1", member.guild.id)
             msg = msg.replace(".guild", member.guild.name).replace(".member", member.mention)
@@ -54,7 +54,7 @@ class OnMember(commands.Cog):
                 F"***Member-Count:*** {member.guild.member_count}"
             ]
             omjmbed = discord.Embed(
-                color=self.bot.color or fetch.accent_color,
+                color=self.bot.color if not fetch.accent_color else fetch.accent_color,
                 title="A member has been lost",
                 description=msg,
                 timestamp=discord.utils.utcnow()

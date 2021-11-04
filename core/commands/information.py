@@ -48,7 +48,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     # Invite
     @commands.command(name="invite", aliases=["ie"], help="Makes an invite link for the bot or the given bot")
     async def invite(self, ctx:commands.Context, bot:discord.Member=None):
-        bot = self.bot.user or bot
+        bot = self.bot.user if not bot else bot
         iembed = discord.Embed(
             color=self.bot.color,
             timestamp=ctx.message.created_at
@@ -155,7 +155,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="colors", aliases=["clrs"], help="Gives you the colors from the given image")
     @commands.bot_has_guild_permissions(attach_files=True)
     async def colors(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author or user
+        user = ctx.author if not user else user
         session = await self.bot.session.get(F"https://api.dagpi.xyz/image/colors/?url={user.avatar.with_format('png')}", headers=self.dagpi_headers)
         response = io.BytesIO(await session.read())
         session.close()
@@ -171,7 +171,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     # Avatar
     @commands.command(name="avatar", aliases=["av"], help="Shows your or another user's avatar")
     async def avatar(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author or user
+        user = ctx.author if not user else user
         avmbed = discord.Embed(
             color=self.bot.color,
             title=F"{user}'s Avatar",
@@ -184,7 +184,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     # Banner
     @commands.command(name="banner", aliases=["br"], help="Shows your or another user's banner")
     async def banner(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author or user
+        user = ctx.author if not user else user
         fetch = await self.bot.fetch_user(user.id)
         brmbed = discord.Embed(
             color=self.bot.color,
@@ -201,14 +201,14 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="userinfo", aliases=["ui"], help="Shows user info")
     @commands.guild_only()
     async def userinfo(self, ctx:commands.Context, member:discord.Member=None):
-        member = ctx.author or member
+        member = ctx.author if not member else member
         fetch = await self.bot.fetch_user(member.id)
         gi = [
             F"***Username:*** {member.name}",
             F"***Discriminator:*** {member.discriminator}",
             F"***ID:*** {member.id}",
             F"***Mention:*** {member.mention}",
-            F"***Activity:*** {'*Nothing*' or member.activity.name}",
+            F"***Activity:*** {'*Nothing*' if not member.activity else member.activity.name}",
             F"***Status:*** {member.status}",
             F"***Web-Status:*** {member.web_status}",
             F"***Desktop-Status:*** {member.desktop_status}",
@@ -221,10 +221,10 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             F"***Top-Role:*** {member.top_role.mention}",
             F"***Boosting:*** {'True' if member in ctx.guild.premium_subscribers else 'False'}",
             F"***Nickname:*** {member.nick}",
-            F"***Voice:*** {'*Not in a voice*' or member.voice.channel.mention}"
+            F"***Voice:*** {'*Not in a voice*' if not member.voice else member.voice.channel.mention}"
         ]
         uimbed = discord.Embed(
-            color=self.bot.color or fetch.accent_color,
+            color=self.bot.color if not fetch.accent_color else fetch.accent_color,
             title=F"{member}'s' Information",
             timestamp=ctx.message.created_at
         )
@@ -239,7 +239,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="permissions", aliases=["perms"], help="Shows your or the given member's permissions")
     @commands.guild_only()
     async def permissions(self, ctx:commands.Context, member:discord.Member=None):
-        member = ctx.author or member
+        member = ctx.author if not member else member
         ai = []
         di = []
         for permission, value in member.guild_permissions:
@@ -263,7 +263,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     # Spotify
     @commands.command(name="spotify", aliases=["sy"], help="Shows your or the given member's spotify activity")
     async def spotify(self, ctx:commands.Context, member:discord.Member=None):
-        member = ctx.author or member
+        member = ctx.author if not member else member
         spotifymbed = discord.Embed(
             timestamp=ctx.message.created_at
         )
@@ -320,7 +320,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         si = [
             F"***Name:*** {ctx.guild.name}",
             F"***ID:*** {ctx.guild.id}",
-            F"***Description:*** {'*No Description*' or ctx.guild.description}",
+            F"***Description:*** {'*No Description*' if not ctx.guild.description else ctx.guild.description}",
             F"***Created-At:*** {discord.utils.format_dt(ctx.guild.created_at, style='F')} ({discord.utils.format_dt(ctx.guild.created_at, style='R')})",
             F"***Region:*** {ctx.guild.region}",
             F"***MFA:*** {ctx.guild.mfa_level}",
@@ -328,12 +328,12 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             F"***File-Size-Limit:*** {ctx.guild.filesize_limit}",
             F"***Members:*** {ctx.guild.member_count}",
             F"***Default-Role:*** {ctx.guild.default_role.mention}",
-            F"***Boost-Role:*** {'*No boost-role*' or ctx.guild.premium_subscriber_role.mention}",
+            F"***Boost-Role:*** {'*No boost-role*' if not ctx.guild.premium_subscriber_role else ctx.guild.premium_subscriber_role.mention}",
             F"***Boost-Level:*** {ctx.guild.premium_tier}",
             F"***Boosters:*** {', '.join(self.bot.trim(booster.name, 20) for booster in ctx.guild.premium_subscribers)}",
             F"***Categories:*** {len(ctx.guild.categories)}",
             F"***Channels:*** {len(ctx.guild.channels)}",
-            F"***AFK-Channel:*** {'*No AFK channel*' or ctx.guild.afk_channel.mention}",
+            F"***AFK-Channel:*** {'*No AFK channel*' if not ctx.guild.afk_channel else ctx.guild.afk_channel.mention}",
             F"***AFK-Timeout:*** {ctx.guild.afk_timeout}"
         ]
         simbed = discord.Embed(

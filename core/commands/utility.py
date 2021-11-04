@@ -42,7 +42,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     # AFK
     @commands.command(name="afk", help="Makes you AFK")
     async def afk(self, ctx:commands.Context, *, reason:str=None):
-        reason = "You didn't provide anything" or reason
+        reason = "You didn't provide anything" if not reason else reason
         afk = self.bot.afks.get(ctx.author.id)
         afkmbed  = discord.Embed(
             color=self.bot.color,
@@ -65,7 +65,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     # Notes-List
     @notes.command(name="list", aliases=["="], help="Shows every of your or the given user's notes")
     async def notes_list(self, ctx:commands.Context, user:discord.User=None):
-        user = ctx.author or user
+        user = ctx.author if not user else user
         notes = await self.bot.postgres.fetch("SELECT task FROM notes WHERE user_id=$1", user.id)
         notelistmbed = discord.Embed(
             color=self.bot.color,
