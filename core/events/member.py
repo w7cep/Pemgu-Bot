@@ -33,9 +33,14 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            channel = discord.utils.get(member.guild.text_channels, name="welcome")
-            if not channel: channel = member.guild.system_channel
-            await channel.send(embed=omjmbed)
+            for channel in member.guild.channels:
+                if channel.name.lower() in ("goodbye"):
+                    destination = channel
+                    break
+                else:
+                    destination = member.guild.system_channel
+                    break
+            await destination.send(embed=omjmbed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member:discord.Member):
@@ -65,9 +70,14 @@ class OnMember(commands.Cog):
             if fetch.banner: omjmbed.set_image(url=fetch.banner.url)
             omjmbed.add_field(name="Information:", value="\n".join(m for m in mi))
             omjmbed.set_footer(text=self.bot.user.name, icon_url=self.bot.user.avatar.url)
-            channel = discord.utils.get(member.guild.text_channels, name="goodbye")
-            if not channel: channel = member.guild.system_channel
-            await channel.send(embed=omjmbed)
+            for channel in member.guild.channels:
+                if channel.name.lower() in ("welcome"):
+                    destination = channel
+                    break
+                else:
+                    destination = member.guild.system_channel
+                    break
+            await destination.send(embed=omjmbed)
 
 def setup(bot):
     bot.add_cog(OnMember(bot))
