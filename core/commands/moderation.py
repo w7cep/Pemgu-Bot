@@ -230,7 +230,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             crmtmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             await ctx.send(embed=crmtmbed)
             for channel in ctx.guild.channels:
-                await channel.set_permissions(muterole, add_reactions=False, send_messages=False, speak=False, create_public_threads=False, create_private_threads=False)
+                await channel.set_permissions(muterole, add_reactions=False, send_messages=False, connect=False, speak=False, create_public_threads=False, create_private_threads=False)
         if muterole in member.roles:
             mtmbed.title = F"Successfully UnMuted"
             mtmbed.description = F"UnMuted: {member.mention}\nReason: {reason}\nRole: {muterole.mention}"
