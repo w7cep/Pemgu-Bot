@@ -32,14 +32,15 @@ class OnError(commands.Cog):
             nmatcnfmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             if len(matches) > 0:
                 view = dymview.DYMView(ctx, matches)
-                view.message = await ctx.send(embed=matcnfmbed)
+                view.message = await ctx.send(embed=matcnfmbed, view=view)
             else:
                 await ctx.send(embed=nmatcnfmbed)
         else:
             print("".join(traceback.format_exception(type(error), error,  error.__traceback__)))
+
             errormbed = discord.Embed(
                 color=self.bot.color,
-                title="❌ An Error Occurred",
+                title=F"❌ An Error Occurred: {ctx.command}",
                 description=F"```diff\n- {error}\n```",
                 timestamp=ctx.message.created_at
             )
