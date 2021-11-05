@@ -1,4 +1,4 @@
-import discord
+import discord, typing
 from discord.ext import commands
 
 class Moderation(commands.Cog, description="Was someone being bad?"):
@@ -10,7 +10,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
-    async def ban(self, ctx:commands.Context, user:discord.User, *, reason:str=None):
+    async def ban(self, ctx:commands.Context, user:commands.Greedy[discord.User], *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
         abnmbed = discord.Embed(
             color=self.bot.color,
@@ -35,7 +35,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
-    async def unban(self, ctx:commands.Context, user:discord.User, *, reason:str=None):
+    async def unban(self, ctx:commands.Context, user:commands.Greedy[discord.User], *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
         aunmbed = discord.Embed(
             color=self.bot.color,
@@ -59,7 +59,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(kick_members=True)
     @commands.bot_has_guild_permissions(kick_members=True)
-    async def kick(self, ctx:commands.Context, member:discord.Member, *, reason:str=None):
+    async def kick(self, ctx:commands.Context, member:commands.Greedy[discord.Member], *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
         akcmbed = discord.Embed(
             color=self.bot.color,
@@ -84,7 +84,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
-    async def addrole(self, ctx:commands.Context, role:discord.Role, member:discord.Member=None):
+    async def addrole(self, ctx:commands.Context, role:commands.Greedy[discord.Role], member:commands.Greedy[discord.Member]=None):
         member = ctx.author if not member else member
         aembed = discord.Embed(
             color=self.bot.color,
@@ -107,7 +107,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
-    async def removerole(self, ctx:commands.Context, role:discord.Role, member:discord.Member=None):
+    async def removerole(self, ctx:commands.Context, role:commands.Greedy[discord.Role], member:commands.Greedy[discord.Member]=None):
         member = ctx.author if not member else member
         rembed = discord.Embed(
             color=self.bot.color,
@@ -130,7 +130,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def slowmode(self, ctx:commands.Context, seconds:int, channel:discord.TextChannel=None):
+    async def slowmode(self, ctx:commands.Context, seconds:int, channel:commands.Greedy[discord.TextChannel]=None):
         channel = ctx.channel if not channel else channel
         smmbed = discord.Embed(
             color=self.bot.color,
@@ -154,9 +154,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def lock(self, ctx:commands.Context, channel:discord.TextChannel=None):
+    async def lock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
+        over.connect = False
+        over.speak = False
         over.send_messages = False
         over.add_reactions = False
         over.create_public_threads = False
@@ -180,9 +182,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def unlock(self, ctx:commands.Context, channel:discord.TextChannel=None):
+    async def unlock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
+        over.connect = None
+        over.speak = None
         over.send_messages = None
         over.add_reactions = None
         over.create_public_threads = None
@@ -206,7 +210,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_roles=True)
     @commands.bot_has_guild_permissions(manage_roles=True, manage_channels=True)
-    async def mute(self, ctx:commands.Context, member:discord.Member, *, reason:str=None):
+    async def mute(self, ctx:commands.Context, member:commands.Greedy[discord.Member], *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
         mtmbed = discord.Embed(
             color=self.bot.color,
