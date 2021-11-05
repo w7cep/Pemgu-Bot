@@ -6,9 +6,9 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
     def __init__(self, bot):
         self.bot = bot
 
-    # SFW
-    @commands.command(name="sfw", help="Sends an random SFW Waifu Image")
-    async def sfw(self, ctx:commands.Context):
+    # Waifu
+    @commands.command(name="waifu", help="Sends an random SFW Waifu Image")
+    async def waifu(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.waifu.im/sfw/waifu/")
         response = await session.json()
         session.close()
@@ -22,10 +22,10 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         sfwmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=sfwmbed)
     
-    # NSFW
-    @commands.command(name="nsfw", help="Sends an random NSFW Waifu Image")
+    # NWaifu
+    @commands.command(name="nwaifu", help="Sends an random NSFW Waifu Image")
     @commands.is_nsfw()
-    async def nsfw(self, ctx:commands.Context):
+    async def nwaifu(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.waifu.im/nsfw/ero/")
         response = await session.json()
         session.close()
