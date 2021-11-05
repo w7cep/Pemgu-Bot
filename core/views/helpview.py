@@ -119,7 +119,7 @@ class SelectView(discord.ui.View):
         for cog, commands in self.mapping.items():
             name = cog.qualified_name if cog else "Alone"
             description = cog.description if cog else "Commands without category..."
-            if not name.startswith("On"):
+            if not name.startswith("On") and cog:
                 option = discord.SelectOption(emoji=self.help.emojis.get(name) if self.help.emojis.get(name) else '❓', label=F"{name} Category", description=description, value=name)
                 options.append(option)
         self.add_item(item=SelectUI(placeholder="Where do you want to go...", options=options, min_values=1, max_values=1, view=self))
