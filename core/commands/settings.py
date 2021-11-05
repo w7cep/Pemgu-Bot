@@ -95,10 +95,10 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=welstmbed)
 
     # Welcome-Toggle
-    @welcome.command(name="change", aliases=["tg"], help="Toggles off or on the welcome")
+    @welcome.command(name="toggle", aliases=["tg"], help="Toggles off or on the welcome")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
-    async def welcome_change(self, ctx:commands.Context):
+    async def welcome_toggle(self, ctx:commands.Context):
         welcome = await self.bot.postgres.fetchval("SELECT * FROM welcome WHERE guild_id=$1", ctx.guild.id)
         welchmbed = discord.Embed(
             color=self.bot.color,
@@ -179,10 +179,10 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         await ctx.send(embed=byestmbed)
 
     # Goodbye-Toggle
-    @goodbye.command(name="change", aliases=["tg"], help="Toggles off or on the goodbye")
+    @goodbye.command(name="toggle", aliases=["tg"], help="Toggles off or on the goodbye")
     @commands.guild_only()
     @commands.has_guild_permissions(administrator=True)
-    async def goodbye_change(self, ctx:commands.Context):
+    async def goodbye_toggle(self, ctx:commands.Context):
         goodbye = await self.bot.postgres.fetchval("SELECT * FROM goodbye WHERE guild_id=$1", ctx.guild.id)
         byechmbed = discord.Embed(
             color=self.bot.color,
