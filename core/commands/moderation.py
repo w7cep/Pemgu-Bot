@@ -154,7 +154,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def lock(self, ctx:commands.Context, channel:typing.Union[commands.Greedy[discord.TextChannel], commands.Greedy[discord.StageChannel], commands.Greedy[discord.VoiceChannel]]=None):
+    async def lock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
         over.connect = False
@@ -182,7 +182,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def unlock(self, ctx:commands.Context, channel:typing.Union[commands.Greedy[discord.TextChannel], commands.Greedy[discord.StageChannel], commands.Greedy[discord.VoiceChannel]]=None):
+    async def unlock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
         over.connect = None
