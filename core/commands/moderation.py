@@ -14,8 +14,8 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         reason = "Nothing was provided" if not reason else reason
         abnmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user} is now Banned",
-            description=F"For reason: {reason}",
+            title=F"Unbanned",
+            description=F"{', '.join(u for u in user)}\nReason: {reason}",
             timestamp=ctx.message.created_at
         )
         abnmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -39,7 +39,8 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         reason = "Nothing was provided" if not reason else reason
         aunmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user} is now Unbanned",
+            title=F"Unbanned",
+            description=", ".join(u for u in user),
             timestamp=ctx.message.created_at
         )
         aunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -63,8 +64,8 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         reason = "Nothing was provided" if not reason else reason
         akcmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{member} is now Kicked",
-            description=F"For reason: {reason}",
+            title=F"Kicked:",
+            description=F"{', '.join(m.mention for m in member)}\nReason: {reason}",
             timestamp=ctx.message.created_at
         )
         akcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -88,7 +89,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         member = ctx.author if not member else member
         aembed = discord.Embed(
             color=self.bot.color,
-            description=F"Member: {member.mention}\nRole: {role.mention}",
+            description=F"Member: {', '.join(m.mention for m in member)}\nRole: {', '.join(r.mention for r in role)}",
             timestamp=ctx.message.created_at
         )
         aembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -111,7 +112,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         member = ctx.author if not member else member
         rembed = discord.Embed(
             color=self.bot.color,
-            description=F"Member: {member.mention}\nRole: {role.mention}",
+            description=F"Member: {', '.join(m.mention for m in member)}\nRole: {', '.join(r.mention for r in role)}",
             timestamp=ctx.message.created_at
         )
         rembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -142,11 +143,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             return await ctx.send(embed=smmbed)
         if channel.slowmode_delay == seconds:
             smmbed.title = "Channel is already at the same slowmode"
-            smmbed.description = F"Channel: {channel.mention}\nSeconds: {channel.slowmode_delay}"
+            smmbed.description = F"Channel: {', '.join(c.mention for c in channel)}\nSeconds: {channel.slowmode_delay}"
             return await ctx.send(embed=smmbed)
-        await channel.edit(reason=F"Channel: {channel.mention}\nSeconds: {seconds}\nBy: {ctx.author}", slowmode_delay=seconds)
+        await channel.edit(reason=F"Channel: {', '.join(c.mention for c in channel)}\nSeconds: {seconds}\nBy: {ctx.author}", slowmode_delay=seconds)
         smmbed.title = "Successfully changed the slowdown:"
-        smmbed.description = F"Channel: {channel.mention}\nSeconds: {seconds}"
+        smmbed.description = F"Channel: {', '.join(c.mention for c in channel)}\nSeconds: {seconds}"
         await ctx.send(embed=smmbed)
 
     # Lock
@@ -237,12 +238,12 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
                 await channel.set_permissions(muterole, add_reactions=False, send_messages=False, connect=False, speak=False, create_public_threads=False, create_private_threads=False)
         if muterole in member.roles:
             mtmbed.title = F"Successfully UnMuted"
-            mtmbed.description = F"UnMuted: {member.mention}\nReason: {reason}\nRole: {muterole.mention}"
+            mtmbed.description = F"UnMuted: {', '.join(m.mention for m in member)}\nReason: {reason}\nRole: {muterole.mention}"
             await member.remove_roles(muterole, reason=F"UnMuted by {ctx.author}, Because: {reason}")
             await ctx.send(embed=mtmbed)
         else:
             mtmbed.title = F"Successfully Muted"
-            mtmbed.description = F"Muted: {member.mention}\nReason: {reason}\nRole: {muterole.mention}"
+            mtmbed.description = F"Muted: {', '.join(m.mention for m in member)}\nReason: {reason}\nRole: {muterole.mention}"
             await member.add_roles(muterole, reason=F"Muted by {ctx.author}, Because: {reason}")
             await ctx.send(embed=mtmbed)
 
