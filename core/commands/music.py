@@ -44,7 +44,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            self.queue[ctx.guild.id] = []
+            self.queue[str(ctx.guild.id)] = []
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
@@ -54,8 +54,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 else:
                     await ctx.voice_client.play(track=results[0])
                 return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
-            self.queue[ctx.guild.id].append(ctx.voice_client.current)
-            return await ctx.send(F"Added {ctx.voice_client.current.title} to the queue")
+            self.queue[str(ctx.guild.id)].append(results.tracks[0])
+            return await ctx.send(F"Added {results.tracks[0].title} to the queue")
         return await ctx.send("Someone else is using to me")
 
     # Next
@@ -66,13 +66,16 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.send("No one is using to me")
-        search = self.queue[ctx.guild.id][0]
+        search = self.queue.get(str(ctx.guild.id))[0]
+        if not search:
+            return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=search.title)
             if isinstance(results, pomice.Playlist):
                 return await ctx.voice_client.play(track=results.tracks[0])
             else:
                 await ctx.voice_client.play(track=results[0])
+            del self.queue[str(ctx.guild.id)][0]
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
