@@ -53,8 +53,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.voice_client.play(track=results.tracks[0])
                 else:
                     await ctx.voice_client.play(track=results[0])
+                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
             self.queue[ctx.guild.id].append(ctx.voice_client.current)
-            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
+            return await ctx.send(F"Added {ctx.voice_client.current.title} to the queue")
         return await ctx.send("Someone else is using to me")
 
     # Next
