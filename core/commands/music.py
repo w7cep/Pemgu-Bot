@@ -10,7 +10,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     async def start_nodes(self):
         await self.pomice.create_node(bot=self.bot, host="127.0.0.1", port="3030", password="youshallnotpass", identifier="MAIN")
-        print(F"Node is ready!")
 
     # Join
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
