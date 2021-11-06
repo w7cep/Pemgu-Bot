@@ -53,9 +53,12 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.voice_client.play(track=results.tracks[0])
                 else:
                     await ctx.voice_client.play(track=results[0])
-                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
-            self.queue[str(ctx.guild.id)].append(results.tracks[0])
-            return await ctx.send(F"Added {results.tracks[0].title} to the queue")
+                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
+            if isinstance(results, pomice.Playlist):
+                self.queue[str(ctx.guild.id)].append(results.tracks[0])
+            else:
+                self.queue[str(ctx.guild.id)].append(results[0])
+            return await ctx.send(F"Added {results[0].title} to the queue")
         return await ctx.send("Someone else is using to me")
 
     # Next
@@ -76,7 +79,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             else:
                 await ctx.voice_client.play(track=results[0])
             del self.queue[str(ctx.guild.id)][0]
-            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
+            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
     # Resume
@@ -100,7 +103,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client.channel == ctx.author.voice.channel:
                 if not ctx.voice_client.is_playing:
                     return await ctx.send("Nothing is getting played")
-                await ctx.voice_client.stop()
+                await ctx.voice_client.set_pause(pause=True)
                 return await ctx.send("Paused the music")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
