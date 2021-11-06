@@ -9,7 +9,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="127.0.0.1", port="3030", password="youshallnotpass", identifier="MAIN", spotify_client_id=None, spotify_client_secret=None)
+        await self.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="MAIN", spotify_client_id=None, spotify_client_secret=None)
         print("Created a node")
 
     # Join
