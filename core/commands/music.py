@@ -30,7 +30,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def disconnect(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.me.voice.channel == ctx.author.voice.channel:
-                await ctx.voice_client.destroy()
+                queue = self.queue.get(str(ctx.guild.id))
+                if queue:
+                    del self.queue[str(ctx.guild.id)]
+                    return await ctx.send("Cleared queue")
+                await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
             return await ctx.send("Someone else is using to me")
         await ctx.send("I'm not in a voice channel")
