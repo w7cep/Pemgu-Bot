@@ -41,6 +41,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
             results = await ctx.voice_client.get_tracks(query=search)
+            print(results)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
