@@ -49,11 +49,11 @@ class CustomHelp(commands.HelpCommand):
             "Game": "🎮",
             "Information": "🔎",
             "Moderation": "🎩",
+            "Music": "🎵",
             "Owner": "👑",
             "Settings": "🔧",
             "Utility": "🧰",
-            "Jishaku": "🤿",
-            "Alone": "🔮"
+            "Jishaku": "🤿"
         }
 
     # Help Main
