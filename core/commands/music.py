@@ -43,13 +43,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
             results = await ctx.voice_client.get_tracks(query=search)
+            info = ctx.voice_client.current.info
             print(results)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
                 return await ctx.voice_client.play(track=results.tracks[0])
             await ctx.voice_client.play(track=results[0])
-            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.url}")
+            return await ctx.send(F"Now playing: {info.get('title')}\nBy: {info.get('author')}\nRequested: {info.get('requester')}\nURL:{info.get('url')}")
         return await ctx.send("Someone else is using to me")
 
     # Stop
