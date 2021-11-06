@@ -58,7 +58,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def stop(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if not ctx.voice_client.is_paused():
+                if not ctx.voice_client.is_paused:
                     return await ctx.send("I'm not paused")
                 await ctx.voice_client.resume()
                 return await ctx.send("Resumed the music")
@@ -71,7 +71,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if not ctx.voice_client.is_paused():
+                if not ctx.voice_client.is_paused:
                     return await ctx.send("Music is not paused")
                 await ctx.voice_client.resume()
                 return await ctx.send("Resumed the music")
@@ -84,7 +84,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def pause(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if not ctx.voice_client.is_playing():
+                if not ctx.voice_client.is_playing:
                     return await ctx.send("Nothing is playing")
                 await ctx.voice_client.pause()
                 return await ctx.send("Paused the music")
