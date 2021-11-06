@@ -42,6 +42,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.invoke(self.join)
+        if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=search)
             print(results)
             if not results:
