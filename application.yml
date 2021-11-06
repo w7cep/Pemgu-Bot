@@ -1,8 +1,10 @@
 server:
   port: 3030
   address: 127.0.0.1
+  host: 127.0.0.1
 lavalink:
   server:
+    host: 127.0.0.1
     password: "youshallnotpass"
     sources:
       youtube: true
