@@ -9,7 +9,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="127.0.0.1", port="3030", password="youshallnotpass", identifier="MAIN")
+        await self.pomice.create_node(bot=self.bot, host="127.0.0.1", port="3030", password="youshallnotpass", identifier="MAIN", spotify_client_id=None, spotify_client_secret=None)
 
     # Join
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
