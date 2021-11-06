@@ -44,15 +44,34 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if ctx.me.voice.channel == ctx.author.voice.channel:
+            self.queue[ctx.guild.id] = []
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
+            if not ctx.voice_client.is_playing:
+                if isinstance(results, pomice.Playlist):
+                    await ctx.voice_client.play(track=results.tracks[0])
+                else:
+                    await ctx.voice_client.play(track=results[0])
+            self.queue[ctx.guild.id].append(ctx.voice_client.current)
+            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
+        return await ctx.send("Someone else is using to me")
+
+    # Next
+    @commands.command(name="next", aliases=["nx"], help="Plays the next song in the queue")
+    @commands.guild_only()
+    async def next(self, ctx:commands.Context):
+        if not ctx.author.voice:
+            return await ctx.send("You must be in a voice channel")
+        if not ctx.voice_client:
+            await ctx.send("No one is using to me")
+        search = self.queue[ctx.guild.id][0]
+        if ctx.me.voice.channel == ctx.author.voice.channel:
+            results = await ctx.voice_client.get_tracks(query=search.title)
             if isinstance(results, pomice.Playlist):
                 return await ctx.voice_client.play(track=results.tracks[0])
             else:
                 await ctx.voice_client.play(track=results[0])
-            self.queue[ctx.guild.id] = []
-            self.queue[ctx.guild.id].append(results[0])
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.voice_client.current.requester}\nURL:{ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
