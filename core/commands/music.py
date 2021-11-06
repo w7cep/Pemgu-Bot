@@ -51,7 +51,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         return await ctx.send("Someone else is listening to me")
 
     # Stop
-    @commands.command(name="stop", aliases=["sp"], help="Stops playing music")
+    @commands.command(name="stop", aliases=["so"], help="Stops playing music")
     @commands.guild_only()
     async def stop(self, ctx:commands.Context):
         if ctx.voice_client:
