@@ -8,6 +8,8 @@ async def create_pool_postgres():
     print("Created to the Postgres Pool")
 
 async def get_prefix(bot, message:discord.Message):
+    if not message.guild:
+        return commands.when_mentioned_or(bot.default_prefix)(bot, message)
     prefix = bot.prefixes.get(message.guild.id)
     if prefix:
         return commands.when_mentioned_or(prefix)(bot, message)
