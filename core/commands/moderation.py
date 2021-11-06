@@ -1,4 +1,4 @@
-import discord
+import discord, typing
 from discord.ext import commands
 
 class Moderation(commands.Cog, description="Was someone being bad?"):
@@ -10,24 +10,24 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
-    async def ban(self, ctx:commands.Context, user:discord.User, *, reason:str=None):
+    async def ban(self, ctx:commands.Context, member:discord.Member, *, reason:str=None):
         reason = "Nothing was provided" if not reason else reason
         abnmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user} is now Banned",
-            description=F"For reason: {reason}",
+            title=F"Banned:",
+            description=F"{member.mention}\n{reason}",
             timestamp=ctx.message.created_at
         )
         abnmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         ubnmbed = discord.Embed(
             color=self.bot.color,
-            title=F"Dear {user}"
+            title=F"Dear {member}\nBanned:",
+            description=F"{ctx.guild}\n{ctx.author}\n{reason}",
+            timestamp=ctx.message.created_at
         )
-        ubnmbed.add_field(name=F"You were banned from:", value=F"{ctx.guild.id}")
-        ubnmbed.add_field(name=F"By:", value=F"{ctx.author.name}")
-        ubnmbed.add_field(name=F"For this reason:", value=reason)
         ubnmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.guild.ban(user, reason=reason)
+        await member.send(embed=ubnmbed)
+        await ctx.guild.ban(member, reason=F"{ctx.author}\n{reason}")
         await ctx.send(embed=abnmbed)
 
     # Unban
@@ -39,18 +39,19 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         reason = "Nothing was provided" if not reason else reason
         aunmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user} is now Unbanned",
+            title=F"Unbanned:",
+            description=F"{user.mention}\n{reason}",
             timestamp=ctx.message.created_at
         )
         aunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         uunmbed = discord.Embed(
             color=self.bot.color,
-            title=F"Dear {user}"
+            title=F"Dear {user}\nUnbanned:",
+            description=F"{ctx.guild}\n{ctx.author}\n{reason}",
+            timestamp=ctx.message.created_at
         )
-        uunmbed.add_field(name=F"You were unbanned from:", value=F"{ctx.guild.id}")
-        uunmbed.add_field(name=F"By:", value=F"{ctx.author.name}")
-        uunmbed.add_field(name=F"For this reason:", value=reason)
         uunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await user.send(embed=uunmbed)
         await ctx.guild.unban(user)
         await ctx.send(embed=aunmbed)
 
@@ -63,19 +64,19 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         reason = "Nothing was provided" if not reason else reason
         akcmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{member} is now Kicked",
-            description=F"For reason: {reason}",
+            title=F"Kicked:",
+            description=F"{member.mention}\n{reason}",
             timestamp=ctx.message.created_at
         )
         akcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         ukcmbed = discord.Embed(
             color=self.bot.color,
-            title=F"Dear {member}"
+            title=F"Dear {member}\nKicked:",
+            description=F"{ctx.guild}\n{ctx.author}\n{reason}",
+            timestamp=ctx.message.created_at
         )
-        ukcmbed.add_field(name=F"You were banned from:", value=F"{ctx.guild.id}")
-        ukcmbed.add_field(name=F"By:", value=F"{ctx.author.name}")
-        ukcmbed.add_field(name=F"For this reason:", value=reason)
         ukcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await member.send(embed=ukcmbed)
         await ctx.guild.kick(user=member, reason=reason)
         await ctx.send(embed=akcmbed)
 
@@ -88,7 +89,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         member = ctx.author if not member else member
         aembed = discord.Embed(
             color=self.bot.color,
-            description=F"Member: {member.mention}\nRole: {role.mention}",
+            description=F"{member.mention}\n{role.mention}",
             timestamp=ctx.message.created_at
         )
         aembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -96,10 +97,10 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             aembed.title = F"{role} is higher than {member}"
             return await ctx.send(embed=aembed)
         if role in member.roles:
-            aembed.title = "Already has"
+            aembed.title = "Already has:"
             return await ctx.send(embed=aembed)
         await member.add_roles(role)
-        aembed.title = "Successfully added"
+        aembed.title = "Added:"
         await ctx.send(embed=aembed)
     
     # RemoveRole
@@ -111,7 +112,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         member = ctx.author if not member else member
         rembed = discord.Embed(
             color=self.bot.color,
-            description=F"Member: {member.mention}\nRole: {role.mention}",
+            description=F"{member.mention}\n{role.mention}",
             timestamp=ctx.message.created_at
         )
         rembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -120,9 +121,9 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             return await ctx.send(embed=rembed)
         if role in member.roles:
             await member.remove_roles(role)
-            rembed.title = "Successfully removed"
+            rembed.title = "Removed:"
             return await ctx.send(embed=rembed)
-        rembed.title = "Doesn't have"
+        rembed.title = "Doesn't have:"
         await ctx.send(embed=rembed)
 
     # Slowmode
@@ -134,6 +135,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         channel = ctx.channel if not channel else channel
         smmbed = discord.Embed(
             color=self.bot.color,
+            description=F"{channel.mention}\n{channel.slowmode_delay}",
             timestamp=ctx.message.created_at
         )
         smmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -141,12 +143,10 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             smmbed.title = F"Seconds cannot be more than 21600"
             return await ctx.send(embed=smmbed)
         if channel.slowmode_delay == seconds:
-            smmbed.title = "Channel is already at the same slowmode"
-            smmbed.description = F"Channel: {channel.mention}\nSeconds: {channel.slowmode_delay}"
+            smmbed.title = "Channel is already at the same slowmode:"
             return await ctx.send(embed=smmbed)
         await channel.edit(reason=F"Channel: {channel.mention}\nSeconds: {seconds}\nBy: {ctx.author}", slowmode_delay=seconds)
-        smmbed.title = "Successfully changed the slowdown:"
-        smmbed.description = F"Channel: {channel.mention}\nSeconds: {seconds}"
+        smmbed.title = "Changed the slowdown:"
         await ctx.send(embed=smmbed)
 
     # Lock
@@ -154,9 +154,12 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def lock(self, ctx:commands.Context, channel:discord.TextChannel=None):
+    async def lock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
+        over.connect = False
+        over.speak = False
+        over.request_to_speak = False
         over.send_messages = False
         over.add_reactions = False
         over.create_public_threads = False
@@ -172,7 +175,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             return await ctx.send(embed=lcmbed)
         else:
             await channel.set_permissions(ctx.guild.default_role, overwrite=over)
-            lcmbed.title = "Successfully Locked:"
+            lcmbed.title = "Locked:"
             await ctx.send(embed=lcmbed)
 
     # Unlock
@@ -180,13 +183,16 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     @commands.guild_only()
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def unlock(self, ctx:commands.Context, channel:discord.TextChannel=None):
+    async def unlock(self, ctx:commands.Context, channel:typing.Union[discord.TextChannel, discord.StageChannel, discord.VoiceChannel]=None):
         channel = ctx.channel if not channel else channel
         over = channel.overwrites_for(ctx.guild.default_role)
-        over.send_messages = None
-        over.add_reactions = None
-        over.create_public_threads = None
-        over.create_private_threads = None
+        over.connect = False
+        over.speak = False
+        over.request_to_speak = False
+        over.send_messages = False
+        over.add_reactions = False
+        over.create_public_threads = False
+        over.create_private_threads = False
         ulcmbed = discord.Embed(
             color=self.bot.color,
             description=channel.mention,
@@ -198,7 +204,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             return await ctx.send(embed=ulcmbed)
         else:
             await channel.set_permissions(ctx.guild.default_role, overwrite=over)
-            ulcmbed.title = "Successfully Unlocked:"
+            ulcmbed.title = "Unlocked:"
             await ctx.send(embed=ulcmbed)
 
     # Mute
@@ -232,14 +238,14 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             for channel in ctx.guild.channels:
                 await channel.set_permissions(muterole, add_reactions=False, send_messages=False, connect=False, speak=False, create_public_threads=False, create_private_threads=False)
         if muterole in member.roles:
-            mtmbed.title = F"Successfully UnMuted"
-            mtmbed.description = F"UnMuted: {member.mention}\nReason: {reason}\nRole: {muterole.mention}"
-            await member.remove_roles(muterole, reason=F"UnMuted by {ctx.author}, Because: {reason}")
+            mtmbed.title = F"UnMuted:"
+            mtmbed.description = F"UnMuted: {member.mention}\n{reason}\n{muterole.mention}"
+            await member.remove_roles(muterole, reason=F"Un{ctx.author}\n{reason}")
             await ctx.send(embed=mtmbed)
         else:
-            mtmbed.title = F"Successfully Muted"
-            mtmbed.description = F"Muted: {member.mention}\nReason: {reason}\nRole: {muterole.mention}"
-            await member.add_roles(muterole, reason=F"Muted by {ctx.author}, Because: {reason}")
+            mtmbed.title = F"Muted:"
+            mtmbed.description = F"{member.mention}\n{reason}\n{muterole.mention}"
+            await member.add_roles(muterole, reason=F"{ctx.author}\n{reason}")
             await ctx.send(embed=mtmbed)
 
     # Clear
@@ -275,7 +281,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             eambed.title = "You need to provide an image"
             return await ctx.send(embed=eambed)
         emoji = await ctx.guild.create_custom_emoji(name=name, image=(await ctx.message.attachments[0].read()), reason=F"Added by: {ctx.author}")
-        eambed.title = "Successfully created the emoji:"
+        eambed.title = "Created the emoji:"
         eambed.set_image(url=emoji.url)
         await ctx.send(embed=eambed)
 
@@ -287,7 +293,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
     async def emojiremove(self, ctx:commands.Context, emoji:discord.Emoji):
         ermbed = discord.Embed(
             color=self.bot.color,
-            title="Successfully removed the emoji:",
+            title="Removed the emoji:",
             timestamp=ctx.message.created_at
         )
         ermbed.set_image(url=emoji.url)

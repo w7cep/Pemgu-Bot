@@ -5,7 +5,7 @@ from discord.ext import commands
 
 async def create_pool_postgres():
     bot.postgres = await asyncpg.create_pool(dsn=os.getenv("DATABASE_URL"))
-    print("Successfully created to the Postgres Pool")
+    print("Created to the Postgres Pool")
 
 async def get_prefix(bot, message:discord.Message):
     prefix = bot.prefixes.get(message.guild.id)
@@ -21,7 +21,7 @@ async def get_prefix(bot, message:discord.Message):
 
 async def create_session_aiohttp():
     bot.session = aiohttp.ClientSession()
-    print("Successfully created a AioHttp Session ")
+    print("Created a AioHttp Session ")
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):

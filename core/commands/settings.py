@@ -45,7 +45,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         else:
             await self.bot.postgres.execute("UPDATE prefixes SET prefix=$1 WHERE guild_id=$2", text, ctx.guild.id)
         self.bot.prefixes[ctx.guild.id] = text
-        pfchmbed.title = "Successfully changed prefix"
+        pfchmbed.title = "Changed prefix:"
         pfchmbed.description = text
         await ctx.send(embed=pfchmbed)
 
@@ -62,7 +62,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         pfrsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if prefix:
             await self.bot.postgres.execute("DELETE FROM prefixes WHERE guild_id=$1", ctx.guild.id)
-            pfrsmbed.title = "Successfully resetted to:"
+            pfrsmbed.title = "Resetted to:"
             pfrsmbed.description = self.bot.prefixes[ctx.guild.id] = self.bot.default_prefix
             return await ctx.send(embed=pfrsmbed)
         pfrsmbed.title = "Prefix was never changed"
@@ -252,7 +252,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         view.message = await ctx.send(content="Are you sure you want the bot to leave:", view=view)
         await view.wait()
         if view.value:
-            laembed.title = F"{self.bot.user} has successfully left"
+            laembed.title = F"{self.bot.user} has left"
             await ctx.send(embed=laembed, delete_after=2.5)
             await ctx.me.guild.leave()
 

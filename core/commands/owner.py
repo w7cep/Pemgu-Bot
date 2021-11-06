@@ -58,7 +58,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     async def load(self, ctx:commands.Context, *, cog:str):
         loadmbed = discord.Embed(
             color=self.bot.color,
-            title=F"Successfully loaded {cog}.",
+            title=F"Loaded {cog}.",
             timestamp=ctx.message.created_at
         )
         loadmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -71,7 +71,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     async def unload(self, ctx:commands.Context, *, cog:str):
         unloadmbed = discord.Embed(
             color=self.bot.color,
-            title=F"Successfully unloaded {cog}.",
+            title=F"Unloaded {cog}.",
             timestamp=ctx.message.created_at
         )
         unloadmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -88,7 +88,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             timestamp=ctx.message.created_at
         )
         if not cog:
-            reloadmbed.title = "Successfully reloaded every cog"
+            reloadmbed.title = "Reloaded every cog"
             reloadmbed.description += F"Commands:\n"
             for command in self.bot._commands:
                 try:
@@ -106,7 +106,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
                     reloadmbed.description += F"❎ - {event}\n"
                     reloadmbed.description += F"❎ - {error}\n"
             return await ctx.send(embed=reloadmbed)
-        reloadmbed.title = F"Successfully reloaded {cog}."
+        reloadmbed.title = F"Reloaded {cog}."
         self.bot.reload_extension(cog)
         await ctx.send(embed=reloadmbed)
 
@@ -128,7 +128,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     async def repeat(self, ctx:commands.Context, time:int, command:str):
         for _ in range(1, time+1):
             await self.bot.process_commands(command)
-        await ctx.send(F"Successfully repeated `{command}` - `{time}` times")
+        await ctx.send(F"Repeated `{command}` - `{time}` times")
 
     # Leaves
     @commands.command(name="lives", help="Leaves from the given guilds")

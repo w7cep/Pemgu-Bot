@@ -98,7 +98,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteaddmbed.description = F"{task}"
             return await ctx.send(embed=noteaddmbed)
         await self.bot.postgres.execute("INSERT INTO notes(user_name,user_id,task,jump_url) VALUES($1,$2,$3,$4)", ctx.author.name, ctx.author.id, task, ctx.message.jump_url)
-        noteaddmbed.title = "Successfully added:"
+        noteaddmbed.title = "Added:"
         noteaddmbed.description = F"{task}\n**To your notes**"
         await ctx.send(embed=noteaddmbed)
 
@@ -122,7 +122,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteremovembed.description = F"{number}\n**Check your notes**"
             return await ctx.send(embed=noteremovembed)
         await self.bot.postgres.execute("DELETE FROM notes WHERE user_id=$1 AND task=$2", ctx.author.id, tasks[number])
-        noteremovembed.title = "Successfully removed:"
+        noteremovembed.title = "Removed:"
         noteremovembed.description = F"{tasks[number]}\n**From your notes**"
         await ctx.send(embed=noteremovembed)
 
@@ -147,7 +147,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
                 tasks.append(stuff["task"])
             for task in tasks:
                 await self.bot.postgres.execute("DELETE FROM notes WHERE task=$1 AND user_id=$2", task, ctx.author.id)
-            noteclearmbed.title = "Successfully cleared:"
+            noteclearmbed.title = "Cleared:"
             noteclearmbed.description = "**Your notes**"
             await ctx.send(embed=noteclearmbed)
 
@@ -171,7 +171,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
             noteeditmbed.description = F"{number}\n**Check your notes**"
             return await ctx.send(embed=noteeditmbed)
         await self.bot.postgres.execute("UPDATE notes SET task=$1, jump_url=$2 WHERE user_id=$3 AND task=$4", task, ctx.message.jump_url, ctx.author.id, tasks[number])
-        noteeditmbed.title = "Successfully edited:"
+        noteeditmbed.title = "Edited:"
         noteeditmbed.description = F"**Before:** {tasks[number]}\n**After:** {task}"
         await ctx.send(embed=noteeditmbed)
 

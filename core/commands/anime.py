@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from core.utils.pagination import Paginator
 
 class Anime(commands.Cog, description="Some Weeb shit?!"):
     def __init__(self, bot):

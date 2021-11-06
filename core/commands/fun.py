@@ -1,4 +1,4 @@
-import discord, os, io, random, typing
+import discord, os, random, typing, io
 from discord.ext import commands
 import core.views.funview as fv
 class Fun(commands.Cog, description="You sad? Use these to at least have a smile!"):
