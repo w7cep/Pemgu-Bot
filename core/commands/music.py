@@ -22,7 +22,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
                 ctx.voice_client.queue = asyncio.Queue()
-                ctx.voice_client.lquue = []
+                ctx.voice_client.lqueue = []
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
