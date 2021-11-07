@@ -51,7 +51,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.author.voice:
             return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=term)
+            results = await ctx.voice_client.get_tracks(query=term, search_type=pomice.SearchType.ytmsearch)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
@@ -146,23 +146,15 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
-class OnMusic(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         ctx = commands.Context
-        await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {player.current.requester.mention}\nURL: {player.current.uri}")
+        await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nURL: {player.current.uri}")
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        ctx = commands.Context
-        if not player.queue.empty():
-            song = await player.queue.get()
-            await player.play(track=song)
-        return await ctx.send("There is nothing in the queue")
+        song = await player.queue.get()
+        await player.play(track=song)
 
 def setup(bot):
     bot.add_cog(Music(bot))
-    bot.add_cog(OnMusic(bot))
