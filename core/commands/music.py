@@ -54,12 +54,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
             else:
                 await ctx.voice_client.queue.put(results[0])
             if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
-                if isinstance(song, pomice.Playlist):
-                    await ctx.voice_client.play(track=song.tracks[0])
-                else:
-                    await ctx.voice_client.play(track=song[0])
-                    return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
+                song = await ctx.voice_client.queue.get()
+                await ctx.voice_client.play(track=song)
+                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             else:
                 return await ctx.send(F"Added {search.title()} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -73,13 +70,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client.queue.empty():
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
             await ctx.voice_client.stop()
-            if isinstance(results, pomice.Playlist):
-                await ctx.voice_client.play(track=results.tracks[0])
-            else:
-                await ctx.voice_client.play(track=results[0])
-            return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Resume
@@ -122,6 +113,20 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send(F"Set the volume to {volume}")
             return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("No one is using to me")
+
+    @commands.Cog.listener()
+    async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
+        track: pomice.Track = player.current.original
+        ctx: commands.Context = track.ctx
+        await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {track.ctx.author.mention}\nURL: {player.current.uri}")
+
+    @commands.Cog.listener()
+    async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
+        results = await player.get_tracks(query=(await player.queue.get()).title)
+        if isinstance(results, pomice.Playlist):
+                await player.play(track=results.tracks[0])
+        else:
+            await player.play(track=results[0])
 
 def setup(bot):
     bot.add_cog(Music(bot))
