@@ -33,7 +33,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 queue = self.bot.queue.get(str(ctx.guild.id))
                 if queue:
                     del self.bot.queue[str(ctx.guild.id)]
-                    return await ctx.send("Cleared queue")
+                    await ctx.send("Cleared queue")
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
             return await ctx.send("Someone else is using to me")
@@ -48,7 +48,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            self.bot.queue[str(ctx.guild.id)] = []
+            queue = self.bot.queue.get(str(ctx.guild.id))
+            if not queue:
+                queue = self.bot.queue.get(str(ctx.guild.id)) = []
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
@@ -82,7 +84,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
                 await ctx.voice_client.play(track=results[0])
-            del self.bot.queue[str(ctx.guild.id)][0]
+            search[0].pop(0)
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
