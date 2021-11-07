@@ -43,13 +43,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Play
-    @commands.command(name="play", aliases=["p"], help="Plays music with the given search term")
+    @commands.command(name="play", aliases=["p"], help="Plays music with the given term, term can be a url or a query or a playlist")
     @commands.guild_only()
-    async def play(self, ctx:commands.Context, *, search:str):
+    async def play(self, ctx:commands.Context, *, term:str):
         if not ctx.voice_client:
             if ctx.author.voice:
                 await ctx.invoke(self.join)
-                results = await ctx.voice_client.get_tracks(query=search)
+                results = await ctx.voice_client.get_tracks(query=term)
                 if not results:
                     return await ctx.send("No results were found for that search term.")
                 if isinstance(results, pomice.Playlist):
@@ -135,14 +135,13 @@ class OnMusic(commands.Cog):
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
-        ctx: commands.Context
-        await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {track.ctx.author.mention}\nURL: {player.current.uri}")
+        await track.ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {track.ctx.author.mention}\nURL: {player.current.uri}")
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         ctx: commands.Context
         if player.queue.empty():
-            return await ctx.send("There is nothing in the queue")
+            return await track.ctx.send("There is nothing in the queue")
         track = await player.queue.get()
         await player.play(track)
 
