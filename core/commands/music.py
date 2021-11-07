@@ -51,7 +51,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.author.voice:
             return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=term, search_type=pomice.SearchType.ytmsearch)
+            results = await ctx.voice_client.get_tracks(query=term)
             print(results)
             if not results:
                 return await ctx.send("No results were found for that search term.")
