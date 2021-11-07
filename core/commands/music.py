@@ -9,7 +9,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="lava.link", port="80", password="Pomice", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        await self.pomice.create_node(bot=self.bot, host="lavalink.devz.cloud", port="443", password="mathiscool", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a node")
 
     # Join
@@ -47,26 +47,27 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def play(self, ctx:commands.Context, *, term:str):
         if not ctx.voice_client:
-            await ctx.invoke(self.join)
-        if not ctx.author.voice:
+            if ctx.author.voice:
+                await ctx.invoke(self.join)
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    results = await ctx.voice_client.get_tracks(query=term)
+                    print(results)
+                    if not results:
+                        return await ctx.send("No results were found for that search term.")
+                    if isinstance(results, pomice.Playlist):
+                        for track in results.tracks:
+                            await ctx.voice_client.queue.put(track)
+                    elif isinstance(results, pomice.Track):
+                        await ctx.voice_client.queue.put(results.title)
+                    else:
+                        await ctx.voice_client.queue.put(results[0])
+                    if not ctx.voice_client.is_playing:
+                        song = await ctx.voice_client.queue.get()
+                        return await ctx.voice_client.play(track=song)
+                    else:
+                        return await ctx.send(F"Added {results[0]} to the queue")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
-        if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=term)
-            print(results)
-            if not results:
-                return await ctx.send("No results were found for that search term.")
-            if isinstance(results, pomice.Playlist):
-                for track in results.tracks:
-                    await ctx.voice_client.queue.put(track)
-            elif isinstance(results, pomice.Track):
-                await ctx.voice_client.queue.put(results)
-            else:
-                await ctx.voice_client.queue.put(results[0])
-            if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.queue.get()
-                return await ctx.voice_client.play(track=song)
-            else:
-                return await ctx.send(F"Added {results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Stop
@@ -95,6 +96,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         if ctx.voice_client.queue.empty():
                             return await ctx.send("There is nothing in the queue")
                         await ctx.voice_client.stop()
+                        return await ctx.send(F"Skipped: {ctx.voice_client.current.title}")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
