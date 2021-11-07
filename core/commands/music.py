@@ -250,7 +250,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
-        if member.id == self.bot.user.id:
+        if member.voice.channel == self.bot.user.voice.channel:
             if len(after.channel.members) == 1:
                 c = 0
                 if not before.channel.guild.voice_client.queue.empty():
