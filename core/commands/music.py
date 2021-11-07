@@ -165,7 +165,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.bot.color,
             url=track.uri,
             title=track.title,
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\Duration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
