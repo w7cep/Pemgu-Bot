@@ -36,12 +36,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if not ctx.voice_client.queue.empty():
-                        c = 0
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
-                            ctx.voice_client.lqueue.pop(c)
-                            c += 1
+                            ctx.voice_client.lqueue.pop(0)
                         await ctx.send("Cleared the queue")
                     await ctx.voice_client.destroy()                    
                     return await ctx.send("Disconnected from the voice channel")
@@ -87,12 +85,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
                         if not ctx.voice_client.queue.empty():
-                            c = 0
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
                                 ctx.voice_client.queue.task_done()
-                                ctx.voice_client.lqueue.pop(c)
-                                c += 1
+                                ctx.voice_client.lqueue.pop(0)
                             await ctx.send("Cleared the queue")
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                         return await ctx.voice_client.stop()
