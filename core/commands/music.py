@@ -73,11 +73,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.send("No one is using to me")
-        search = self.bot.queue.get(str(ctx.guild.id))[0]
+        search = self.bot.queue.get(str(ctx.guild.id))
         if not search:
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=search.title)
+            results = await ctx.voice_client.get_tracks(query=search[0].title)
             if isinstance(results, pomice.Playlist):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
@@ -94,7 +94,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client.channel == ctx.author.voice.channel:
                 if not ctx.voice_client.is_paused:
                     return await ctx.send("Music is not paused")
-                await ctx.voice_client.resume()
+                await ctx.voice_client.set_pause(pause=False)
                 return await ctx.send("Resumed the music")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
