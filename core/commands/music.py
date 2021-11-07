@@ -94,11 +94,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if ctx.voice_client.is_playing:
-                    return await ctx.send("The music is already playing")
-                elif ctx.voice_client.is_paused:
+                if ctx.voice_client.is_paused:
                     await ctx.voice_client.set_pause(pause=False)
                     return await ctx.send("Resumed the music")
+                elif ctx.voice_client.is_playing:
+                    return await ctx.send("The music is already playing")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
