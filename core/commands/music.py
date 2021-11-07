@@ -1,4 +1,4 @@
-import discord, pomice, re
+import discord, pomice, re, asyncio, os
 from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
@@ -6,11 +6,11 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.queue = {}
+        self.bot.queue = asyncio.Queue()
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="MAIN", spotify_client_id=None, spotify_client_secret=None)
+        await self.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="MAIN", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a node")
 
     # Join
@@ -48,9 +48,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            queue = self.bot.queue.get(str(ctx.guild.id))
-            if not queue:
-                queue = self.bot.queue[str(ctx.guild.id)] = []
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
@@ -61,9 +58,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.voice_client.play(track=results[0])
                 return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             if isinstance(results, pomice.Playlist):
-                self.bot.queue[str(ctx.guild.id)].append(results.tracks[0])
+                for track in results.tracks:
+                    await self.bot.queue.put(track)
             else:
-                self.bot.queue[str(ctx.guild.id)].append(results[0])
+                await self.bot.queue.put(results[0])
             return await ctx.send(F"Added {results[0].title} to the queue")
         return await ctx.send("Someone else is using to me")
 
@@ -75,16 +73,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.send("No one is using to me")
-        search = self.bot.queue.get(str(ctx.guild.id))
-        if not search:
+        if self.bot.queue.empty():
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=search[0].title)
+            results = await ctx.voice_client.get_tracks(query=(await self.bot.queue.get()).title)
             if isinstance(results, pomice.Playlist):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
                 await ctx.voice_client.play(track=results[0])
-            del search[0]
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
