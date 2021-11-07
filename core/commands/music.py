@@ -250,15 +250,16 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
-        if len(after.channel.members) < 1:
+        print(len(after.channel.members))
+        if len(after.channel.members) < 2:
             c = 0
-            for _ in range(after.channel.guild.voice_client.queue.qsize()):
-                after.channel.guild.voice_client.queue.get_nowait()
-                after.channel.guild.voice_client.queue.task_done()
-                after.channel.guild.voice_client.lqueue.pop(c)
+            for _ in range(before.channel.guild.voice_client.queue.qsize()):
+                before.channel.guild.voice_client.queue.get_nowait()
+                before.channel.guild.voice_client.queue.task_done()
+                before.channel.guild.voice_client.lqueue.pop(c)
                 c += 1
-            await after.channel.guild.voice_client.tchannel.send(F"Left {after.channel.mention} cause everyone left me")
-            return await after.channel.guild.voice_client.destroy()
+            await before.channel.guild.voice_client.tchannel.send(F"Left {after.channel.mention} cause everyone left me")
+            return await before.channel.guild.voice_client.destroy()
 
 def setup(bot):
     bot.add_cog(Music(bot))
