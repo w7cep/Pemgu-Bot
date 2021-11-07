@@ -48,7 +48,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def play(self, ctx:commands.Context, *, term:str):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
-        if ctx.author.voice:
+        if not ctx.author.voice:
             await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, ctx=ctx)
@@ -69,31 +69,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send(F"Added {results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
-    # Stop
-    @commands.command(name="stop", aliases=["so"], help="Stops the music")
+    # Skip
+    @commands.command(name="skip", aliases=["sk"], help="Skips the song")
     @commands.guild_only()
-    async def stop(self, ctx:commands.Context):
+    async def skip(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
-                        await ctx.voice_client.stop()
-                        return await ctx.send("Stopped the music")
-                    return await ctx.send("I'm not playing anything")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
-
-    # Next
-    @commands.command(name="next", aliases=["nx"], help="Plays the next song in the queue")
-    @commands.guild_only()
-    async def next(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
-                        if ctx.voice_client.queue.empty():
-                            return await ctx.send("There is nothing in the queue")
                         await ctx.voice_client.stop()
                         return await ctx.send(F"Skipped: {ctx.voice_client.current.title}")
                     return await ctx.send("Nothing is playing")
@@ -140,24 +123,60 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if not volume:
-                        return await ctx.send(F"The volume is currently {ctx.voice_client.volume}")
-                    if volume < 0 or volume > 500:
-                        return await ctx.send("The volume must be between 0 and 500")
-                    await ctx.voice_client.set_volume(volume)
-                    return await ctx.send(F"Set the volume to {volume}")
+                    if ctx.voice_client.is_playing:
+                        if not volume:
+                            return await ctx.send(F"The volume is currently {ctx.voice_client.volume}")
+                        if volume < 0 or volume > 500:
+                            return await ctx.send("The volume must be between 0 and 500")
+                        await ctx.voice_client.set_volume(volume)
+                        return await ctx.send(F"Set the volume to {volume}")
+                    else:
+                        return await ctx.send("Nothing is playing")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
+    # NowPlaying
+    @commands.command(name="nowplaying", aliases=["np"], help="Tells the playing music")
+    @commands.guild_only()
+    async def nowplaying(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing:
+                        npmbed = discord.Embed(
+                            color=self.bot.color,
+                            url=ctx.voice_client.current.uri,
+                            title=ctx.voice_client.current.title,
+                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nPosition: {ctx.voice_client.current.position}\nDuration: {ctx.voice_client.current.length}",
+                            timestamp=ctx.voice_client.current.ctx.message.created_at
+                        )
+                        npmbed.set_footer(text=ctx.voice_client.current.requester, icon_url=ctx.voice_client.current.requester.display_avatar.url)
+                        return await ctx.send(embed=npmbed)
+                    else:
+                        return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
-        await track.ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nURL: {player.current.uri}")
+        tsmbed = discord.Embed(
+            color=self.bot.color,
+            url=track.uri,
+            title=track.title,
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\nDuration: {track.length}",
+            timestamp=track.ctx.message.created_at
+        )
+        tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+        await track.ctx.send(embed=tsmbed)
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        song = await player.queue.get()
-        await player.play(track=song)
+        if not player.queue.empty():
+            song = await player.queue.get()
+            return await player.play(track=song)
+        return await track.ctx.send("There is nothing in the queue")
 
 def setup(bot):
     bot.add_cog(Music(bot))
