@@ -63,8 +63,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             else:
                 await ctx.voice_client.queue.put(results[0])
             if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.queue.get()
-                return await ctx.voice_client.play(track=song)
+                return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             else:
                 return await ctx.send(F"Added {results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -90,7 +89,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Skip
-    @commands.command(name="skip", aliases=["sk"], help="Skips the song")
+    @commands.command(name="skip", aliases=["sk"], help="Skips the music")
     @commands.guild_only()
     async def skip(self, ctx:commands.Context):
         if ctx.voice_client:
@@ -196,8 +195,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         if not player.queue.empty():
-            song = await player.queue.get()
-            return await player.play(track=song)
+            return await player.play(track=(await player.queue.get()))
 
 def setup(bot):
     bot.add_cog(Music(bot))
