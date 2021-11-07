@@ -34,6 +34,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     for _ in range(ctx.voice_client.queue.qsize()):
                         ctx.voice_client.queue.get_nowait()
                         ctx.voice_client.queue.task_done()
+                    await ctx.send("Cleared the queue")
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
             return await ctx.send("Someone else is using to me")
