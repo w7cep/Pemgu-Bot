@@ -250,7 +250,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
-        if len(after.channel.members) == 0:
+        if len(after.channel.members) < 1:
             c = 0
             for _ in range(after.channel.guild.voice_client.queue.qsize()):
                 after.channel.guild.voice_client.queue.get_nowait()
