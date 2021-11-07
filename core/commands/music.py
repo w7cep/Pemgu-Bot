@@ -136,16 +136,17 @@ class OnMusic(commands.Cog):
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
-        ctx = commands.Context
+        ctx = track.ctx or player.current.ctx
         await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {player.current.requester.mention}\nURL: {player.current.uri}")
+        
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        ctx = commands.Context
+        ctx = track.ctx or player.current.ctx
         if player.queue.empty():
             return await ctx.send("There is nothing in the queue")
-        track = await player.queue.get()
-        await player.play(track)
+        song = await player.queue.get()
+        await player.play(track=song)
 
 def setup(bot):
     bot.add_cog(Music(bot))
