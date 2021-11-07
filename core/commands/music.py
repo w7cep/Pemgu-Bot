@@ -166,7 +166,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         npmbed = discord.Embed(
-                            color=discord.Spotify.color,
+                            color=0x1DB954,
                             url=ctx.voice_client.current.uri,
                             title=ctx.voice_client.current.title,
                             description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
@@ -183,7 +183,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
-            color=discord.Spotify.color,
+            color=0x1DB954,
             url=track.uri,
             title=track.title,
             description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
