@@ -35,11 +35,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if not ctx.voice_client.queue.empty():
+                        c = 0
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
-                        c = 0
-                        for _ in range(len(ctx.voice_client.lqueue)):
                             ctx.voice_client.lqueue.pop(c)
                             c += 1
                         await ctx.send("Cleared the queue")
@@ -87,11 +86,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
                         if not ctx.voice_client.queue.empty():
+                            c = 0
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
                                 ctx.voice_client.queue.task_done()
-                            c = 0
-                            for _ in range(len(ctx.voice_client.lqueue)):
                                 ctx.voice_client.lqueue.pop(c)
                                 c += 1
                             await ctx.send("Cleared the queue")
@@ -185,7 +183,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         )
                         qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                         return await ctx.send(embed=qumbed)
-                    return ctx.invoke(self.nowplaying)
+                    return await ctx.invoke(self.nowplaying)
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -248,6 +246,17 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not player.queue.empty():
             player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
+        if len(after.channel.members) == 0:
+            c = 0
+            for _ in range(after.channel.guild.voice_client.queue.qsize()):
+                after.channel.guild.voice_client.queue.get_nowait()
+                after.channel.guild.voice_client.queue.task_done()
+                after.channel.guild.voice_client.lqueue.pop(c)
+                c += 1
+            await after.channel.guild.voice_client.destroy()
 
 def setup(bot):
     bot.add_cog(Music(bot))
