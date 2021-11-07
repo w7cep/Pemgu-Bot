@@ -6,7 +6,6 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.queue = {}
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
@@ -19,7 +18,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def join(self, ctx:commands.Context):
         if not ctx.voice_client:
             await ctx.author.voice.channel.connect(cls=pomice.Player)
-            self.bot.queue[str(ctx.guild.id)] = []
+            ctx.voice_client.queue = asyncio.Queue()
             return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
         await ctx.send("I'm already in a voice channel")
 
@@ -29,9 +28,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def disconnect(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.me.voice.channel == ctx.author.voice.channel:
-                queue = self.bot.queue.get(str(ctx.guild.id))
-                if queue:
-                    del self.bot.queue[str(ctx.guild.id)]
+                if not ctx.voice_client.queue.empty():
+                    for _ in range(ctx.voice_client.queue.qsize()):
+                        ctx.voice_client.queue.get_nowait()
+                        ctx.voice_client.queue.task_done()
                     await ctx.send("Cleared the queue")
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
@@ -50,11 +50,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
-                    self.bot.queue[str(ctx.guild.id)].append(track)
+                    await ctx.voice_client.queue.put(track)
             else:
-                self.bot.queue[str(ctx.guild.id)].append(results[0])
+                await ctx.voice_client.queue.put(results[0])
             if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.get_tracks(query=self.bot.queue[str(ctx.guild.id)][0].title)
+                song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
                 if isinstance(song, pomice.Playlist):
                     await ctx.voice_client.play(track=song.tracks[0])
                 else:
@@ -70,11 +70,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def next(self, ctx:commands.Context):
         if not ctx.voice_client:
             await ctx.send("No one is using to me")
-        queue = self.bot.queue.get(str(ctx.guild.id))
-        if not queue:
+        if ctx.voice_client.queue.empty():
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=queue[0].title)
+            results = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
             await ctx.voice_client.stop()
             if isinstance(results, pomice.Playlist):
                 await ctx.voice_client.play(track=results.tracks[0])
