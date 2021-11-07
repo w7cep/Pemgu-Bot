@@ -65,13 +65,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
                     await ctx.voice_client.queue.put(track)
-                    ctx.voice_client.lqueue.append(F"[#{len(ctx.voice_client.lqueue)+1}]({ctx.message.jump_url}) [{track.title} - {track.author}]({track.uri})")
+                    ctx.voice_client.lqueue.append(F"[{track.title} - {track.author}]({track.uri})")
             elif isinstance(results, pomice.Track):
                 await ctx.voice_client.queue.put(results.title)
-                ctx.voice_client.lqueue.append(F"[#{len(ctx.voice_client.lqueue)+1}]({ctx.message.jump_url}) [{results.title} - {results.author}]({results.uri})")
+                ctx.voice_client.lqueue.append(F"[{results.title} - {results.author}]({results.uri})")
             else:
                 await ctx.voice_client.queue.put(results[0])
-                ctx.voice_client.lqueue.append(F"[#{len(ctx.voice_client.lqueue)+1}]({ctx.message.jump_url}) [{results[0].title} - {results[0].author}]({results[0].uri})")
+                ctx.voice_client.lqueue.append(F"[{results[0].title} - {results[0].author}]({results[0].uri})")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             else:
