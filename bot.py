@@ -23,7 +23,7 @@ async def get_prefix(bot, message:discord.Message):
 
 async def create_session_aiohttp():
     bot.session = aiohttp.ClientSession()
-    print("Created a AioHttp Session ")
+    print("Created a AioHttp Session")
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
