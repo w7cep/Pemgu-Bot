@@ -4,7 +4,7 @@ import core.views.funview as fv
 class Fun(commands.Cog, description="You sad? Use these to at least have a smile!"):
     def __init__(self, bot):
         self.bot = bot
-        self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
+        self.dagpi = {"Authorization": os.getenv("DAGPI")}
 
     # Say
     @commands.command(name="say", help="Says your text")
@@ -121,7 +121,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # Fact
     @commands.command(name="fact", aliases=["fc"], help="Tells you a random fact")
     async def fact(self, ctx:commands.Context):
-        session = await self.bot.session.get("https://api.dagpi.xyz/data/fact", headers=self.dagpi_headers)
+        session = await self.bot.session.get("https://api.dagpi.xyz/data/fact", headers=self.dagpi)
         response = await session.json()
         session.close()
         fcmbed = discord.Embed(
@@ -136,7 +136,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # Joke
     @commands.command(name="joke", aliases=["jk"], help="Tells you a random joke")
     async def joke(self, ctx:commands.Context):
-        session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi_headers)
+        session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi)
         response = await session.json()
         session.close()
         jkmbed = discord.Embed(
@@ -151,7 +151,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # 8Ball
     @commands.command(name="8ball", aliases=["8b"], help="Gives you a random answer for your given question")
     async def _8ball(self, ctx:commands.Context, *, question:str):
-        session = await self.bot.session.get("https://api.dagpi.xyz/data/8ball", headers=self.dagpi_headers)
+        session = await self.bot.session.get("https://api.dagpi.xyz/data/8ball", headers=self.dagpi)
         response = await session.json()
         session.close()
         _8bmbed = discord.Embed(
@@ -167,7 +167,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     @commands.command(name="roast", aliases=["rt"], help="Roasts you or the given user")
     async def roast(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
-        session = await self.bot.session.get("https://api.dagpi.xyz/data/roast", headers=self.dagpi_headers)
+        session = await self.bot.session.get("https://api.dagpi.xyz/data/roast", headers=self.dagpi)
         response = await session.json()
         session.close()
         rtmbed = discord.Embed(
@@ -184,7 +184,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     @commands.bot_has_guild_permissions(attach_files=True)
     async def tweet(self, ctx:commands.Context, user:typing.Optional[discord.User]=None, *, text:str):
         user = ctx.author if not user else user
-        session = await self.bot.session.get(F"https://api.dagpi.xyz/image/tweet/?url={user.avatar.with_format('png')}&username={user.name}&text={text}", headers=self.dagpi_headers)
+        session = await self.bot.session.get(F"https://api.dagpi.xyz/image/tweet/?url={user.avatar.with_format('png')}&username={user.name}&text={text}", headers=self.dagpi)
         response = io.BytesIO(await session.read())
         session.close()
         twmbed = discord.Embed(

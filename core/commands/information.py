@@ -4,7 +4,7 @@ from discord.ext import commands
 class Information(commands.Cog, description="Stalking people is wrong and bad!"):
     def __init__(self, bot):
         self.bot = bot
-        self.dagpi_headers = {"Authorization": os.getenv("DAGPI")}
+        self.dagpi = {"Authorization": os.getenv("DAGPI")}
 
     # Stats
     @commands.command(name="stats", aliases=["st"], help="Shows bot's stats")
@@ -156,7 +156,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.bot_has_guild_permissions(attach_files=True)
     async def colors(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
-        session = await self.bot.session.get(F"https://api.dagpi.xyz/image/colors/?url={user.avatar.with_format('png')}", headers=self.dagpi_headers)
+        session = await self.bot.session.get(F"https://api.dagpi.xyz/image/colors/?url={user.avatar.with_format('png')}", headers=self.dagpi)
         response = io.BytesIO(await session.read())
         session.close()
         clrsmbed = discord.Embed(
