@@ -22,7 +22,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 ctx.voice_client.queue = asyncio.Queue()
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm already in a voice channel")
+        await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Disconnect
     @commands.command(name="disconnect", aliases=["dc"], help="Disconnects from the voice channel")
@@ -35,7 +35,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
-                    await ctx.send("Cleared the queue")
+                        await ctx.send("Cleared the queue")
                     await ctx.voice_client.destroy()                    
                     return await ctx.send("Disconnected from the voice channel")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -66,6 +66,21 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send(F"Added {results[0].title()} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
+    # Stop
+    @commands.command(name="stop", aliases=["so"], help="Stops the music")
+    @commands.guild_only()
+    async def stop(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing:
+                        await ctx.voice_client.stop()
+                        return await ctx.send("Stopped the music")
+                    return await ctx.send("I'm not playing anything")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
     # Next
     @commands.command(name="next", aliases=["nx"], help="Plays the next song in the queue")
     @commands.guild_only()
@@ -76,10 +91,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     if ctx.voice_client.is_playing:
                         if ctx.voice_client.queue.empty():
                             return await ctx.send("There is nothing in the queue")
-                    await ctx.voice_client.stop()
-                return await ctx.send("Nothing is playing")
+                        await ctx.voice_client.stop()
+                    return await ctx.send("Nothing is playing")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
-        return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+        await ctx.send("I'm not in a voice channel")
 
     # Resume
     @commands.command(name="resume", aliases=["ru"], help="Resumes the paused music")
@@ -94,8 +110,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     elif ctx.voice_client.is_playing:
                         return await ctx.send("The music is already playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("I'm not in a voice channel")
-        await ctx.send("No one is using to me")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
 
     # Pause
     @commands.command(name="pause", aliases=["pu"], help="Pauses playing music")
@@ -110,8 +126,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         await ctx.voice_client.set_pause(pause=True)
                         return await ctx.send("Paused the music")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice chnnal")
-        await ctx.send("No one is using to me")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
 
     # Volume
     @commands.command(name="volume", aliases=["vol"], help="Sets or Tells the volume of the music")
@@ -127,8 +143,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.voice_client.set_volume(volume)
                     return await ctx.send(F"Set the volume to {volume}")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice chnnal")
-        await ctx.send("No one is using to me")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
 
 class OnMusic(commands.Cog):
     def __init__(self, bot):
@@ -137,14 +153,14 @@ class OnMusic(commands.Cog):
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         ctx = track.ctx or player.current.ctx
-        await ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {player.current.requester.mention}\nURL: {player.current.uri}")
+        await player.current.ctx.send(F"Now playing: {player.current.title}\nBy: {player.current.author}\nRequested: {player.current.requester.mention}\nURL: {player.current.uri}")
         
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         ctx = track.ctx or player.current.ctx
         if player.queue.empty():
-            return await ctx.send("There is nothing in the queue")
+            return await player.current.ctx.send("There is nothing in the queue")
         song = await player.queue.get()
         await player.play(track=song)
 
