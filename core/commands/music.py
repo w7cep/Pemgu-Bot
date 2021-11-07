@@ -129,8 +129,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     if ctx.voice_client.is_paused:
                         await ctx.voice_client.set_pause(pause=False)
                         return await ctx.send("Resumed the music")
-                    elif ctx.voice_client.is_playing:
-                        return await ctx.send("The music is already playing")
+                    return await ctx.send("The music is already playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -142,11 +141,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_paused:
-                        return await ctx.send("Music is already paused")
-                    elif ctx.voice_client.is_playing:
+                    if ctx.voice_client.is_playing:
                         await ctx.voice_client.set_pause(pause=True)
                         return await ctx.send("Paused the music")
+                    return await ctx.send("Music is already paused")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -158,15 +156,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         if not volume:
                             return await ctx.send(F"The volume is currently {ctx.voice_client.volume}")
                         if volume < 0 or volume > 500:
                             return await ctx.send("The volume must be between 0 and 500")
                         await ctx.voice_client.set_volume(volume)
                         return await ctx.send(F"Set the volume to {volume}")
-                    else:
-                        return await ctx.send("Nothing is playing")
+                    return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -183,7 +180,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         qumbed = discord.Embed(
                             color=self.color,
                             title="Queue",
-                            description=self.bot.trim(d, 4090),
+                            description=self.bot.trim(d, 4095),
                             timestamp=ctx.message.created_at
                         )
                         qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -210,8 +207,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         )
                         npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                         return await ctx.send(embed=npmbed)
-                    else:
-                        return await ctx.send("Nothing is playing")
+                    return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
