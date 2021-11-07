@@ -77,8 +77,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
-                        await ctx.voice_client.stop()
-                        return await ctx.send(F"Skipped: {ctx.voice_client.current.title}")
+                        await ctx.send(F"Skipped: {ctx.voice_client.current.title}")
+                        return await ctx.voice_client.stop()
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
@@ -143,12 +143,12 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         npmbed = discord.Embed(
                             color=self.bot.color,
                             url=ctx.voice_client.current.uri,
                             title=ctx.voice_client.current.title,
-                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nPosition: {ctx.voice_client.current.position}\nDuration: {ctx.voice_client.current.length}",
+                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nPosition: {ctx.voice_client.current.position}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
                             timestamp=ctx.voice_client.current.ctx.message.created_at
                         )
                         npmbed.set_footer(text=ctx.voice_client.current.requester, icon_url=ctx.voice_client.current.requester.display_avatar.url)
@@ -165,7 +165,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.bot.color,
             url=track.uri,
             title=track.title,
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\nDuration: {track.length}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\Duration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
