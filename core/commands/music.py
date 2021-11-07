@@ -84,7 +84,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
                 await ctx.voice_client.play(track=results[0])
-            search[0].pop(0)
+            del search[0]
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
         return await ctx.send("Someone else is using to me")
 
@@ -94,11 +94,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if ctx.voice_client.is_paused:
-                    await ctx.voice_client.set_pause(pause=False)
-                    return await ctx.send("Resumed the music")
                 if ctx.voice_client.is_playing:
                     return await ctx.send("The music is already playing")
+                elif ctx.voice_client.is_paused:
+                    await ctx.voice_client.set_pause(pause=False)
+                    return await ctx.send("Resumed the music")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
@@ -108,11 +108,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def pause(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if ctx.voice_client.is_playing:
-                    await ctx.voice_client.set_pause(pause=True)
-                    return await ctx.send("Paused the music")
                 if ctx.voice_client.is_paused:
                     return await ctx.send("Music is already paused")
+                elif ctx.voice_client.is_playing:
+                    await ctx.voice_client.set_pause(pause=True)
+                    return await ctx.send("Paused the music")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
