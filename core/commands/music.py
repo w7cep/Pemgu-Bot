@@ -28,7 +28,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="disconnect", aliases=["dc"], help="Disconnects from the voice channel")
     @commands.guild_only()
     async def disconnect(self, ctx:commands.Context):
-        if ctx.me.voice:
+        if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if not ctx.voice_client.queue.empty():
@@ -46,31 +46,30 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="play", aliases=["p"], help="Plays music with the given search term")
     @commands.guild_only()
     async def play(self, ctx:commands.Context, *, search:str):
-        if not ctx.me.voice:
-            await ctx.invoke(self.join)
-        if not ctx.author.voice:
+        if not ctx.voice_client:
+            if ctx.author.voice:
+                await ctx.invoke(self.join)
+                results = await ctx.voice_client.get_tracks(query=search)
+                if not results:
+                    return await ctx.send("No results were found for that search term.")
+                if isinstance(results, pomice.Playlist):
+                    for track in results.tracks:
+                        await ctx.voice_client.queue.put(track)
+                else:
+                    await ctx.voice_client.queue.put(results[0])
+                if not ctx.voice_client.is_playing:
+                    song = await ctx.voice_client.queue.get()
+                    return await ctx.voice_client.play(track=song)
+                else:
+                    return await ctx.send(F"Added {results[0].title()} to the queue")
             return await ctx.send("You must be in a voice channel")
-        if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=search)
-            if not results:
-                return await ctx.send("No results were found for that search term.")
-            if isinstance(results, pomice.Playlist):
-                for track in results.tracks:
-                    await ctx.voice_client.queue.put(track)
-            else:
-                await ctx.voice_client.queue.put(results[0])
-            if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.queue.get()
-                return await ctx.voice_client.play(track=song)
-            else:
-                return await ctx.send(F"Added {results[0].title()} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Next
     @commands.command(name="next", aliases=["nx"], help="Plays the next song in the queue")
     @commands.guild_only()
     async def next(self, ctx:commands.Context):
-        if not ctx.me.voice:
+        if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
@@ -85,7 +84,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="resume", aliases=["ru"], help="Resumes the paused music")
     @commands.guild_only()
     async def resume(self, ctx:commands.Context):
-        if ctx.me.voice:
+        if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_paused:
@@ -101,7 +100,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="pause", aliases=["pu"], help="Pauses playing music")
     @commands.guild_only()
     async def pause(self, ctx:commands.Context):
-        if ctx.me.voice:
+        if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_paused:
@@ -117,7 +116,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="volume", aliases=["vol"], help="Sets or Tells the volume of the music")
     @commands.guild_only()
     async def volume(self, ctx:commands.Context, *, volume:int=None):
-        if ctx.me.voice:
+        if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if not volume:
@@ -143,7 +142,7 @@ class OnMusic(commands.Cog):
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         ctx: commands.Context = track.ctx
-        if player.queue.queue.empty():
+        if player.queue.empty():
             return await ctx.send("There is nothing in the queue")
         track = await player.queue.get()
         await player.play(track)
