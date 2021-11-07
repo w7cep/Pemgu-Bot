@@ -145,10 +145,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         npmbed = discord.Embed(
-                            color=self.bot.color,
+                            color=discord.Spotify.color,
                             url=ctx.voice_client.current.uri,
                             title=ctx.voice_client.current.title,
-                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nPosition: {ctx.voice_client.current.position}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
+                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
                             timestamp=ctx.voice_client.current.ctx.message.created_at
                         )
                         npmbed.set_footer(text=ctx.voice_client.current.requester, icon_url=ctx.voice_client.current.requester.display_avatar.url)
@@ -162,10 +162,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
-            color=self.bot.color,
+            color=discord.Spotify.color,
             url=track.uri,
             title=track.title,
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nPosition: {track.position}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
