@@ -1,4 +1,4 @@
-import discord, io, textwrap, contextlib, traceback
+import discord, pomice, io, textwrap, contextlib, traceback
 from discord.ext import commands
 import core.views.confirm as cum
 
@@ -15,6 +15,8 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             "self": self,
             "discord": discord,
             "commands": commands,
+            "player": pomice.Player,
+            "track": pomice.Track,
             "bot": self.bot,
             "dad": dad,
             "ctx": ctx,
