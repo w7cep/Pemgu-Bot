@@ -69,6 +69,26 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send(F"Added {results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
+    # Stop
+    @commands.command(name="stop", aliases=["so"], help="Stops playing and Clears queue")
+    @commands.guild_only()
+    async def stop(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing:
+                        if not ctx.voice_client.queue.empty():
+                            for _ in range(ctx.voice_client.queue.qsize()):
+                                ctx.voice_client.queue.get_nowait()
+                                ctx.voice_client.queue.task_done()
+                            await ctx.send("Cleared the queue")
+                        await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+                        return await ctx.voice_client.stop()
+                    return await ctx.send("Nothing is playing")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
     # Skip
     @commands.command(name="skip", aliases=["sk"], help="Skips the song")
     @commands.guild_only()
@@ -77,8 +97,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
-                        await ctx.send(F"Skipped: {ctx.voice_client.current.title}")
-                        return await ctx.voice_client.stop()
+                        if not ctx.voice_client.queue.empty():
+                            await ctx.send(F"Skipped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+                            return await ctx.voice_client.stop()
+                        return await ctx.send("There is nothing in the queue")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
@@ -176,7 +198,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not player.queue.empty():
             song = await player.queue.get()
             return await player.play(track=song)
-        return await track.ctx.send("There is nothing in the queue")
 
 def setup(bot):
     bot.add_cog(Music(bot))
