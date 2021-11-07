@@ -6,6 +6,7 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
+        self.color = 0x1DB954
         self.openrobot = {"Authorization": os.getenv("OPENROBOT")}
         self.pomice = pomice.NodePool()
 
@@ -21,6 +22,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
                 ctx.voice_client.queue = asyncio.Queue()
+                ctx.voice_client.lquue = []
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -36,6 +38,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
+                        c = 0
+                        for _ in range(ctx.voice_client.lqueue):
+                            ctx.voice_client.lqueue.pop(c)
+                            c += 1
                         await ctx.send("Cleared the queue")
                     await ctx.voice_client.destroy()                    
                     return await ctx.send("Disconnected from the voice channel")
@@ -59,10 +65,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
                     await ctx.voice_client.queue.put(track)
+                    ctx.voice_client.queue.append(F"({track.title} - {track.author})[{track.uri}]")
             elif isinstance(results, pomice.Track):
                 await ctx.voice_client.queue.put(results.title)
+                ctx.voice_client.queue.append(F"({results.title} - {results.author})[{results.uri}]")
             else:
                 await ctx.voice_client.queue.put(results[0])
+                ctx.voice_client.queue.append(F"({results[0].title} - {results[0].author})[{results[0].uri}]")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             else:
@@ -81,6 +90,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
                                 ctx.voice_client.queue.task_done()
+                            c = 0
+                            for _ in range(ctx.voice_client.lqueue):
+                                ctx.voice_client.lqueue.pop(c)
+                                c += 1
                             await ctx.send("Cleared the queue")
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                         return await ctx.voice_client.stop()
@@ -158,6 +171,28 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
+    # Queue
+    @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
+    @commands.guild_only()
+    async def queue(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if len(ctx.voice_client.lqueue) > 0:
+                        d = "\n".join(q for q in ctx.voice_client.lqueue)
+                        qumbed = discord.Embed(
+                            color=self.color,
+                            title="Queue",
+                            description=self.bot.trim(d, 4906),
+                            timestamp=ctx.message.created_at
+                        )
+                        qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                        return await ctx.send(embed=qumbed)
+                    return ctx.invoke(self.nowplaying)
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
     # NowPlaying
     @commands.command(name="nowplaying", aliases=["np"], help="Tells the playing music")
     @commands.guild_only()
@@ -167,13 +202,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         npmbed = discord.Embed(
-                            color=0x1DB954,
+                            color=self.color,
                             url=ctx.voice_client.current.uri,
                             title=ctx.voice_client.current.title,
                             description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
                             timestamp=ctx.voice_client.current.ctx.message.created_at
                         )
-                        npmbed.set_footer(text=ctx.voice_client.current.requester, icon_url=ctx.voice_client.current.requester.display_avatar.url)
+                        npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                         return await ctx.send(embed=npmbed)
                     else:
                         return await ctx.send("Nothing is playing")
@@ -190,7 +225,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         response = await session.json()
         session.close()
         lymbed = discord.Embed(
-            color=0x1DB954,
+            color=self.color,
             title=response['title'],
             description=self.bot.trim(response['lyrics'], 4096),
             timestamp=ctx.message.created_at
@@ -203,7 +238,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
-            color=0x1DB954,
+            color=self.color,
             url=track.uri,
             title=track.title,
             description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
@@ -215,6 +250,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         if not player.queue.empty():
+            player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
 
 def setup(bot):
