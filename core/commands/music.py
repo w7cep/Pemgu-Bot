@@ -30,7 +30,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def disconnect(self, ctx:commands.Context):
         if ctx.me.voice:
             if ctx.author.voice:
-                if ctx.me.voice == ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
                     if not ctx.voice_client.queue.empty():
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
@@ -72,7 +72,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def next(self, ctx:commands.Context):
         if not ctx.me.voice:
             if ctx.author.voice:
-                if ctx.me.voice == ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing:
                         if ctx.voice_client.queue.empty():
                             return await ctx.send("There is nothing in the queue")
@@ -87,7 +87,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def resume(self, ctx:commands.Context):
         if ctx.me.voice:
             if ctx.author.voice:
-                if ctx.me.voice == ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_paused:
                         await ctx.voice_client.set_pause(pause=False)
                         return await ctx.send("Resumed the music")
@@ -103,7 +103,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def pause(self, ctx:commands.Context):
         if ctx.me.voice:
             if ctx.author.voice:
-                if ctx.me.voice == ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_paused:
                         return await ctx.send("Music is already paused")
                     elif ctx.voice_client.is_playing:
@@ -119,7 +119,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def volume(self, ctx:commands.Context, *, volume:int):
         if ctx.me.voice:
             if ctx.author.voice:
-                if ctx.me.voice == ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
                     if volume < 0 or volume > 500:
                         return await ctx.send("The volume must be between 0 and 500")
                     await ctx.voice_client.set_volume(volume)
