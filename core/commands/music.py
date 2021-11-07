@@ -30,10 +30,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def disconnect(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.me.voice.channel == ctx.author.voice.channel:
-                queue = self.bot.queue.get(str(ctx.guild.id))
-                if queue:
-                    del self.bot.queue[str(ctx.guild.id)]
-                    await ctx.send("Cleared queue")
+                if not self.bot.queue.empty():
+                    for _ in range(self.bot.queue.qsize()):
+                        self.bot.queue.get_nowait()
+                        self.bot.queue.task_done()
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
             return await ctx.send("Someone else is using to me")
@@ -51,18 +51,19 @@ class Music(commands.Cog, description="Jamming out with these!"):
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
-            if not ctx.voice_client.is_playing:
-                if isinstance(results, pomice.Playlist):
-                    await ctx.voice_client.play(track=results.tracks[0])
-                else:
-                    await ctx.voice_client.play(track=results[0])
-                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             if isinstance(results, pomice.Playlist):
-                for track in results.tracks:
-                    await self.bot.queue.put(track)
+                if not ctx.voice_client.is_playing:
+                    return await ctx.voice_client.play(track=results.tracks[0])
+                else:
+                    for track in results.tracks:
+                        await self.bot.queue.put(track)
+                    return await ctx.send(F"Added the playlist to the queue")
             else:
-                await self.bot.queue.put(results[0])
-            return await ctx.send(F"Added {results[0].title} to the queue")
+                if not ctx.voice_client.is_playing:
+                    await ctx.voice_client.play(track=results[0])
+                else:
+                    await self.bot.queue.put(results[0])
+                    return await ctx.send(F"Added {results[0].title} to the queue")
         return await ctx.send("Someone else is using to me")
 
     # Next
