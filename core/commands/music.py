@@ -49,7 +49,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if ctx.author.voice:
-            return await ctx.send("You must be in a voice channel")
+            await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, ctx=ctx)
             print(results)
