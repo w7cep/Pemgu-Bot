@@ -37,7 +37,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.send("Cleared the queue")
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
-            return await ctx.send("Someone else is using to me")
+            return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("I'm not in a voice channel")
 
     # Play
@@ -59,11 +59,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.voice_client.queue.put(results[0])
             if not ctx.voice_client.is_playing:
                 song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
-                await ctx.voice_client.play(track=song)
-                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
+                if isinstance(song, pomice.Playlist):
+                    await ctx.voice_client.play(track=song.tracks[0])
+                else:
+                    await ctx.voice_client.play(track=song)
+                    return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             else:
                 return await ctx.send(F"Added to the queue")
-        return await ctx.send("Someone else is using to me")
+        return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Next
     @commands.command(name="next", aliases=["nx"], help="Plays the next song in the queue")
@@ -83,20 +86,22 @@ class Music(commands.Cog, description="Jamming out with these!"):
             else:
                 await ctx.voice_client.play(track=results[0])
             return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
-        return await ctx.send("Someone else is using to me")
+        return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Resume
     @commands.command(name="resume", aliases=["ru"], help="Resumes the paused music")
     @commands.guild_only()
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client:
+            if not ctx.author.voice:
+                return await ctx.send("You must be in a voice channel")
             if ctx.voice_client.channel == ctx.author.voice.channel:
                 if ctx.voice_client.is_paused:
                     await ctx.voice_client.set_pause(pause=False)
                     return await ctx.send("Resumed the music")
                 elif ctx.voice_client.is_playing:
                     return await ctx.send("The music is already playing")
-            return await ctx.send("Someone else is using to me")
+            return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("No one is using to me")
 
     # Pause
@@ -104,13 +109,15 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def pause(self, ctx:commands.Context):
         if ctx.voice_client:
+            if not ctx.author.voice:
+                return await ctx.send("You must be in a voice channel")
             if ctx.voice_client.channel == ctx.author.voice.channel:
                 if ctx.voice_client.is_paused:
                     return await ctx.send("Music is already paused")
                 elif ctx.voice_client.is_playing:
                     await ctx.voice_client.set_pause(pause=True)
                     return await ctx.send("Paused the music")
-            return await ctx.send("Someone else is using to me")
+            return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("No one is using to me")
 
     # Volume
@@ -118,12 +125,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def volume(self, ctx:commands.Context, *, volume:int):
         if ctx.voice_client:
+            if not ctx.author.voice:
+                return await ctx.send("You must be in a voice channel")
             if ctx.voice_client.channel == ctx.author.voice.channel:
                 if volume < 0 or volume > 500:
                     return await ctx.send("The volume must be between 0 and 500")
                 await ctx.voice_client.set_volume(volume)
                 return await ctx.send(F"Set the volume to {volume}")
-            return await ctx.send("Someone else is using to me")
+            return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("No one is using to me")
 
 def setup(bot):
