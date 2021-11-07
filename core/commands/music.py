@@ -9,7 +9,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="MAIN", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        await self.pomice.create_node(bot=self.bot, host="lavalink.mrpriyamyt.repl.co", port="443", password="methisbigbrain", identifier="MAIN", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a node")
 
     # Join
@@ -52,6 +52,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, search_type=pomice.SearchType.ytmsearch)
+            print(results)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
