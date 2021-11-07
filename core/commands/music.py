@@ -6,7 +6,6 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.queue = asyncio.Queue()
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
@@ -21,6 +20,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.author.voice.channel.connect(cls=pomice.Player)
+            ctx.voice_client.queue = asyncio.Queue()
             return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
         await ctx.send("I'm already in a voice channel")
 
@@ -30,10 +30,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def disconnect(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.me.voice.channel == ctx.author.voice.channel:
-                if not self.bot.queue.empty():
-                    for _ in range(self.bot.queue.qsize()):
-                        self.bot.queue.get_nowait()
-                        self.bot.queue.task_done()
+                if not ctx.voice_client.queue.empty():
+                    for _ in range(ctx.voice_client.queue.qsize()):
+                        ctx.voice_client.queue.get_nowait()
+                        ctx.voice_client.queue.task_done()
                 await ctx.voice_client.destroy()                    
                 return await ctx.send("Disconnected from the voice channel")
             return await ctx.send("Someone else is using to me")
@@ -52,18 +52,16 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
-                if not ctx.voice_client.is_playing:
-                    return await ctx.voice_client.play(track=results.tracks[0])
-                else:
-                    for track in results.tracks:
-                        await self.bot.queue.put(track)
-                    return await ctx.send(F"Added the playlist to the queue")
+                for track in results.tracks:
+                    await ctx.voice_client.queue.put(track)
             else:
-                if not ctx.voice_client.is_playing:
-                    await ctx.voice_client.play(track=results[0])
-                else:
-                    await self.bot.queue.put(results[0])
-                    return await ctx.send(F"Added {results[0].title} to the queue")
+                await ctx.voice_client.queue.put(results[0])
+            if not ctx.voice_client.is_playing:
+                song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).titl)
+                await ctx.voice_client.play(track=song)
+                return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
+            else:
+                return await ctx.send(F"Added to the queue")
         return await ctx.send("Someone else is using to me")
 
     # Next
@@ -74,10 +72,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if not ctx.voice_client:
             await ctx.send("No one is using to me")
-        if self.bot.queue.empty():
+        if ctx.voice_client.queue.empty():
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=(await self.bot.queue.get()).title)
+            results = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
             if isinstance(results, pomice.Playlist):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
