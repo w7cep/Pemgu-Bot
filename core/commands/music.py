@@ -47,22 +47,23 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def play(self, ctx:commands.Context, *, term:str):
         if not ctx.voice_client:
-            if ctx.author.voice:
-                await ctx.invoke(self.join)
-                results = await ctx.voice_client.get_tracks(query=term)
-                if not results:
-                    return await ctx.send("No results were found for that search term.")
-                if isinstance(results, pomice.Playlist):
-                    for track in results.tracks:
-                        await ctx.voice_client.queue.put(track)
-                else:
-                    await ctx.voice_client.queue.put(results[0])
-                if not ctx.voice_client.is_playing:
-                    song = await ctx.voice_client.queue.get()
-                    return await ctx.voice_client.play(track=song)
-                else:
-                    return await ctx.send(F"Added {results[0].title()} to the queue")
+            await ctx.invoke(self.join)
+        if ctx.author.voice:
             return await ctx.send("You must be in a voice channel")
+        if ctx.me.voice.channel == ctx.author.voice.channel:
+            results = await ctx.voice_client.get_tracks(query=term)
+            if not results:
+                return await ctx.send("No results were found for that search term.")
+            if isinstance(results, pomice.Playlist):
+                for track in results.tracks:
+                    await ctx.voice_client.queue.put(track)
+            else:
+                await ctx.voice_client.queue.put(results[0])
+            if not ctx.voice_client.is_playing:
+                song = await ctx.voice_client.queue.get()
+                return await ctx.voice_client.play(track=song)
+            else:
+                return await ctx.send(F"Added {results[0].title()} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Next
