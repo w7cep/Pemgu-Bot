@@ -248,19 +248,5 @@ class Music(commands.Cog, description="Jamming out with these!"):
             player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
 
-    @commands.Cog.listener()
-    async def on_voice_state_update(self, member:discord.Member, before:discord.VoiceState, after:discord.VoiceState):
-        if member.voice.channel == self.bot.user.voice.channel:
-            if len(after.channel.members) == 1:
-                c = 0
-                if not before.channel.guild.voice_client.queue.empty():
-                    for _ in range(before.channel.guild.voice_client.queue.qsize()):
-                        before.channel.guild.voice_client.queue.get_nowait()
-                        before.channel.guild.voice_client.queue.task_done()
-                        before.channel.guild.voice_client.lqueue.pop(c)
-                        c += 1
-                await before.channel.guild.voice_client.tchannel.send(F"Left {before.channel.mention} cause everyone left me")
-                return await after.channel.guild.voice_client.destroy()
-
 def setup(bot):
     bot.add_cog(Music(bot))
