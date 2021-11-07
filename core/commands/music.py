@@ -94,10 +94,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if not ctx.voice_client.is_paused:
-                    return await ctx.send("Music is not paused")
-                await ctx.voice_client.set_pause(pause=False)
-                return await ctx.send("Resumed the music")
+                if ctx.voice_client.is_paused:
+                    await ctx.voice_client.set_pause(pause=False)
+                    return await ctx.send("Resumed the music")
+                if ctx.voice_client.is_playing:
+                    return await ctx.send("The music is already playing")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
@@ -107,10 +108,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def pause(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.voice_client.channel == ctx.author.voice.channel:
-                if not ctx.voice_client.is_playing:
-                    return await ctx.send("Nothing is getting played")
-                await ctx.voice_client.set_pause(pause=True)
-                return await ctx.send("Paused the music")
+                if ctx.voice_client.is_playing:
+                    await ctx.voice_client.set_pause(pause=True)
+                    return await ctx.send("Paused the music")
+                if ctx.voice_client.is_paused:
+                    return await ctx.send("Music is already paused")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
