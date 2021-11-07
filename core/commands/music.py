@@ -58,7 +58,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             else:
                 await ctx.voice_client.queue.put(results[0])
             if not ctx.voice_client.is_playing:
-                song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).titl)
+                song = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
                 await ctx.voice_client.play(track=song)
                 return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             else:
@@ -77,6 +77,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("There is nothing in the queue")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=(await ctx.voice_client.queue.get()).title)
+            await ctx.voice_client.stop()
             if isinstance(results, pomice.Playlist):
                 await ctx.voice_client.play(track=results.tracks[0])
             else:
@@ -109,6 +110,19 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 elif ctx.voice_client.is_playing:
                     await ctx.voice_client.set_pause(pause=True)
                     return await ctx.send("Paused the music")
+            return await ctx.send("Someone else is using to me")
+        await ctx.send("No one is using to me")
+
+    # Volume
+    @commands.command(name="volume", aliases=["vol"], help="Sets the volume of the music")
+    @commands.guild_only()
+    async def volume(self, ctx:commands.Context, *, volume:int):
+        if ctx.voice_client:
+            if ctx.voice_client.channel == ctx.author.voice.channel:
+                if volume < 0 or volume > 500:
+                    return await ctx.send("The volume must be between 0 and 500")
+                await ctx.voice_client.set_volume(volume)
+                return await ctx.send(F"Set the volume to {volume}")
             return await ctx.send("Someone else is using to me")
         await ctx.send("No one is using to me")
 
