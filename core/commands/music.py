@@ -62,7 +62,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if isinstance(song, pomice.Playlist):
                     await ctx.voice_client.play(track=song.tracks[0])
                 else:
-                    await ctx.voice_client.play(track=song)
+                    await ctx.voice_client.play(track=song[0])
                     return await ctx.send(F"Now playing: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequested: {ctx.author.mention}\nURL: {ctx.voice_client.current.uri}")
             else:
                 return await ctx.send(F"Added to the queue")
