@@ -23,6 +23,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
                 ctx.voice_client.queue = asyncio.Queue()
                 ctx.voice_client.lqueue = []
+                ctx.voice_client.tchannel = ctx.channel
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -256,7 +257,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 after.channel.guild.voice_client.queue.task_done()
                 after.channel.guild.voice_client.lqueue.pop(c)
                 c += 1
-            await after.channel.guild.voice_client.destroy()
+            await after.channel.guild.voice_client.tchannel.send(F"Left {after.channel.mention} cause everyone left me")
+            return await after.channel.guild.voice_client.destroy()
 
 def setup(bot):
     bot.add_cog(Music(bot))
