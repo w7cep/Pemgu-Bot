@@ -53,7 +53,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, search_type=pomice.SearchType.ytmsearch)
             print(results)
-            print(results[0])
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
