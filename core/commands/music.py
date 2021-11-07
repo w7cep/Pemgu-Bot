@@ -114,12 +114,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("No one is using to me")
 
     # Volume
-    @commands.command(name="volume", aliases=["vol"], help="Sets the volume of the music")
+    @commands.command(name="volume", aliases=["vol"], help="Sets or Tells the volume of the music")
     @commands.guild_only()
-    async def volume(self, ctx:commands.Context, *, volume:int):
+    async def volume(self, ctx:commands.Context, *, volume:int=None):
         if ctx.me.voice:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if not volume:
+                        return await ctx.send(F"The volume is currently {ctx.voice_client.volume}")
                     if volume < 0 or volume > 500:
                         return await ctx.send("The volume must be between 0 and 500")
                     await ctx.voice_client.set_volume(volume)
