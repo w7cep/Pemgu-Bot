@@ -1,4 +1,4 @@
-import discord, pomice, re, asyncio, os
+import discord, pomice, re, os, asyncio
 from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
@@ -6,6 +6,7 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
+        self.openrobot = {"Authorization": os.getenv("OPENROBOT")}
         self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
@@ -179,6 +180,25 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
+
+    # Lyric
+    @commands.command(name="lyric", aliases=["ly"], help="Shows the lyric for music", hidden=True)
+    @commands.guild_only()
+    async def lyric(self, ctx:commands.Context, *, music:str=None):
+        music = music or F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
+        session = await self.bot.session.get(F"https://api.openrobot.xyz/api/lyrics/{music}", headers=self.openrobot)
+        response = await session.json()
+        session.close()
+        lymbed = discord.Embed(
+            color=0x1DB954,
+            title=response['title'],
+            description=self.bot.trim(response['lyrics'], 4096),
+            timestamp=ctx.message.created_at
+        )
+        lymbed.set_thumbnail(url=response['images']['background'])
+        lymbed.set_author(name=response['artist'], icon_url=response['images']['track'])
+        lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=lymbed)
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
