@@ -50,7 +50,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.me.voice.channel == ctx.author.voice.channel:
             queue = self.bot.queue.get(str(ctx.guild.id))
             if not queue:
-                queue = self.bot.queue.get(str(ctx.guild.id)) = []
+                queue = self.bot.queue[str(ctx.guild.id)] = []
             results = await ctx.voice_client.get_tracks(query=search)
             if not results:
                 return await ctx.send("No results were found for that search term.")
