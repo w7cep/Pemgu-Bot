@@ -116,6 +116,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
         await ctx.send("No one is using to me")
 
+class OnMusic(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         track: pomice.Track = player.current.original
@@ -132,3 +136,4 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
 def setup(bot):
     bot.add_cog(Music(bot))
+    bot.add_cog(OnMusic(bot))
