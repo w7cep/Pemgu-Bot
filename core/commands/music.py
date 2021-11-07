@@ -23,7 +23,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
                 ctx.voice_client.queue = asyncio.Queue()
                 ctx.voice_client.lqueue = []
-                ctx.voice_client.tchannel = ctx.channel
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -63,13 +62,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
                     await ctx.voice_client.queue.put(track)
-                    ctx.voice_client.lqueue.append(F"[{track.title} - {track.author}]({track.uri})")
+                    ctx.voice_client.lqueue.append(F"{track.title} - {track.author}")
             elif isinstance(results, pomice.Track):
                 await ctx.voice_client.queue.put(results.title)
-                ctx.voice_client.lqueue.append(F"[{results.title} - {results.author}]({results.uri})")
+                ctx.voice_client.lqueue.append(F"{results.title} - {results.author}")
             else:
                 await ctx.voice_client.queue.put(results[0])
-                ctx.voice_client.lqueue.append(F"[{results[0].title} - {results[0].author}]({results[0].uri})")
+                ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author}")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             else:
@@ -153,7 +152,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         if not volume:
-                            return await ctx.send(F"The volume is currently {ctx.voice_client.volume}")
+                            return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
                         if volume < 0 or volume > 500:
                             return await ctx.send("The volume must be between 0 and 500")
                         await ctx.voice_client.set_volume(volume)
@@ -196,7 +195,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         npmbed = discord.Embed(
                             color=self.color,
                             url=ctx.voice_client.current.uri,
-                            title=ctx.voice_client.current.title,
+                            title=F"Playing:\n{ctx.voice_client.current.title}",
                             description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
                             timestamp=ctx.voice_client.current.ctx.message.created_at
                         )
@@ -231,7 +230,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         tsmbed = discord.Embed(
             color=self.color,
             url=track.uri,
-            title=track.title,
+            title=F"Playing:\n{track.title}",
             description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
             timestamp=track.ctx.message.created_at
         )
@@ -243,6 +242,15 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not player.queue.empty():
             player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
+        tembed = discord.Embed(
+            color=self.color,
+            url=track.uri,
+            title=F"Ended:\n{track.title}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            timestamp=track.ctx.message.created_at
+        )
+        tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+        await track.ctx.send(embed=tembed)
 
 def setup(bot):
     bot.add_cog(Music(bot))
