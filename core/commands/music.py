@@ -51,7 +51,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.author.voice:
             return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
-            results = await ctx.voice_client.get_tracks(query=term, search_type=pomice.enums.SearchType.ytmsearch)
+            results = await ctx.voice_client.get_tracks(query=term)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
@@ -63,7 +63,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 song = await ctx.voice_client.queue.get()
                 return await ctx.voice_client.play(track=song)
             else:
-                return await ctx.send(F"Added {results[0].title()} to the queue")
+                return await ctx.send(F"Added {results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Stop
