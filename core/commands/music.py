@@ -76,6 +76,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                        for _ in range(ctx.voice_client.queue.qsize()):
+                            ctx.voice_client.queue.get_nowait()
+                            ctx.voice_client.queue.task_done()
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                         return await ctx.voice_client.stop()
                     return await ctx.send("Nothing is playing")
