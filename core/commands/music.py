@@ -207,7 +207,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Lyric
-    @commands.command(name="lyric", aliases=["ly"], help="Shows the lyric for music", hidden=True)
+    @commands.command(name="lyric", aliases=["ly"], help="Shows the lyric for music")
     @commands.guild_only()
     async def lyric(self, ctx:commands.Context, *, music:str=None):
         music = music or F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
