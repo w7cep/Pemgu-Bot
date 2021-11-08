@@ -1,6 +1,7 @@
 PyNaCl
 asyncpg
 git+https://github.com/jay3332/expr.py
-git+https://github.com/Gorialis/jishaku
 git+https://github.com/cloudwithax/pomice
+git+https://github.com/OpenRobot-Packages/Python-API-Wrapper
+git+https://github.com/Gorialis/jishaku
 git+https://github.com/iDevision/enhanced-discord.py

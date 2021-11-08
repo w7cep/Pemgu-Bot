@@ -1,4 +1,4 @@
-import discord, pomice, re, os, asyncio
+import discord, pomice, openrobot.api_wrapper, re, os, asyncio
 from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
@@ -6,12 +6,12 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
+        self.bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"), session=self.bot.session)
+        self.bot.pomice = pomice.NodePool()
         self.color = 0x1DB954
-        self.openrobot = {"Authorization": os.getenv("OPENROBOT")}
-        self.pomice = pomice.NodePool()
 
     async def start_nodes(self):
-        await self.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
 
     # Join
@@ -38,6 +38,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
+                        for _ in range(len(ctx.voice_client.lqueue)):
                             ctx.voice_client.lqueue.pop(0)
                         await ctx.send("Cleared the queue")
                     await ctx.voice_client.destroy()                    
@@ -53,7 +54,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.voice_client:
             await ctx.invoke(self.join)
         if not ctx.author.voice:
-            await ctx.send("You must be in a voice channel")
+            return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, ctx=ctx)
             print(results)
@@ -82,11 +83,12 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         if not ctx.voice_client.queue.empty():
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
                                 ctx.voice_client.queue.task_done()
+                            for _ in range(len(ctx.voice_client.lqueue)):
                                 ctx.voice_client.lqueue.pop(0)
                             await ctx.send("Cleared the queue")
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
@@ -151,12 +153,12 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        if not volume:
-                            return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
-                        if volume < 0 or volume > 500:
+                        if volume:
+                            if not volume < 0 or not volume > 500:
+                                await ctx.voice_client.set_volume(volume)
+                                return await ctx.send(F"Set the volume to {volume}")
                             return await ctx.send("The volume must be between 0 and 500")
-                        await ctx.voice_client.set_volume(volume)
-                        return await ctx.send(F"Set the volume to {volume}")
+                        return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
@@ -167,21 +169,17 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def queue(self, ctx:commands.Context):
         if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if len(ctx.voice_client.lqueue) > 1:
-                        d = "\n".join(q for q in ctx.voice_client.lqueue)
-                        qumbed = discord.Embed(
-                            color=self.color,
-                            title="Queue",
-                            description=self.bot.trim(d, 4095),
-                            timestamp=ctx.message.created_at
-                        )
-                        qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                        return await ctx.send(embed=qumbed)
-                    return await ctx.invoke(self.nowplaying)
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
+            if len(ctx.voice_client.lqueue) > 1:
+                d = "\n".join(q for q in ctx.voice_client.lqueue)
+                qumbed = discord.Embed(
+                    color=self.color,
+                    title="Queue",
+                    description=self.bot.trim(d, 4095),
+                    timestamp=ctx.message.created_at
+                )
+                qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                return await ctx.send(embed=qumbed)
+            return await ctx.invoke(self.nowplaying)
         await ctx.send("I'm not in a voice channel")
 
     # NowPlaying
@@ -189,39 +187,35 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def nowplaying(self, ctx:commands.Context):
         if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        npmbed = discord.Embed(
-                            color=self.color,
-                            url=ctx.voice_client.current.uri,
-                            title=F"Playing:\n{ctx.voice_client.current.title}",
-                            description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
-                            timestamp=ctx.voice_client.current.ctx.message.created_at
-                        )
-                        npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                        return await ctx.send(embed=npmbed)
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
+            if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                npmbed = discord.Embed(
+                    color=self.color,
+                    url=ctx.voice_client.current.uri,
+                    title=F"Playing:\n{ctx.voice_client.current.title}",
+                    description=F"By: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
+                    timestamp=ctx.voice_client.current.ctx.message.created_at
+                )
+                npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                return await ctx.send(embed=npmbed)
+            return await ctx.send("Nothing is playing")
         await ctx.send("I'm not in a voice channel")
 
-    # Lyric
-    @commands.command(name="lyric", aliases=["ly"], help="Shows the lyric for music")
+    # Lyrics
+    @commands.command(name="lyrics", aliases=["ly"], help="Shows the lyrics for music")
     @commands.guild_only()
-    async def lyric(self, ctx:commands.Context, *, music:str=None):
-        music = music or F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
-        session = await self.bot.session.get(F"https://api.openrobot.xyz/api/lyrics/{music}", headers=self.openrobot)
-        response = await session.json()
-        session.close()
+    async def lyrics(self, ctx:commands.Context, *, music:str=None):
+        if not music:
+            if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
+            else: raise commands.MissingRequiredArgument
+        lyrics = await self.bot.openrobot.lyrics(music)
         lymbed = discord.Embed(
             color=self.color,
-            title=response['title'],
-            description=self.bot.trim(response['lyrics'], 4096),
+            title=lyrics.title,
+            description=self.bot.trim(lyrics.lyric, 4096),
             timestamp=ctx.message.created_at
         )
-        lymbed.set_thumbnail(url=response['images']['track'])
-        lymbed.set_author(name=response['artist'], icon_url=response['images']['background'])
+        lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
+        lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
         lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=lymbed)
 
@@ -239,18 +233,18 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        if not player.queue.empty():
-            player.lqueue.pop(0)
-            return await player.play(track=(await player.queue.get()))
-        tembed = discord.Embed(
-            color=self.color,
-            url=track.uri,
-            title=F"Ended:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
-            timestamp=track.ctx.message.created_at
-        )
-        tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        await track.ctx.send(embed=tembed)
+        if player.queue.empty():
+            tembed = discord.Embed(
+                color=self.color,
+                url=track.uri,
+                title=F"Ended:\n{track.title}",
+                description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+                timestamp=track.ctx.message.created_at
+            )
+            tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+            return await track.ctx.send(embed=tembed)
+        player.lqueue.pop(0)
+        await player.play(track=(await player.queue.get()))
 
 def setup(bot):
     bot.add_cog(Music(bot))
