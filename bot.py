@@ -1,4 +1,4 @@
-import discord, asyncpg, os, aiohttp, random
+import discord, asyncpg, os, aiohttp, pomice, openrobot.api_wrapper, random
 import ast, re, inspect
 import core.utils.help as help
 from discord.ext import commands
@@ -24,6 +24,11 @@ async def get_prefix(bot, message:discord.Message):
 async def create_session_aiohttp():
     bot.session = aiohttp.ClientSession()
     print("Created a AioHttp Session")
+
+async def create_node_pomice():
+    bot.pomice = pomice.NodePool()
+    await ot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+    print("Created a Pomice Node")
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
@@ -134,6 +139,8 @@ def ready():
 
 ready()
 
+bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"), session=bot.session)
 bot.loop.run_until_complete(create_pool_postgres())
+bot.loop.run_until_complete(create_node_pomice())
 bot.loop.create_task(create_session_aiohttp())
 bot.run(os.getenv("TOKEN"))
