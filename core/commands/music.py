@@ -220,8 +220,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
             description=self.bot.trim(response['lyrics'], 4096),
             timestamp=ctx.message.created_at
         )
-        lymbed.set_thumbnail(url=response['images']['background'])
-        lymbed.set_author(name=response['artist'], icon_url=response['images']['track'])
+        lymbed.set_thumbnail(url=response['images']['track'])
+        lymbed.set_author(name=response['artist'], icon_url=response['images']['background'])
         lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=lymbed)
 
