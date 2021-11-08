@@ -33,13 +33,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if not ctx.voice_client.queue.empty():
-                        for _ in range(ctx.voice_client.queue.qsize()):
-                            ctx.voice_client.queue.get_nowait()
-                            ctx.voice_client.queue.task_done()
-                        for _ in range(len(ctx.voice_client.lqueue)):
-                            ctx.voice_client.lqueue.pop(0)
-                        await ctx.send("Cleared the queue")
                     await ctx.voice_client.destroy()                    
                     return await ctx.send("Disconnected from the voice channel")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -83,13 +76,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        if not ctx.voice_client.queue.empty():
-                            for _ in range(ctx.voice_client.queue.qsize()):
-                                ctx.voice_client.queue.get_nowait()
-                                ctx.voice_client.queue.task_done()
-                            for _ in range(len(ctx.voice_client.lqueue)):
-                                ctx.voice_client.lqueue.pop(0)
-                            await ctx.send("Cleared the queue")
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                         return await ctx.voice_client.stop()
                     return await ctx.send("Nothing is playing")
@@ -233,7 +219,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
         if not player.queue.empty():
-            layer.lqueue.pop(0)
+            player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
         tembed = discord.Embed(
             color=self.color,
