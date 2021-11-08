@@ -10,7 +10,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         self.color = 0x1DB954
 
     async def create_node_pomice(self):
-        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.devz.cloud", port="443", password="mathiscool", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
 
     # Join
