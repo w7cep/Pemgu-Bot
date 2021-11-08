@@ -232,18 +232,19 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        if player.queue.empty():
-            tembed = discord.Embed(
-                color=self.color,
-                url=track.uri,
-                title=F"Ended:\n{track.title}",
-                description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
-                timestamp=track.ctx.message.created_at
-            )
-            tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-            return await track.ctx.send(embed=tembed)
-        player.lqueue.pop(0)
-        await player.play(track=(await player.queue.get()))
+        if not player.queue.empty():
+            layer.lqueue.pop(0)
+            return await player.play(track=(await player.queue.get()))
+        tembed = discord.Embed(
+            color=self.color,
+            url=track.uri,
+            title=F"Ended:\n{track.title}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            timestamp=track.ctx.message.created_at
+        )
+        tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+        return await track.ctx.send(embed=tembed)
+       
 
 def setup(bot):
     bot.add_cog(Music(bot))
