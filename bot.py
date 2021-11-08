@@ -139,7 +139,7 @@ def ready():
 
 ready()
 
-bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"), session=bot.session)
+bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"))
 bot.loop.run_until_complete(create_pool_postgres())
 bot.loop.run_until_complete(create_node_pomice())
 bot.loop.create_task(create_session_aiohttp())
