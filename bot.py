@@ -110,9 +110,9 @@ bot = PemguBase(
 
 @bot.check
 async def blacklisted(ctx:commands.Context):
-    blacklist = await bot.postgres.fetchval("SELECT user_id FROM blacklist WHERE user_id=$1", ctx.author.id)
-    if not blacklist: return True
-    raise commands.CheckAnyFailure
+    reason = await bot.postgres.fetchval("SELECT reason FROM blacklist WHERE user_id=$1", ctx.author.id)
+    if not reason: return True
+    raise commands.CheckAnyFailure(F"You are blacklisted\n{reason}")
 
 def source(o):
     s = inspect.getsource(o).split("\n")
