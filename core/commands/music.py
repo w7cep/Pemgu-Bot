@@ -205,7 +205,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def lyrics(self, ctx:commands.Context, *, music:str=None):
         if not music:
             if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
-            else: raise commands.MissingRequiredArgument
+            else: raise commands.MissingRequiredArgument(param=music)
         lyrics = await self.bot.openrobot.lyrics(music)
         lymbed = discord.Embed(
             color=self.color,
