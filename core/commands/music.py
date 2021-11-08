@@ -1,4 +1,4 @@
-import discord, re, os, asyncio
+import discord, re, asyncio, pomice
 from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
