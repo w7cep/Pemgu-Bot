@@ -114,26 +114,6 @@ async def blacklisted(ctx:commands.Context):
     if not reason: return True
     raise commands.CheckAnyFailure(F"You are blacklisted\n{reason}")
 
-def source(o):
-    s = inspect.getsource(o).split("\n")
-    indent = len(s[0]) - len(s[0].lstrip())
-    return "\n".join(i[indent:] for i in s)
-
-
-def ready():
-    source_ = source(discord.gateway.DiscordWebSocket.identify)
-    patched = re.sub(
-        r'([\'"]\$browser[\'"]:\s?[\'"]).+([\'"])',
-        r"\1Discord Android\2",
-        source_
-    )
-    loc = {}
-    exec(compile(ast.parse(patched), "<string>", "exec"),
-        discord.gateway.__dict__, loc)
-    discord.gateway.DiscordWebSocket.identify = loc["identify"]
-
-ready()
-
 bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"))
 
 bot.loop.run_until_complete(create_pool_postgres())
