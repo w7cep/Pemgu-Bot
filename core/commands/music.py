@@ -1,4 +1,4 @@
-import discord, pomice, openrobot.api_wrapper, re, os, asyncio
+import discord, re, os, asyncio
 from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
@@ -6,13 +6,7 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"), session=self.bot.session)
-        self.bot.pomice = pomice.NodePool()
         self.color = 0x1DB954
-
-    async def start_nodes(self):
-        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-        print("Created a Pomice Node")
 
     # Join
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
