@@ -5,7 +5,7 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
 class ViewMusic(discord.ui.View):
     def __init__(self, ctx, music):
-        super().__init__(timeout=180)
+        super().__init__(timeout=None)
         self.ctx = ctx
         self.music = music
 
@@ -34,6 +34,8 @@ class ViewMusic(discord.ui.View):
                 for _ in range(self.ctx.voice_client.queue.qsize()):
                     self.ctx.voice_client.queue.get_nowait()
                     self.ctx.voice_client.queue.task_done()
+                for _ in range(len(self.ctx.voice_client.lqueue)):
+                    self.ctx.voice_client.lqueue.pop(0)
             await interaction.response.send_message(F"Stopped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}")
             return await self.ctx.voice_client.stop()
         return await interaction.response.send_message("Stop - Nothing is playing")
@@ -41,12 +43,6 @@ class ViewMusic(discord.ui.View):
     @discord.ui.button(label="Queue", style=discord.ButtonStyle.grey)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
         await self.ctx.invoke(self.music.queue)
-
-    async def on_timeout(self):
-        if self.children:
-            self.clear_items()
-            self.add_item(discord.ui.Button(emoji="💣", label="You took so long to answer...", style=discord.ButtonStyle.red, disabled=True))
-            await self.message.edit(view=self)
 
     async def interaction_check(self, interaction:discord.Interaction):
         if interaction.user.id == self.ctx.message.author.id:
