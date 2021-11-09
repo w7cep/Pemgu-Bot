@@ -13,7 +13,7 @@ class ViewMusic(discord.ui.View):
     async def resume(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
-            return await ctx.voice_client.set_pause(pause=False)
+            return await self.ctx.voice_client.set_pause(pause=False)
         await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
     @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
@@ -46,7 +46,7 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message("Skip - Nothing is playing", ephemeral=True)
 
     async def nowplaying(self, interaction):
-        if ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
@@ -77,7 +77,7 @@ class ViewMusic(discord.ui.View):
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
         lymbed = discord.Embed(
-            color=self.color,
+            color=self.music.color,
             title=lyrics.title,
             description=self.ctx.bot.trim(lyrics.lyrics, 4096),
             timestamp=self.ctx.message.created_at
