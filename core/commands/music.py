@@ -18,7 +18,7 @@ class ViewMusic(discord.ui.View):
 
     @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
     async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if not self.ctx.voice_client.is_playing:
+        if self.ctx.voice_client.is_paused:
             return await interaction.response.send_message(F"Already Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
         await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.set_pause(pause=True)
