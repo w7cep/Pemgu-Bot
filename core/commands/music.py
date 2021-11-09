@@ -9,28 +9,19 @@ class ViewMusic(discord.ui.View):
         self.ctx = ctx
         self.music = music
 
-    @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Resume", style=discord.ButtonStyle.green)
     async def resume(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
-            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await ctx.voice_client.set_pause(pause=False)
-        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
-    @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
     async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing:
-            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.set_pause(pause=True)
-        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
-
-    @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
-    async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
-            if not self.ctx.voice_client.queue.empty():
-                await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
-                return await self.ctx.voice_client.stop()
-            return await interaction.response.send_message("Skip - There is nothing in the queue")
-        return await interaction.response.send_message("Skip - Nothing is playing")
+        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
     @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -41,17 +32,66 @@ class ViewMusic(discord.ui.View):
                     self.ctx.voice_client.queue.task_done()
                 for _ in range(len(self.ctx.voice_client.lqueue)):
                     self.ctx.voice_client.lqueue.pop(0)
-            await interaction.response.send_message(F"Stopped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}")
+            await interaction.response.send_message(F"Stopped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.stop()
-        return await interaction.response.send_message("Stop - Nothing is playing")
+        return await interaction.response.send_message("Stop - Nothing is playing", ephemeral=True)
 
-    @discord.ui.button(label="Queue", style=discord.ButtonStyle.grey)
+    @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
+    async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            if not self.ctx.voice_client.queue.empty():
+                await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+                return await self.ctx.voice_client.stop()
+            return await interaction.response.send_message("Skip - There is nothing in the queue", ephemeral=True)
+        return await interaction.response.send_message("Skip - Nothing is playing", ephemeral=True)
+
+    async def nowplaying(self, interaction):
+        if swlf.ctx.voice_client:
+        if ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            npmbed = discord.Embed(
+                color=self.music.color,
+                url=self.ctx.voice_client.current.uri,
+                title=F"Playing:\n{self.ctx.voice_client.current.title}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {'%d:%d:%d'%((self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
+                timestamp=self.ctx.voice_client.current.ctx.message.created_at
+            )
+            npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
+            return await interaction.response.send_message(embed=npmbed, view=self, ephemeral=True)
+        return await interaction.response.send_message.send("Nothing is playing", ephemeral=True)
+
+
+    @discord.ui.button(label="Queue", style=discord.ButtonStyle.blurple)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
-        await self.ctx.invoke(self.music.queue)
+        if len(self.ctx.voice_client.lqueue) > 1:
+            d = "\n".join(q for q in self.ctx.voice_client.lqueue)
+            qumbed = discord.Embed(
+                color=self.music.color,
+                title="Queue",
+                description=self.ctx.bot.trim(d, 4095),
+                timestamp=self.ctx.message.created_at
+            )
+            qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
+            return await interaction.response.send_message(embed=qumbed, ephemeral=True)
+        return await nowplaying(interaction=interaction)
+
+    @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
+    async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
+        lyrics = await self.ctx.bot.openrobot.lyrics(music)
+        lymbed = discord.Embed(
+            color=self.color,
+            title=lyrics.title,
+            description=self.ctx.bot.trim(lyrics.lyrics, 4096),
+            timestamp=self.ctx.message.created_at
+        )
+        lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
+        lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
+        lymbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
+        await interaction.response.send_message(embed=lymbed,  ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        if interaction.user.id == self.ctx.message.author.id:
-            return True
+        for member in ctx.me.voice.channel.members:
+            if interaction.user.id == member.id:
+                return True
         icheckmbed = discord.Embed(
             color=self.ctx.bot.color,
             title=F"You can't use this",
@@ -253,7 +293,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def lyrics(self, ctx:commands.Context, *, music:str=None):
         if not music:
             if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
-            else: raise commands.MissingRequiredArgument(param=music)
+            else: return await ctx.send("Since I'm not in a voice channel\nYou need to pass a music")
         lyrics = await self.bot.openrobot.lyrics(music)
         lymbed = discord.Embed(
             color=self.color,
