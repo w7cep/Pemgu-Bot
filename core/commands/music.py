@@ -46,7 +46,6 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message("Skip - Nothing is playing", ephemeral=True)
 
     async def nowplaying(self, interaction):
-        if swlf.ctx.voice_client:
         if ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
