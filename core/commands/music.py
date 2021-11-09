@@ -267,6 +267,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 class OnMusic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.color = 0x1DB954
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
