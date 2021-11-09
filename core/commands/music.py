@@ -14,14 +14,14 @@ class ViewMusic(discord.ui.View):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await ctx.voice_client.set_pause(pause=False)
-        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
     @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
     async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing:
             await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.set_pause(pause=True)
-        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
     @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -71,11 +71,11 @@ class ViewMusic(discord.ui.View):
             )
             qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             return await interaction.response.send_message(embed=qumbed, ephemeral=True)
-        return await nowplaying(interaction=interaction)
+        return await self.nowplaying(interaction=interaction)
 
     @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
-        lyrics = await self.ctx.bot.openrobot.lyrics(music)
+        lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
         lymbed = discord.Embed(
             color=self.color,
             title=lyrics.title,
