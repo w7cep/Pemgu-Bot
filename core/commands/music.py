@@ -3,6 +3,63 @@ from discord.ext import commands
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
+class ViewMusic(discord.ui.View):
+    def __init__(self, ctx, music):
+        super().__init__(timeout=15)
+        self.ctx = ctx
+        self.music = music
+
+    @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
+    async def rpuse(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if ctx.voice_client.is_playing:
+            await interaction.response.send_message("Paused the song")
+            return await ctx.voice_client.set_pause(pause=True)
+        await interaction.response.send_message("Resumed the song")
+        await ctx.voice_client.set_pause(pause=False)
+
+    @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
+    async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if ctx.voice_client.is_playing:
+            if not ctx.voice_client.queue.empty():
+                await interaction.response.send_message(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
+                return await ctx.voice_client.stop()
+            return await interaction.response.send_message("Skip - There is nothing in the queue")
+        return await interaction.response.send_message("Skip - Nothing is playing")
+
+    @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
+    async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            if not ctx.voice_client.queue.empty():
+                for _ in range(ctx.voice_client.queue.qsize()):
+                    ctx.voice_client.queue.get_nowait()
+                    ctx.voice_client.queue.task_done()
+            await interaction.response.send_message(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+            return await ctx.voice_client.stop()
+        return await interaction.response.send_message("Nothing is playing")
+
+    @discord.ui.button(label="Queue", style=discord.ButtonStyle.grey)
+    async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
+        await self.ctx.invoke(self.music.queue)
+
+    async def on_timeout(self):
+        if self.children:
+            self.clear_items()
+            self.add_item(discord.ui.Button(emoji="💣", label="You took so long to answer...", style=discord.ButtonStyle.red, disabled=True))
+            await self.message.edit(view=self)
+
+    async def interaction_check(self, interaction:discord.Interaction):
+        if interaction.user.id == self.ctx.message.author.id:
+            return True
+        icheckmbed = discord.Embed(
+            color=self.ctx.bot.color,
+            title=F"You can't use this",
+            description=F"<@{interaction.user.id}> - Only <@{self.ctx.message.author.id}> can use this\nCause they did the command\nIf you want to use this, do what they did",
+            timestamp=interaction.message.created_at
+        )
+        icheckmbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
+        await interaction.response.send_message(embed=icheckmbed, ephemeral=True)
+        return False
+
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
@@ -207,6 +264,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
         lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=lymbed)
 
+class OnMusic(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
@@ -237,3 +298,4 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
 def setup(bot):
     bot.add_cog(Music(bot))
+    bot.add_cog(OnMusic(bot))
