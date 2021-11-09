@@ -13,8 +13,8 @@ class ViewMusic(discord.ui.View):
     async def rpuse(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing:
             await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
-            return await self.ctx.voice_client.set_pause(pause=True)
-        elif self.ctx.voice_client.is_paused:
+            await self.ctx.voice_client.set_pause(pause=True)
+        if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
             return await ctx.voice_client.set_pause(pause=False)
 
