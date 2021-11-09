@@ -10,13 +10,18 @@ class ViewMusic(discord.ui.View):
         self.music = music
 
     @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
-    async def rpuse(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing:
-            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
-            await self.ctx.voice_client.set_pause(pause=True)
+    async def resume(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
             return await ctx.voice_client.set_pause(pause=False)
+        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+
+    @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
+    async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.ctx.voice_client.is_playing:
+            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            return await self.ctx.voice_client.set_pause(pause=True)
+        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
