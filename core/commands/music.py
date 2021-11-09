@@ -88,11 +88,11 @@ class ViewMusic(discord.ui.View):
         await interaction.response.send_message(embed=lymbed,  ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        for member in ctx.me.voice.channel.members:
+        for member in self.ctx.me.voice.channel.members:
             if interaction.user.id == member.id:
                 return True
         icheckmbed = discord.Embed(
-            color=self.ctx.bot.color,
+            color=self.music.color,
             title=F"You can't use this",
             description=F"<@{interaction.user.id}> - Only <@{self.ctx.message.author.id}> can use this\nCause they did the command\nIf you want to use this, do what they did",
             timestamp=interaction.message.created_at
