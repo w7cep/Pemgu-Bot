@@ -241,7 +241,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=npmbed)
+                return await ctx.send(embed=npmbed, view=ViewMusic(ctx, self))
             return await ctx.send("Nothing is playing")
         await ctx.send("I'm not in a voice channel")
 
@@ -278,7 +278,7 @@ class OnMusic(commands.Cog):
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        await track.ctx.send(embed=tsmbed)
+        await track.ctx.send(embed=tsmbed, view=ViewMusic(ctx, self))
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
