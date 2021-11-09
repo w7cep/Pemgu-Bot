@@ -12,14 +12,15 @@ class ViewMusic(discord.ui.View):
     @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
     async def rpuse(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing:
-            await interaction.response.send_message("Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
             return await self.ctx.voice_client.set_pause(pause=True)
-        await interaction.response.send_message("Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
-        await ctx.voice_client.set_pause(pause=False)
+        elif self.ctx.voice_client.is_paused:
+            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            return await ctx.voice_client.set_pause(pause=False)
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing:
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.queue.empty():
                 await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
                 return await self.ctx.voice_client.stop()
