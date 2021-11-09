@@ -14,14 +14,14 @@ class ViewMusic(discord.ui.View):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.set_pause(pause=False)
-        await interaction.response.send_message(F"Resume: already on resume, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        return await interaction.response.send_message(F"Already Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
 
     @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
     async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing:
-            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
-            return await self.ctx.voice_client.set_pause(pause=True)
-        await interaction.response.send_message(F"Pause: already on pause, {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        if not self.ctx.voice_client.is_playing:
+            return await interaction.response.send_message(F"Already Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        return await self.ctx.voice_client.set_pause(pause=True)
 
     @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -34,7 +34,19 @@ class ViewMusic(discord.ui.View):
                     self.ctx.voice_client.lqueue.pop(0)
             await interaction.response.send_message(F"Stopped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.stop()
-        return await interaction.response.send_message("Stop - Nothing is playing", ephemeral=True)
+        return await interaction.response.send_message("Stop: Nothing is playing", ephemeral=True)
+
+    @discord.ui.button(label="Destroy", style=discord.ButtonStyle.red)
+    async def destroy(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if not self.ctx.voice_client.queue.empty():
+            for _ in range(self.ctx.voice_client.queue.qsize()):
+                self.ctx.voice_client.queue.get_nowait()
+                self.ctx.voice_client.queue.task_done()
+            for _ in range(len(self.ctx.voice_client.lqueue)):
+                self.ctx.voice_client.lqueue.pop(0)
+        await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        return await self.ctx.voice_client.destroy()
+
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -42,8 +54,8 @@ class ViewMusic(discord.ui.View):
             if not self.ctx.voice_client.queue.empty():
                 await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
                 return await self.ctx.voice_client.stop()
-            return await interaction.response.send_message("Skip - There is nothing in the queue", ephemeral=True)
-        return await interaction.response.send_message("Skip - Nothing is playing", ephemeral=True)
+            return await interaction.response.send_message("Skip: There is nothing in the queue", ephemeral=True)
+        return await interaction.response.send_message("Skip: Nothing is playing", ephemeral=True)
 
     async def nowplaying(self, interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
@@ -85,7 +97,7 @@ class ViewMusic(discord.ui.View):
         lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
         lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
         lymbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
-        await interaction.response.send_message(embed=lymbed,  ephemeral=True)
+        return await interaction.response.send_message(embed=lymbed,  ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
         for member in self.ctx.me.voice.channel.members:
