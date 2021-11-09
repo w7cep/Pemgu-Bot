@@ -5,37 +5,37 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
 class ViewMusic(discord.ui.View):
     def __init__(self, ctx, music):
-        super().__init__(timeout=15)
+        super().__init__(timeout=180)
         self.ctx = ctx
         self.music = music
 
     @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
     async def rpuse(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if ctx.voice_client.is_playing:
-            await interaction.response.send_message("Paused the song")
-            return await ctx.voice_client.set_pause(pause=True)
-        await interaction.response.send_message("Resumed the song")
+        if self.ctx.voice_client.is_playing:
+            await interaction.response.send_message("Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+            return await self.ctx.voice_client.set_pause(pause=True)
+        await interaction.response.send_message("Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
         await ctx.voice_client.set_pause(pause=False)
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if ctx.voice_client.is_playing:
-            if not ctx.voice_client.queue.empty():
-                await interaction.response.send_message(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
-                return await ctx.voice_client.stop()
+        if self.ctx.voice_client.is_playing:
+            if not self.ctx.voice_client.queue.empty():
+                await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}")
+                return await self.ctx.voice_client.stop()
             return await interaction.response.send_message("Skip - There is nothing in the queue")
         return await interaction.response.send_message("Skip - Nothing is playing")
 
     @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-            if not ctx.voice_client.queue.empty():
-                for _ in range(ctx.voice_client.queue.qsize()):
-                    ctx.voice_client.queue.get_nowait()
-                    ctx.voice_client.queue.task_done()
-            await interaction.response.send_message(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
-            return await ctx.voice_client.stop()
-        return await interaction.response.send_message("Nothing is playing")
+        if self.ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            if not self.ctx.voice_client.queue.empty():
+                for _ in range(self.ctx.voice_client.queue.qsize()):
+                    self.ctx.voice_client.queue.get_nowait()
+                    self.ctx.voice_client.queue.task_done()
+            await interaction.response.send_message(F"Stopped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}")
+            return await self.ctx.voice_client.stop()
+        return await interaction.response.send_message("Stop - Nothing is playing")
 
     @discord.ui.button(label="Queue", style=discord.ButtonStyle.grey)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
