@@ -264,11 +264,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=lymbed)
 
-class OnMusic(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-        self.color = 0x1DB954
-
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
@@ -279,7 +274,7 @@ class OnMusic(commands.Cog):
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        await track.ctx.send(embed=tsmbed, view=ViewMusic(ctx, self))
+        await track.ctx.send(embed=tsmbed, view=ViewMusic(track.ctx, self))
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
@@ -299,4 +294,3 @@ class OnMusic(commands.Cog):
 
 def setup(bot):
     bot.add_cog(Music(bot))
-    bot.add_cog(OnMusic(bot))
