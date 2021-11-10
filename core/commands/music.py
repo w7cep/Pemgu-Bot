@@ -9,17 +9,11 @@ class ViewMusic(discord.ui.View):
         self.ctx = ctx
         self.music = music
 
-    @discord.ui.button(label="Resume", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Resume/Pause", style=discord.ButtonStyle.green)
     async def resume(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.set_pause(pause=False)
-        return await interaction.response.send_message(F"Already Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
-
-    @discord.ui.button(label="Pause", style=discord.ButtonStyle.green)
-    async def pause(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_paused:
-            return await interaction.response.send_message(F"Already Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
         await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.set_pause(pause=True)
 
@@ -47,7 +41,6 @@ class ViewMusic(discord.ui.View):
         await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.destroy()
 
-
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
@@ -69,7 +62,6 @@ class ViewMusic(discord.ui.View):
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             return await interaction.response.send_message(embed=npmbed, view=self, ephemeral=True)
         return await interaction.response.send_message.send("Nothing is playing", ephemeral=True)
-
 
     @discord.ui.button(label="Queue", style=discord.ButtonStyle.blurple)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -123,6 +115,21 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def create_node_pomice(self):
         await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
+
+    # Player
+    @commands.command(name="player", help="Shows you the ultimate player")
+    @commands.guild_only()
+    async def player(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                        await ctx.invoke(self.nowplaying)
+                        return await ctx.send("Pemgu.Player.exe", view=ViewMusic(ctx, self.ctx))
+                    return ctx.send("Nothing is playing")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
 
     # Join
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
