@@ -23,7 +23,7 @@ class PaginatorButtons(discord.ui.Button):
 
 class PaginatorView(discord.ui.View):
     def __init__(self, help, mapping):
-        super().__init__(timeout=None15)
+        super().__init__(timeout=None)
         self.help = help
         self.mapping = mapping
         self.homepage = discord.Embed(
@@ -106,7 +106,7 @@ class SelectUI(discord.ui.Select):
 
 class SelectView(discord.ui.View):
     def __init__(self, help, mapping):
-        super().__init__(timeout=None15)
+        super().__init__(timeout=None)
         self.help = help
         self.mapping = mapping
         self.homepage = discord.Embed(

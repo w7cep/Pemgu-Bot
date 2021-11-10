@@ -2,7 +2,7 @@ import discord
 
 class CounterView(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=None5)
+        super().__init__(timeout=None)
         self.ctx = ctx
         self.clicks = 0
         self.clickers = ""
@@ -30,7 +30,7 @@ class CounterView(discord.ui.View):
 
 class NitroView(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=None5)
+        super().__init__(timeout=None)
         self.ctx = ctx
 
     @discord.ui.button(label="ACCEPT", style=discord.ButtonStyle.green)

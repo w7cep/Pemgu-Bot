@@ -2,7 +2,7 @@ import discord
 
 class Confirm(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=None3)
+        super().__init__(timeout=None)
         self.ctx = ctx
         self.value = None
 
