@@ -38,7 +38,8 @@ class ViewMusic(discord.ui.View):
                 self.ctx.voice_client.queue.task_done()
             for _ in range(len(self.ctx.voice_client.lqueue)):
                 self.ctx.voice_client.lqueue.pop(0)
-        await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.destroy()
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
