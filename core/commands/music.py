@@ -269,8 +269,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        ctx.voice_client.loop = ctx.voice_client.current
-                        return await ctx.send(F"Loop has been changed to {ctx.voice_client.current.title}- {ctx.voice_client.current.author}")
+                        if not ctx.voice_client.loop:
+                            ctx.voice_client.loop = ctx.voice_client.current
+                            return await ctx.send(F"Loop has been turned on - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+                        return await ctx.send(F"Loop has been turned off - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
