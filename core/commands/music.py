@@ -118,7 +118,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     def bar(self, position, length, size=15):
         done = int((position/length)*size)
-        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%(done/(1000*60*60))%24, (done/(1000*60))%60, (done/(1000)%60)}"
+        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%((done/(1000*60*60))%24, (done/(1000*60))%60, (done/1000)%60)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
