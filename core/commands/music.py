@@ -5,7 +5,7 @@ URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
 class ViewMusic(discord.ui.View):
     def __init__(self, ctx, music):
-        super().__init__(timeout=None)
+        super().__init__(timeout=NoneNone)
         self.ctx = ctx
         self.music = music
 

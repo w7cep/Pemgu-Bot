@@ -48,7 +48,7 @@ class RPSButtons(discord.ui.Button):
 
 class RPSView(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=5)
+        super().__init__(timeout=None5)
         self.ctx = ctx
         self.botoption = random.choice(["🗻Rock", "🧻Paper", "✂️Scissors"])
         self.useroption = ""
@@ -108,7 +108,7 @@ class CFButtons(discord.ui.Button):
 
 class CFView(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=5)
+        super().__init__(timeout=None5)
         self.ctx = ctx
         self.botoption = random.choice(["Heads", "Tails"])
         self.useroption = ""
@@ -167,7 +167,7 @@ class GuessButtons(discord.ui.Button):
 
 class GuessView(discord.ui.View):
     def __init__(self, ctx):
-        super().__init__(timeout=5)
+        super().__init__(timeout=None5)
         self.ctx = ctx
         self.choose = None
         self.number = random.randint(1, 3)

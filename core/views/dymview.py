@@ -24,7 +24,7 @@ class DYMButtons(discord.ui.Button):
 
 class DYMView(discord.ui.View):
     def __init__(self, ctx, matches):
-        super().__init__(timeout=10)
+        super().__init__(timeout=None10)
         self.ctx = ctx
         self.matches = matches
         for match in self.matches:
