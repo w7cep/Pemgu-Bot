@@ -38,8 +38,7 @@ class ViewMusic(discord.ui.View):
                 self.ctx.voice_client.queue.task_done()
             for _ in range(len(self.ctx.voice_client.lqueue)):
                 self.ctx.voice_client.lqueue.pop(0)
-        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
-            await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused: await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         else: await interaction.response.send_message("Destroyed", ephemeral=True)
         return await self.ctx.voice_client.destroy()
 
@@ -95,9 +94,7 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message(embed=lymbed, ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        for member in self.ctx.me.voice.channel.members:
-            if interaction.user.id == member.id:
-                return True
+        for member in self.ctx.me.voice.channel.members: if interaction.user.id == member.id: return True
         icheckmbed = discord.Embed(
             color=self.music.color,
             title=F"You can't use this",
@@ -120,7 +117,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     def bar(self, position, length, size=15):
         done = int((position/length)*size)
-        return F"{'🔵'*done}{'🔴'*(size-done)} | {%d:%d:%#d''%(done/(1000*60*60))%24, (done/(1000*60))%60, (done/(1000)%60)}"
+        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%(done/(1000*60*60))%24, (done/(1000*60))%60, (done/(1000)%60)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
