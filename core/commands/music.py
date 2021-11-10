@@ -118,9 +118,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
 
-    def bar(self, position, length, size=20):
+    def bar(self, position, length, size=15):
         done = int((position/length)*size)
-        return F"[{'🔵'*done}{'🔴'*(size-done)}]"
+        return F"{'🔵'*done}{'🔴'*(size-done)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
