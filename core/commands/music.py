@@ -13,14 +13,14 @@ class ViewMusic(discord.ui.View):
     @discord.ui.button(label="Resume & Pause", style=discord.ButtonStyle.green)
     async def ue(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
-            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
             return await self.ctx.voice_client.set_pause(pause=False)
-        await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+        await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.set_pause(pause=True)
 
     @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.queue.empty():
                 for _ in range(self.ctx.voice_client.queue.qsize()):
                     self.ctx.voice_client.queue.get_nowait()
@@ -49,7 +49,7 @@ class ViewMusic(discord.ui.View):
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.queue.empty():
-                await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+                await interaction.response.send_message(F"Skipped: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
                 return await self.ctx.voice_client.stop()
             return await interaction.response.send_message("Skip: There is nothing in the queue", ephemeral=True)
         return await interaction.response.send_message("Skip: Nothing is playing", ephemeral=True)
@@ -60,7 +60,7 @@ class ViewMusic(discord.ui.View):
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
                 title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.progress(self.ctx.voice_client.position, self.ctx.voice_client.current.length)}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.progress(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
@@ -101,8 +101,7 @@ class ViewMusic(discord.ui.View):
             if interaction.user.id == member.id: return True
         icheckmbed = discord.Embed(
             color=self.music.color,
-            title=F"You can't use this",
-            description=F"<@{interaction.user.id}> - Only <@{self.ctx.message.author.id}> can use this\nCause they did the command\nIf you want to use this, do what they did",
+            description=F"<@{interaction.user.id}> - You can't use this\nOnly the people in {self.ctx.me.voice.channel.mention} can use this\nIf you want to use this join",
             timestamp=interaction.message.created_at
         )
         icheckmbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
