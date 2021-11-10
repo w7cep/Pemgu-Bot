@@ -187,7 +187,7 @@ class ButtonUI(discord.ui.Button):
 
 class ButtonView(discord.ui.View):
     def __init__(self, help, mapping):
-        super().__init__(timeout=NoneNone)
+        super().__init__(timeout=None)
         self.help = help
         self.mapping = mapping
         self.homepage = discord.Embed(
