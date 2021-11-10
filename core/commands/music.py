@@ -120,7 +120,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         print("Created a Pomice Node")
 
     def duration(self, length):
-        return {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}
+        return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
 
     def progress(self, position, length, size=10):
         done = int((position/length)*size)
