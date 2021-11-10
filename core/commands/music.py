@@ -276,7 +276,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             sembed = discord.Embed(
                                 color=self.color,
                                 title=F"Seeked to {self.duration(mtime)}",
-                                description=F"{self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {ctx.voice_client.current.length}",
+                                description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {ctx.voice_client.current.length}",
                                 timestamp=ctx.message.created_at
                             )
                             sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -298,7 +298,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         if volume:
                             if not volume < 0 or not volume > 500:
                                 await ctx.voice_client.set_volume(volume)
-                                return await ctx.send(F"Set the volume to {volume}")
+                                return await ctx.send(F"Volume has been changed to {volume}")
                             return await ctx.send("The volume must be between 0 and 500")
                         return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
                     return await ctx.send("Nothing is playing")
