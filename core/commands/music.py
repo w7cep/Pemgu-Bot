@@ -270,6 +270,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         time = time.split(":")
                         dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
+                        print(dtime.max, dtime.resolution, dtime.min, dtime.total_seconds(), dtime.seconds, dtime.microseconds)
                         mtime = dtime.seconds * 60
                         print(mtime, ctx.voice_client.current.length)
                         if not (mtime) >= ctx.voice_client.current.length:
@@ -368,7 +369,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Playing:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)} | {self.duration(player.position)} - {track.length}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
