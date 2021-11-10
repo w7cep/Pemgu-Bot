@@ -9,11 +9,10 @@ class MinimalHelp(commands.MinimalHelpCommand):
             "Fun": "😹",
             "Game": "🎮",
             "Internet": "🌎",
-            "Math": "🧮",
             "Meta": "🔧",
             "Moderation": "🎩",
             "Owner": "👑",
-            "Utility": "🧰",
+            "Utility": "🛠️",
             "No": "❓"
         }
         super().__init__(

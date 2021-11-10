@@ -59,7 +59,7 @@ class ViewMusic(discord.ui.View):
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
                 title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} {'%d:%d:%d'%((self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.progress(self.ctx.voice_client.position, self.ctx.voice_client.current.length)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
@@ -118,10 +118,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
 
-    def bar(self, position, length, size=10):
+    def progress(self, position, length, size=10):
         done = int((position/length)*size)
-        print(position, length, done)
-        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%((position/(1000*60*60))%24, (position/(1000*60))%60, (position/1000)%60)}"
+        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%((position/(1000*60*60))%24, (position/(1000*60))%60, (position/1000)%60)} {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
@@ -305,7 +304,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     color=self.color,
                     url=ctx.voice_client.current.uri,
                     title=F"Playing:\n{ctx.voice_client.current.title}",
-                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} {'%d:%d:%d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}",
+                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(ctx.voice_client.position, ctx.voice_client.current.length)}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -338,7 +337,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Playing:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)

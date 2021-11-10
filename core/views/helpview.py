@@ -123,7 +123,7 @@ class SelectView(discord.ui.View):
                 option = discord.SelectOption(emoji=self.help.emojis.get(name) if self.help.emojis.get(name) else '❓', label=F"{name} Category", description=description, value=name)
                 options.append(option)
         self.add_item(item=SelectUI(placeholder="Where do you want to go...", options=options, min_values=1, max_values=1, view=self))
-        self.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
+        self.add_item(item=discord.ui.Button(emoji="➕", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
         self.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
 
     @discord.ui.button(emoji="🏠", label="Home", style=discord.ButtonStyle.green)
@@ -187,7 +187,7 @@ class ButtonUI(discord.ui.Button):
 
 class ButtonView(discord.ui.View):
     def __init__(self, help, mapping):
-        super().__init__(timeout=15)
+        super().__init__(timeout=None)
         self.help = help
         self.mapping = mapping
         self.homepage = discord.Embed(
@@ -198,9 +198,9 @@ class ButtonView(discord.ui.View):
         )
         for cog, commands in self.mapping.items():
             name = cog.qualified_name if cog else "Alone"
-            if not name.startswith("On"):
-                self.add_item(item=ButtonUI(emoji=self.help.emojis.get(name), label=name, style=discord.ButtonStyle.blurple, custom_id=name, view=self))
-        self.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
+            if cog and not cog.qualified_name.startswith("On"):
+                self.add_item(item=ButtonUI(emoji=self.help.emojis.get(cog.qualified_name), label=cog.qualified_name, style=discord.ButtonStyle.blurple, custom_id=cog.qualified_name, view=self))
+        self.add_item(item=discord.ui.Button(emoji="➕", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
         self.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
 
     @discord.ui.button(emoji="🏠", label="Home", style=discord.ButtonStyle.green)
@@ -211,19 +211,8 @@ class ButtonView(discord.ui.View):
     async def delete(self, button:discord.ui.Button, interaction:discord.Interaction):
         await interaction.message.delete()
 
-    async def on_timeout(self):
-        try:
-            for item in self.children:
-                if isinstance(item, discord.ui.Select):
-                    item.placeholder = "Disabled due to being timed out..."
-                item.disabled = True
-            await self.message.edit(view=self)
-        except discord.NotFound:
-            return
-
     async def interaction_check(self, interaction:discord.Interaction):
-        if interaction.user.id == self.help.context.author.id:
-            return True
+        if interaction.user.id == self.help.context.author.id: return True
         icheckmbed = discord.Embed(
             color=self.help.context.bot.color,
             title="You can't use this",
