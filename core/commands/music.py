@@ -58,7 +58,7 @@ class ViewMusic(discord.ui.View):
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
                 title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} {'%d:%d:%d'%((self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} {'%d:%d:%d'%(self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
@@ -120,7 +120,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     def bar(self, position, length, size=15):
         done = int((position/length)*size)
-        return F"{'🔵'*done}{'🔴'*(size-done)}"
+        return F"{'🔵'*done}{'🔴'*(size-done)} | {%d:%d:%#d''%(done/(1000*60*60))%24, (done/(1000*60))%60, (done/(1000)%60)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
