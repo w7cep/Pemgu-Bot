@@ -94,7 +94,8 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message(embed=lymbed, ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        for member in self.ctx.me.voice.channel.members: if interaction.user.id == member.id: return True
+        for member in self.ctx.me.voice.channel.members:
+            if interaction.user.id == member.id: return True
         icheckmbed = discord.Embed(
             color=self.music.color,
             title=F"You can't use this",
