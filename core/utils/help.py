@@ -13,7 +13,6 @@ class MinimalHelp(commands.MinimalHelpCommand):
             "Moderation": "🎩",
             "Owner": "👑",
             "Utility": "🛠️",
-            "No": "❓"
         }
         super().__init__(
             command_attrs={
@@ -51,8 +50,8 @@ class CustomHelp(commands.HelpCommand):
             "Music": "🎵",
             "Owner": "👑",
             "Settings": "🔧",
-            "Utility": "🧰",
-            "Jishaku": "🤿"
+            "Utility": "🛠️",
+            "Jishaku": "🤖"
         }
 
     # Help Main
