@@ -81,6 +81,16 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message(embed=qumbed, ephemeral=True)
         return await self.nowplaying(interaction=interaction)
 
+    @discord.ui.button(label="Loop", style=discord.ButtonStyle.grey)
+    async def loop(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            if not self.ctx.voice_client.loop:
+                self.ctx.voice_client.loop = self.ctx.voice_client.current
+                return await interaction.response.send_message(F"Loop: turned on | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+            self.ctx.voice_client.loop = None
+            return await interaction.response.send_message(F"Loop: turned off | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        return await interaction.response.send_message.send("Nothing is playing", ephemeral=True)
+
     @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
