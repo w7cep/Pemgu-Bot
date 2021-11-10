@@ -1,5 +1,6 @@
-import discord, pomice, re, os, asyncio
+import discord, pomice, re, os, asyncio, datetime
 from discord.ext import commands
+from core.views.confirm import Confirm
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
@@ -253,6 +254,36 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         await ctx.voice_client.set_pause(pause=True)
                         return await ctx.send("Paused the music")
                     return await ctx.send("Music is already paused")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
+    # Seek
+    @commands.command(name="seek", aliases=["se"], help="Seeks to the given time")
+    @commands.guild_only()
+    async def seek(self, ctx:commands.Context, *, time:str=None):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                        time = time.split(":")
+                        print(time)
+                        time = datetime.timedelta(hours=int(time[0]) if not int(time[0]) == 0 else None, minutes=int(time[1]) if not int(time[1]) == 0 else None, seconds=int(time[2]) if not int(time[2]) == 0 else None)
+                        print(time)
+                        mtime = time.microseconds*1000
+                        print(mtime)
+                        if not (mtime) >= ctx.voice_client.current.length:
+                            await ctx.voice_client.seek(mtime)
+                            sembed = discord.Embed(
+                                color=self.color,
+                                title=F"Seeked to {'%d:%d:%#d'%((mtime/(1000*60*60))%24, (mtime/(1000*60))%60, (mtime/1000)%60)}",
+                                description=self.progress(mtime, ctx.voice_client.current.length),
+                                timestmap=ctx.message.created_at
+                            )
+                            sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                            return await ctx.send(embed=sembed)
+                        return await ctx.send(F"Time needs to be between 0 or {'%d:%d:%#d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}")
+                    return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
