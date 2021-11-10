@@ -111,12 +111,7 @@ class ViewMusic(discord.ui.View):
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.pomice = pomice.NodePool()
         self.color = 0x1DB954
-
-    async def create_node_pomice(self):
-        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-        print("Created a Pomice Node")
 
     def duration(self, length):
         return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
