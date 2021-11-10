@@ -269,6 +269,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         time = time.split(":")
                         time = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
                         mtime = time.microseconds*1000
+                        print(mtime, ctx.voice_client.current.length)
                         if not (mtime) >= ctx.voice_client.current.length:
                             await ctx.voice_client.seek(mtime)
                             sembed = discord.Embed(
