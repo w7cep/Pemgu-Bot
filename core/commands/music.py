@@ -120,7 +120,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     def progress(self, position, length, size=10):
         done = int((position/length)*size)
-        return F"{'🔵'*done}{'🔴'*(size-done)} | {'%d:%d:%#d'%((position/(1000*60*60))%24, (position/(1000*60))%60, (position/1000)%60)} {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}"
+        return F"{'🔷'*done}{'🔶'*(size-done)} | {'%d:%d:%#d'%((position/(1000*60*60))%24, (position/(1000*60))%60, (position/1000)%60)} {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
