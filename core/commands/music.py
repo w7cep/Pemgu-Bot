@@ -270,16 +270,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         time = time.split(":")
                         dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
-                        print(dtime.max*60, dtime.resolution*60, dtime.min*60, dtime.total_seconds()*60, dtime.seconds*60, dtime.microseconds*60)
-                        print(dtime.max*1000, dtime.resolution*1000, dtime.min*1000, dtime.total_seconds()*1000, dtime.seconds*1000, dtime.microseconds*1000)
                         mtime = dtime.seconds*1000
-                        print(mtime, ctx.voice_client.current.length)
                         if not (mtime) >= ctx.voice_client.current.length:
                             await ctx.voice_client.seek(mtime)
                             sembed = discord.Embed(
                                 color=self.color,
                                 title=F"Seeked to {self.duration(mtime)}",
-                                description=self.progress(mtime, ctx.voice_client.current.length),
+                                description=F"{self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {ctx.voice_client.current.length}",
                                 timestamp=ctx.message.created_at
                             )
                             sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
