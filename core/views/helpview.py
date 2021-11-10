@@ -197,7 +197,7 @@ class ButtonView(discord.ui.View):
             timestamp=self.help.context.message.created_at
         )
         for cog, commands in self.mapping.items():
-            if cog and not cog.qualified_name.startswith("On") and cog.qualified_name not in self.help.ctx.bot._others:
+            if cog and not cog.qualified_name.startswith("On") and cog.qualified_name not in self.help.context.bot._others:
                 self.add_item(item=ButtonUI(emoji=self.help.emojis.get(cog.qualified_name), label=cog.qualified_name, style=discord.ButtonStyle.blurple, custom_id=cog.qualified_name, view=self))
         self.add_item(item=discord.ui.Button(emoji="➕", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
         self.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
