@@ -149,6 +149,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
                 ctx.voice_client.queue = asyncio.Queue()
                 ctx.voice_client.lqueue = []
+                ctx.voice_client.loop = None
                 return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
@@ -256,6 +257,21 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         await ctx.voice_client.set_pause(pause=True)
                         return await ctx.send("Paused the music")
                     return await ctx.send("Music is already paused")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
+    # Loop
+    @commands.command(name="loop", aliases=["lp"], help="Loops over the music")
+    @commands.guild_only()
+    async def loop(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                        ctx.voice_client.loop = ctx.voice_client.current
+                        return await ctx.send(F"Loop has been changed to {ctx.voice_client.current.title}- {ctx.voice_client.current.author}")
+                    return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -375,6 +391,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
+        if player.loop:
+            return await player.play(track=player.loop)
         if not player.queue.empty():
             player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
