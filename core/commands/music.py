@@ -267,11 +267,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         time = time.split(":")
-                        print(time)
-                        time = datetime.timedelta(hours=int(time[0]) if not int(time[0]) == 0 else None, minutes=int(time[1]) if not int(time[1]) == 0 else None, seconds=int(time[2]) if not int(time[2]) == 0 else None)
-                        print(time)
+                        time = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
                         mtime = time.microseconds*1000
-                        print(mtime)
                         if not (mtime) >= ctx.voice_client.current.length:
                             await ctx.voice_client.seek(mtime)
                             sembed = discord.Embed(
