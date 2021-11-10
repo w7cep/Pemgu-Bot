@@ -119,9 +119,12 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print("Created a Pomice Node")
 
+    def duration(self, length):
+        return {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}
+
     def progress(self, position, length, size=10):
         done = int((position/length)*size)
-        return F"{'🔷'*done}{'🔶'*(size-done)} | {'%d:%d:%#d'%((position/(1000*60*60))%24, (position/(1000*60))%60, (position/1000)%60)} {'%d:%d:%#d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)}"
+        return F"{'🔷'*done}{'🔶'*(size-done)}"
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
@@ -267,20 +270,20 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         time = time.split(":")
-                        time = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
-                        mtime = time.microseconds*1000
+                        dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
+                        mtime = dtime.seconds * 60
                         print(mtime, ctx.voice_client.current.length)
                         if not (mtime) >= ctx.voice_client.current.length:
                             await ctx.voice_client.seek(mtime)
                             sembed = discord.Embed(
                                 color=self.color,
-                                title=F"Seeked to {'%d:%d:%#d'%((mtime/(1000*60*60))%24, (mtime/(1000*60))%60, (mtime/1000)%60)}",
+                                title=F"Seeked to {self.duration(mtime)}",
                                 description=self.progress(mtime, ctx.voice_client.current.length),
                                 timestamp=ctx.message.created_at
                             )
                             sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                             return await ctx.send(embed=sembed)
-                        return await ctx.send(F"Time needs to be between 0 or {'%d:%d:%#d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}\nFor example: 0:1:25")
+                        return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}\nFor example: 0:1:23")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
@@ -333,7 +336,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     color=self.color,
                     url=ctx.voice_client.current.uri,
                     title=F"Playing:\n{ctx.voice_client.current.title}",
-                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(ctx.voice_client.position, ctx.voice_client.current.length)}",
+                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -366,7 +369,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Playing:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)} | {self.duration(player.position)} - {track.length}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
@@ -381,7 +384,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Ended:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {'%d:%d:%d'%((track.length/(1000*60*60))%24, (track.length/(1000*60))%60, (track.length/1000)%60)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)} | {self.duration(player.position)} - {track.length}",
             timestamp=track.ctx.message.created_at
         )
         tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
