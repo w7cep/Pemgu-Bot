@@ -275,11 +275,11 @@ class Music(commands.Cog, description="Jamming out with these!"):
                                 color=self.color,
                                 title=F"Seeked to {'%d:%d:%#d'%((mtime/(1000*60*60))%24, (mtime/(1000*60))%60, (mtime/1000)%60)}",
                                 description=self.progress(mtime, ctx.voice_client.current.length),
-                                timestmap=ctx.message.created_at
+                                timestamp=ctx.message.created_at
                             )
                             sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                             return await ctx.send(embed=sembed)
-                        return await ctx.send(F"Time needs to be between 0 or {'%d:%d:%#d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}")
+                        return await ctx.send(F"Time needs to be between 0 or {'%d:%d:%#d'%((ctx.voice_client.current.length/(1000*60*60))%24, (ctx.voice_client.current.length/(1000*60))%60, (ctx.voice_client.current.length/1000)%60)}\nFor example: 0:1:25")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
