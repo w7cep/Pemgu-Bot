@@ -58,7 +58,7 @@ class ViewMusic(discord.ui.View):
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
                 title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} {'%d:%d:%d'%((self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} {'%d:%d:%d'%((self.ctx.voice_client.current.length/(1000*60*60))%24, (self.ctx.voice_client.current.length/(1000*60))%60, (self.ctx.voice_client.current.length/1000)%60)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
