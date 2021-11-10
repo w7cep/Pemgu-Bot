@@ -38,8 +38,10 @@ class ViewMusic(discord.ui.View):
                 self.ctx.voice_client.queue.task_done()
             for _ in range(len(self.ctx.voice_client.lqueue)):
                 self.ctx.voice_client.lqueue.pop(0)
-        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused: await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-        else: await interaction.response.send_message("Destroyed", ephemeral=True)
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            await interaction.response.send_message(F"Destroyed: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        else:
+            await interaction.response.send_message("Destroyed", ephemeral=True)
         return await self.ctx.voice_client.destroy()
 
     @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
@@ -81,7 +83,7 @@ class ViewMusic(discord.ui.View):
     @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
-        if not lyrics.lyrics or not lyrics.detail: return await interaction.response.send_message(F"Lyrics: There is no lyrics, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        if not lyrics.lyrics: return await interaction.response.send_message(F"Lyrics: There is no lyrics, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         lymbed = discord.Embed(
             color=self.music.color,
             title=lyrics.title,
