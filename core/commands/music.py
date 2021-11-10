@@ -125,8 +125,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                         await ctx.invoke(self.nowplaying)
-                        return await ctx.send("Pemgu.Player.exe", view=ViewMusic(ctx, self.ctx))
-                    return ctx.send("Nothing is playing")
+                        return await ctx.send("Pemgu.Player.exe", view=ViewMusic(ctx, self))
+                    return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
@@ -302,7 +302,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=npmbed, view=ViewMusic(ctx, self))
+                return await ctx.send(embed=npmbed)
             return await ctx.send("Nothing is playing")
         await ctx.send("I'm not in a voice channel")
 
@@ -335,7 +335,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        await track.ctx.send(embed=tsmbed, view=ViewMusic(track.ctx, self))
+        await track.ctx.send(embed=tsmbed)
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
