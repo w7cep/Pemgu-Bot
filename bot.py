@@ -125,7 +125,7 @@ async def news(ctx:commands.Context):
 async def blacklisted(ctx:commands.Context):
     reason = await bot.postgres.fetchval("SELECT reason FROM blacklist WHERE user_id=$1", ctx.author.id)
     if not reason: return True
-    raise commands.CheckFailure(message=F"You are blacklisted\n{reason}")
+    raise commands.CheckFailure(message=F"You are blacklisted: {reason}")
 
 bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"))
 
