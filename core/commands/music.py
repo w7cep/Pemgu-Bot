@@ -419,7 +419,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
         )
         tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
         return await track.ctx.send(embed=tembed)
-       
 
 def setup(bot):
     bot.add_cog(Music(bot))
