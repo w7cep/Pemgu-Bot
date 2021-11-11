@@ -60,7 +60,7 @@ class ViewMusic(discord.ui.View):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
-                description=F"Playing:\nTitle: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}",
+                description=F"Playing:\nTitle: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}\nNext: {self.ctx.voice_client.lqueue[1]}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
@@ -125,12 +125,7 @@ class ViewMusic(discord.ui.View):
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.bot.pomice = pomice.NodePool()
         self.color = 0x1DB954
-
-    async def create_node_pomice(self):
-        await self.bot.pomice.create_node(bot=self.bot, host="lava.link", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-        print("Created a Pomice Node")
 
     def duration(self, length):
         return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
@@ -196,13 +191,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
                     await ctx.voice_client.queue.put(track)
-                    ctx.voice_client.lqueue.append(F"{track.title} - {track.author}")
+                    ctx.voice_client.lqueue.append(F"{track.title} - {track.author} | {ctx.author.mention}")
             elif isinstance(results, pomice.Track):
                 await ctx.voice_client.queue.put(results.title)
-                ctx.voice_client.lqueue.append(F"{results.title} - {results.author}")
+                ctx.voice_client.lqueue.append(F"{results.title} - {results.author} | {ctx.author.mention}")
             else:
                 await ctx.voice_client.queue.put(results[0])
-                ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author}")
+                ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author} | {ctx.author.mention}")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             else:
@@ -342,7 +337,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Queue
-    @commands.group(name="queue", aliases=["qu"], help="Shows the queue")
+    @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
     @commands.guild_only()
     async def queue(self, ctx:commands.Context):
         if ctx.voice_client:
@@ -360,7 +355,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Queue-Clear
-    @queue.command(name="clear", aliases=["cr"], help="Clears the queue")
+    @commands.command(name="queueclear", aliases=["cr"], help="Clears the queue")
     @commands.guild_only()
     async def queue_clear(self, ctx:commands.Context):
         if ctx.voice_client:
@@ -370,7 +365,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         await ctx.invoke(self.queue)
                         view = Confirm(ctx)
                         await ctx.send("Do you want to clear the queue", view=view)
-                        view.wait()
+                        await view.wait()
                         if view.value:
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
@@ -391,7 +386,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                 npmbed = discord.Embed(
                     color=self.color,
-                    description=F"Playing:\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
+                    description=F"Playing:\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\nNext: {ctx.voice_client.lqueue[1]}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
