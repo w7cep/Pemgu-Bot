@@ -109,20 +109,15 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message.send("Lyrics: Nothing is playing", ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        icmbed = discord.Embed(
-            color=self.music.color,
-            description=d,
-            timestamp=interaction.message.created_at
-        )
-        icmbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
         if self.ctx.voice_client:
             if interaction.user.voice:
                 for member in self.ctx.me.voice.channel.members:
                     if interaction.user.id == member.id: return True
-                return icmbed.description = F"<@{interaction.user.id}> - Only the people in {self.ctx.me.voice.channel.mention} can use this"
-            return icmbed.description = F"<@{interaction.user.id}> - You must be in a voice channel"
-        return icmbed.description = F"<@{interaction.user.id}> - I'm not in a voice channel"
-        await interaction.response.send_message(embed=icmbed, ephemeral=True)
+                await interaction.response.send_message(F"Only the people in {self.ctx.me.voice.channel.mention} can use this", ephemeral=True)
+                return False
+            await interaction.respoonse.send_message("You must be in voice channel", ephemeral=True)
+            return False
+        await interaction.response.send_message("I'm not in a voice channel", ephemeral=True)
         return False
 
 class Music(commands.Cog, description="Jamming out with these!"):
