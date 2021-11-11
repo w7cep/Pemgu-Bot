@@ -4,6 +4,7 @@ import core.utils.help as help
 from discord.ext import commands
 
 async def create_pool_postgres():
+    await bot.wait_until_ready()
     bot.postgres = await asyncpg.create_pool(dsn=os.getenv("DATABASE_URL"))
     print("Created to the Postgres Pool")
 
@@ -22,10 +23,12 @@ async def get_prefix(bot, message:discord.Message):
     return commands.when_mentioned_or(prefix)(bot, message)
 
 async def create_session_aiohttp():
+    await bot.wait_until_ready()
     bot.session = aiohttp.ClientSession()
     print("Created a AioHttp Session")
 
 async def create_node_pomice():
+    await bot.wait_until_ready()
     bot.pomice = pomice.NodePool()
     await bot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
     print("Created a Pomice Node")
