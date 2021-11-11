@@ -109,6 +109,18 @@ bot = PemguBase(
     allowed_mentions=discord.AllowedMentions.none()
 )
 
+@bot.command(name="news", aliases=["new"])
+async def news(ctx:commands.Context):
+    message = await bot.http.get_message(898287740267937813, 908136879944253490)
+    newmbed = discord.Embed(
+        color=bot.color,
+        title="Latest News",
+        description=F">>> {message.get('content')}\n{discord.utils.format_dt(message.get('timestamp'), style='f')} ({discord.utils.format_dt(message.get('timestamp'), style='R')})",
+        timestamp=ctx.message.created_at
+    )
+    newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+    await ctx.send(embed=newmbed)
+
 @bot.check
 async def blacklisted(ctx:commands.Context):
     reason = await bot.postgres.fetchval("SELECT reason FROM blacklist WHERE user_id=$1", ctx.author.id)
