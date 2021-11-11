@@ -121,7 +121,12 @@ class ViewMusic(discord.ui.View):
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
+        self.bot.pomice = pomice.NodePool()
         self.color = 0x1DB954
+
+    async def create_node_pomice(self):
+        await self.bot.pomice.create_node(bot=self.bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        print("Created a Pomice Node")
 
     def duration(self, length):
         return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
@@ -291,20 +296,22 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.author.voice:
                 if ctx.me.voice.channel == ctx.author.voice.channel:
                     if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        time = time.split(":")
-                        dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
-                        mtime = dtime.seconds*1000
-                        if not (mtime) >= ctx.voice_client.current.length:
-                            await ctx.voice_client.seek(mtime)
-                            sembed = discord.Embed(
-                                color=self.color,
-                                title=F"Seeked to {self.duration(mtime)}",
-                                description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {ctx.voice_client.current.length}",
-                                timestamp=ctx.message.created_at
-                            )
-                            sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                            return await ctx.send(embed=sembed)
-                        return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}\nFor example: 0:1:23")
+                        if ":" in time:
+                            time = time.split(":")
+                            dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
+                            mtime = dtime.seconds*1000
+                            if not (mtime) >= ctx.voice_client.current.length:
+                                await ctx.voice_client.seek(mtime)
+                                sembed = discord.Embed(
+                                    color=self.color,
+                                    title=F"Seeked to {self.duration(mtime)}",
+                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {ctx.voice_client.current.length}",
+                                    timestamp=ctx.message.created_at
+                                )
+                                sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                                return await ctx.send(embed=sembed)
+                            return await ctx.send(F"Time need to be like 0:1:23")
+                        return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
