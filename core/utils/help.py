@@ -49,8 +49,8 @@ class CustomHelp(commands.HelpCommand):
             "Moderation": "🎩",
             "Music": "🎵",
             "Owner": "👑",
-            "Settings": ⚙️"",
-            "Utility": "🛠️",
+            "Settings": "⚙️",
+            "Utility": "🛠️"
         }
 
     # Help Main
