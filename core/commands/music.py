@@ -58,7 +58,7 @@ class ViewMusic(discord.ui.View):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
-                description=F"Playing:\nTitle: ({self.ctx.voice_client.current.title})[{self.ctx.voice_client.current.uri}]\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}",
+                description=F"Playing:\nTitle: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
@@ -365,7 +365,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                 npmbed = discord.Embed(
                     color=self.color,
-                    description=F"Playing:\nTitle: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
+                    description=F"Playing:\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
@@ -399,7 +399,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
             color=self.color,
-            description=F"Playing:\nTitle: ({track.title})[{track.uri}]\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
+            description=F"Playing:\nTitle: [{track.title}]({track.uri})\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
@@ -414,7 +414,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await player.play(track=(await player.queue.get()))
             tembed = discord.Embed(
                 color=self.color,
-                description=F"Ended:\nTitle: ({track.title})[{track.uri}]\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
+                description=F"Ended:\nTitle: [{track.title}]({track.uri})\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
                 timestamp=track.ctx.message.created_at
             )
             tembed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
