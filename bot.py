@@ -115,7 +115,7 @@ async def news(ctx:commands.Context):
     newmbed = discord.Embed(
         color=bot.color,
         title="Latest News",
-        description=F">>> {message.get('content')}\n{discord.utils.format_dt(message.get('timestamp'), style='f')} ({discord.utils.format_dt(message.get('timestamp'), style='R')})",
+        description=message.get("content"),
         timestamp=ctx.message.created_at
     )
     newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
