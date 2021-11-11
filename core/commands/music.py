@@ -56,11 +56,22 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message("Skip: There is nothing in the queue", ephemeral=True)
         return await interaction.response.send_message("Skip: Nothing is playing", ephemeral=True)
 
+    @discord.ui.button(emoji="🔁", style=discord.ButtonStyle.blurple)
+    async def loop(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            if not self.ctx.voice_client.loop:
+                self.ctx.voice_client.loop = self.ctx.voice_client.current
+                return await interaction.response.send_message(F"Loop: turned on | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+            self.ctx.voice_client.loop = None
+            return await interaction.response.send_message(F"Loop: turned off | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+        return await interaction.response.send_message.send("Loop: Nothing is playing", ephemeral=True)
+
     async def nowplaying(self, interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
-                description=F"Playing:\nTitle: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}\nNext: {self.ctx.voice_client.lqueue[1]}",
+                title="Playing:",
+                description=F"Title: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}\nNext: {self.ctx.voice_client.lqueue[1]}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
@@ -68,7 +79,7 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message(embed=npmbed, ephemeral=True)
         return await interaction.response.send_message.send("Queue: Nothing is playing", ephemeral=True)
 
-    @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.grey)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
         if len(self.ctx.voice_client.lqueue) > 1:
             d = "\n".join(q for q in self.ctx.voice_client.lqueue)
@@ -81,16 +92,6 @@ class ViewMusic(discord.ui.View):
             qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             return await interaction.response.send_message(embed=qumbed, ephemeral=True)
         return await self.nowplaying(interaction=interaction)
-
-    @discord.ui.button(emoji="🔁", style=discord.ButtonStyle.grey)
-    async def loop(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
-            if not self.ctx.voice_client.loop:
-                self.ctx.voice_client.loop = self.ctx.voice_client.current
-                return await interaction.response.send_message(F"Loop: turned on | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-            self.ctx.voice_client.loop = None
-            return await interaction.response.send_message(F"Loop: turned off | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-        return await interaction.response.send_message.send("Loop: Nothing is playing", ephemeral=True)
 
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -288,6 +289,66 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
+    # NowPlaying
+    @commands.command(name="nowplaying", aliases=["np"], help="Tells the playing music")
+    @commands.guild_only()
+    async def nowplaying(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+                npmbed = discord.Embed(
+                    color=self.color,
+                    title="Playing:",
+                    description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\nNext: {ctx.voice_client.lqueue[1]}",
+                    timestamp=ctx.voice_client.current.ctx.message.created_at
+                )
+                npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+                npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                return await ctx.send(embed=npmbed)
+            return await ctx.send("Nothing is playing")
+        await ctx.send("I'm not in a voice channel")
+
+    # Queue
+    @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
+    @commands.guild_only()
+    async def queue(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if len(ctx.voice_client.lqueue) > 1:
+                d = "\n".join(q for q in ctx.voice_client.lqueue)
+                qumbed = discord.Embed(
+                    color=self.color,
+                    title="Queue",
+                    description=self.bot.trim(d, 4095),
+                    timestamp=ctx.message.created_at
+                )
+                qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                return await ctx.send(embed=qumbed)
+            return await ctx.invoke(self.nowplaying)
+        await ctx.send("I'm not in a voice channel")
+
+    # Queue-Clear
+    @commands.command(name="queueclear", aliases=["cr"], help="Clears the queue")
+    @commands.guild_only()
+    async def queue_clear(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if not ctx.voice_client.queue.empty():
+                        await ctx.invoke(self.queue)
+                        view = Confirm(ctx)
+                        await ctx.send("Do you want to clear the queue", view=view)
+                        await view.wait()
+                        if view.value:
+                            for _ in range(ctx.voice_client.queue.qsize()):
+                                ctx.voice_client.queue.get_nowait()
+                                ctx.voice_client.queue.task_done()
+                                ctx.voice_client.lqueue.pop(0)
+                            return await ctx.send("Queue has been cleared")
+                        return await ctx.send("Queue has not been cleared")
+                    return await ctx.send("Nothing is in the queue")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
+        await ctx.send("I'm not in a voice channel")
+
     # Seek
     @commands.command(name="seek", aliases=["se"], help="Seeks to the given time")
     @commands.guild_only()
@@ -336,65 +397,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
-    # Queue
-    @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
-    @commands.guild_only()
-    async def queue(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if len(ctx.voice_client.lqueue) > 1:
-                d = "\n".join(q for q in ctx.voice_client.lqueue)
-                qumbed = discord.Embed(
-                    color=self.color,
-                    title="Queue",
-                    description=self.bot.trim(d, 4095),
-                    timestamp=ctx.message.created_at
-                )
-                qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=qumbed)
-            return await ctx.invoke(self.nowplaying)
-        await ctx.send("I'm not in a voice channel")
-
-    # Queue-Clear
-    @commands.command(name="queueclear", aliases=["cr"], help="Clears the queue")
-    @commands.guild_only()
-    async def queue_clear(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if not ctx.voice_client.queue.empty():
-                        await ctx.invoke(self.queue)
-                        view = Confirm(ctx)
-                        await ctx.send("Do you want to clear the queue", view=view)
-                        await view.wait()
-                        if view.value:
-                            for _ in range(ctx.voice_client.queue.qsize()):
-                                ctx.voice_client.queue.get_nowait()
-                                ctx.voice_client.queue.task_done()
-                                ctx.voice_client.lqueue.pop(0)
-                            return await ctx.send("Queue has been cleared")
-                        return await ctx.send("Queue has not been cleared")
-                    return await ctx.send("Nothing is in the queue")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
-
-    # NowPlaying
-    @commands.command(name="nowplaying", aliases=["np"], help="Tells the playing music")
-    @commands.guild_only()
-    async def nowplaying(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                npmbed = discord.Embed(
-                    color=self.color,
-                    description=F"Playing:\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\nNext: {ctx.voice_client.lqueue[1]}",
-                    timestamp=ctx.voice_client.current.ctx.message.created_at
-                )
-                npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
-                npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=npmbed)
-            return await ctx.send("Nothing is playing")
-        await ctx.send("I'm not in a voice channel")
-
     # Lyrics
     @commands.command(name="lyrics", aliases=["ly"], help="Shows the lyrics for music")
     @commands.guild_only()
@@ -420,7 +422,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
             color=self.color,
-            description=F"Playing:\nTitle: [{track.title}]({track.uri})\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
+            title="Playing:",
+            description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
@@ -435,7 +438,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 return await player.play(track=(await player.queue.get()))
             tembed = discord.Embed(
                 color=self.color,
-                description=F"Ended:\nTitle: [{track.title}]({track.uri})\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
+                title="Ended:",
+                description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
                 timestamp=track.ctx.message.created_at
             )
             tembed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
