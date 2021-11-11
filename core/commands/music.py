@@ -360,6 +360,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
 
     # Queue-Clear
     @queue.command(name="clear", aliases=["cr"], help="Clears the queue")
+    @commands.guild_only()
     async def queue_clear(self, ctx:commands.Context):
         if ctx.voice_client:
             if ctx.author.voice:
