@@ -341,7 +341,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Queue
-    @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
+    @commands.group(name="queue", aliases=["qu"], help="Shows the queue")
     @commands.guild_only()
     async def queue(self, ctx:commands.Context):
         if ctx.voice_client:
@@ -356,6 +356,28 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 return await ctx.send(embed=qumbed)
             return await ctx.invoke(self.nowplaying)
+        await ctx.send("I'm not in a voice channel")
+
+    # Queue-Clear
+    @queue.command(name="clear", aliases=["cr"], help="Clears the queue")
+    async def queue_clear(self, ctx:commands.Context):
+        if ctx.voice_client:
+            if ctx.author.voice:
+                if ctx.me.voice.channel == ctx.author.voice.channel:
+                    if not ctx.voice_client.queue.empty():
+                        await ctx.invoke(self.queue)
+                        view = Confirm(ctx)
+                        await ctx.send("Do you want to clear the queue", view=view)
+                        if view.value:
+                            for _ in range(ctx.voice_client.queue.qsize()):
+                                ctx.voice_client.queue.get_nowait()
+                                ctx.voice_client.queue.task_done()
+                                ctx.voice_client.lqueue.pop(0)
+                            return await ctx.send("Queue has been cleared")
+                        return await ctx.send("Queue has not been cleared")
+                    return await ctx.send("Nothing is in the queue")
+                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
+            return await ctx.send("You must be in a voice channel")
         await ctx.send("I'm not in a voice channel")
 
     # NowPlaying
