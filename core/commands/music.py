@@ -60,7 +60,7 @@ class ViewMusic(discord.ui.View):
                 color=self.music.color,
                 url=self.ctx.voice_client.current.uri,
                 title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.progress(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}",
+                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
@@ -131,7 +131,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     def duration(self, length):
         return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
 
-    def progress(self, position, length, size=10):
+    def bar(self, position, length, size=10):
         done = int((position/length)*size)
         return F"{'🔷'*done}{'🔶'*(size-done)}"
 
@@ -303,7 +303,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                                 sembed = discord.Embed(
                                     color=self.color,
                                     title=F"Seeked to {self.duration(mtime)}",
-                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
+                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
                                 sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -363,7 +363,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     color=self.color,
                     url=ctx.voice_client.current.uri,
                     title=F"Playing:\n{ctx.voice_client.current.title}",
-                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
+                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -396,7 +396,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Playing:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.progress(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
@@ -413,7 +413,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             color=self.color,
             url=track.uri,
             title=F"Ended:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.duration(track.length)}",
+            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
         tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
