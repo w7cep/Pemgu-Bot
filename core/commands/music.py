@@ -310,6 +310,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                                     timestamp=ctx.message.created_at
                                 )
                                 sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                                print(mtime, ctx.voice_client.position, ctx.voice_client.current.length)
                                 return await ctx.send(embed=sembed)
                             return await ctx.send(F"Time need to be like 0:1:23")
                         return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
