@@ -43,8 +43,8 @@ class CustomHelp(commands.HelpCommand):
         )
         self.emojis = {
             "Anime": "🍘",
-            "Fun": "😹",
-            "Game": "🎮",
+            "Fun": "🤡",
+            "Game": "👾",
             "Information": "🔎",
             "Moderation": "🎩",
             "Music": "🎵",
