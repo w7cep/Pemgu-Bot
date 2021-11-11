@@ -370,6 +370,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         await ctx.invoke(self.queue)
                         view = Confirm(ctx)
                         await ctx.send("Do you want to clear the queue", view=view)
+                        view.wait()
                         if view.value:
                             for _ in range(ctx.voice_client.queue.qsize()):
                                 ctx.voice_client.queue.get_nowait()
