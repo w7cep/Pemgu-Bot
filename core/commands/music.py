@@ -326,7 +326,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         await ctx.send("I'm not in a voice channel")
 
     # Queue-Clear
-    @commands.command(name="queueclear", aliases=["cr"], help="Clears the queue")
+    @commands.command(name="queueclear", aliases=["qucr"], help="Clears the queue")
     @commands.guild_only()
     async def queue_clear(self, ctx:commands.Context):
         if ctx.voice_client:
