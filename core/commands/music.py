@@ -109,11 +109,16 @@ class ViewMusic(discord.ui.View):
         return await interaction.response.send_message.send("Lyrics: Nothing is playing", ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
-        for member in self.ctx.me.voice.channel.members:
-            if interaction.user.id == member.id: return True
+        if self.ctx.voice_client:
+            if interaction.user.voice:
+                for member in self.ctx.me.voice.channel.members:
+                    if interaction.user.id == member.id: return True
+                d = F"<@{interaction.user.id}> - Only the people in {self.ctx.me.voice.channel.mention} can use this"
+            d = F"<@{interaction.user.id}> - You must be in a voice channel"
+        d = F"<@{interaction.user.id}> - I'm not in a voice channel"
         icheckmbed = discord.Embed(
             color=self.music.color,
-            description=F"<@{interaction.user.id}> - You can't use this\nOnly the people in {self.ctx.me.voice.channel.mention} can use this\nIf you want to use this join",
+            description=d,
             timestamp=interaction.message.created_at
         )
         icheckmbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
