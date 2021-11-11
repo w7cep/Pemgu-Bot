@@ -307,7 +307,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             if not (mtime) >= ctx.voice_client.current.length:
                                 sembed = discord.Embed(
                                     color=self.color,
-                                    description=F"Seeked: {self.duration(mtime)}\nTitle: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
+                                    description=F"Seeked: {self.duration(mtime)}\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
                                 sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
