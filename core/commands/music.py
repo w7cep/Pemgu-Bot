@@ -281,6 +281,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         if not ctx.voice_client.loop:
                             ctx.voice_client.loop = ctx.voice_client.current
                             return await ctx.send(F"Loop has been turned on - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+                        ctx.voice_client.loop = None
                         return await ctx.send(F"Loop has been turned off - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
