@@ -58,11 +58,10 @@ class ViewMusic(discord.ui.View):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
                 color=self.music.color,
-                url=self.ctx.voice_client.current.uri,
-                title=F"Playing:\n{self.ctx.voice_client.current.title}",
-                description=F"By: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}",
+                description=F"Playing:\nTitle: ({self.ctx.voice_client.current.title})[{self.ctx.voice_client.current.uri}]\nBy: {self.ctx.voice_client.current.author}\nRequested by {self.ctx.voice_client.current.requester.mention}\nDuration: {self.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.duration(self.ctx.voice_client.position)} - {self.duration(self.ctx.voice_client.current.length)}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
+            npmbed.set_thumbnail(url=self.ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             return await interaction.response.send_message(embed=npmbed, ephemeral=True)
         return await interaction.response.send_message.send("Queue: Nothing is playing", ephemeral=True)
@@ -307,9 +306,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
                                 sembed = discord.Embed(
                                     color=self.color,
                                     title=F"Seeked to {self.duration(mtime)}",
-                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
+                                    description=F"Title: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
+                                sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
                                 sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                                 await ctx.voice_client.seek(mtime)
                                 return await ctx.send(embed=sembed)
@@ -365,11 +365,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                 npmbed = discord.Embed(
                     color=self.color,
-                    url=ctx.voice_client.current.uri,
-                    title=F"Playing:\n{ctx.voice_client.current.title}",
-                    description=F"By: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
+                    description=F"Playing:\nTitle: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequested by {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
+                npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
                 npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 return await ctx.send(embed=npmbed)
             return await ctx.send("Nothing is playing")
@@ -400,30 +399,28 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
             color=self.color,
-            url=track.uri,
-            title=F"Playing:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
+            description=F"Playing:\nTitle: ({track.title})[{track.uri}]\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
+        tsmbed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
         await track.ctx.send(embed=tsmbed)
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
-        if player.loop:
-            return await player.play(track=player.loop)
-        if not player.queue.empty():
-            player.lqueue.pop(0)
-            return await player.play(track=(await player.queue.get()))
-        tembed = discord.Embed(
-            color=self.color,
-            url=track.uri,
-            title=F"Ended:\n{track.title}",
-            description=F"By: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
-            timestamp=track.ctx.message.created_at
-        )
-        tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        return await track.ctx.send(embed=tembed)
+        if not player.loop:
+            if not player.queue.empty():
+                player.lqueue.pop(0)
+                return await player.play(track=(await player.queue.get()))
+            tembed = discord.Embed(
+                color=self.color,
+                description=F"Ended:\nTitle: ({track.title})[{track.uri}]\nBy: {track.author}\nRequested by {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
+                timestamp=track.ctx.message.created_at
+            )
+            tembed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
+            tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+            return await track.ctx.send(embed=tembed)
+        return await player.play(track=player.loop)
 
 def setup(bot):
     bot.add_cog(Music(bot))
