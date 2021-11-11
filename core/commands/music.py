@@ -220,6 +220,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         for _ in range(ctx.voice_client.queue.qsize()):
                             ctx.voice_client.queue.get_nowait()
                             ctx.voice_client.queue.task_done()
+                            ctx.voice_client.lqueue.pop(0)
                         await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
                         return await ctx.voice_client.stop()
                     return await ctx.send("Nothing is playing")
