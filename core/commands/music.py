@@ -94,9 +94,8 @@ class ViewMusic(discord.ui.View):
     @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
-            try:
-                lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
-                if not lyrics.lyrics: return await interaction.response.send_message(F"Lyrics: There is no lyrics, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+            lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
+            if lyrics:
                 lymbed = discord.Embed(
                     color=self.music.color,
                     title=lyrics.title,
@@ -107,12 +106,7 @@ class ViewMusic(discord.ui.View):
                 lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
                 lymbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 return await interaction.response.send_message(embed=lymbed, ephemeral=True)
-            except:
-                return await interaction.response.send_message(F"Lyrics: Didn't found any, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-            else:
-                if not lyrics.lyrics:
-                    return await interaction.response.send_message(F"Lyrics: Didn't found any, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-                else: return
+            return await interaction.response.send_message(F"Lyrics: Didn't found any, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await interaction.response.send_message.send("Lyrics: Nothing is playing", ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
@@ -388,8 +382,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not music:
             if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
             else: return await ctx.send("Since I'm not in a voice channel\nYou need to pass a music")
-        try:
-            lyrics = await self.bot.openrobot.lyrics(music)
+        lyrics = await self.bot.openrobot.lyrics(music)
+        if lyrics:
             lymbed = discord.Embed(
                 color=self.color,
                 title=lyrics.title,
@@ -399,12 +393,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
             lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
             lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
             lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-            await ctx.send(embed=lymbed)
-        except:
-            await ctx.send(F"Didn't found any lyrics for {music}")
-        else:
-            if not lyrics.lyrics:
-                await ctx.send(F"Didn't found any lyrics for {music}")
+            return await ctx.send(embed=lymbed)
+        return await ctx.send(F"Didn't found any lyrics for {music}")
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
