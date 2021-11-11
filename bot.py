@@ -26,7 +26,7 @@ async def create_session_aiohttp():
     print("Created a AioHttp Session")
 
 async def create_node_pomice():
-    bot.pomice = pomice.Node()
+    bot.pomice = pomice.NodePool()
     await bot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="Pomice", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
     print("Created a Pomice Node")
 
