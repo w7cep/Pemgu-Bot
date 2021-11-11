@@ -187,7 +187,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
             return await ctx.send("You must be in a voice channel")
         if ctx.me.voice.channel == ctx.author.voice.channel:
             results = await ctx.voice_client.get_tracks(query=term, ctx=ctx)
-            print(results)
             if not results:
                 return await ctx.send("No results were found for that search term.")
             if isinstance(results, pomice.Playlist):
@@ -300,17 +299,15 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             time = time.split(":")
                             dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
                             mtime = dtime.seconds*1000
-                            print(mtime, ctx.voice_client.current.length)
                             if not (mtime) >= ctx.voice_client.current.length:
-                                await ctx.voice_client.seek(mtime)
                                 sembed = discord.Embed(
                                     color=self.color,
                                     title=F"Seeked to {self.duration(mtime)}",
-                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}",
+                                    description=F"Song: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.progress(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
                                 sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                                print(mtime, ctx.voice_client.position, ctx.voice_client.current.length)
+                                await ctx.voice_client.seek(mtime)
                                 return await ctx.send(embed=sembed)
                             return await ctx.send(F"Time need to be like 0:1:23")
                         return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
