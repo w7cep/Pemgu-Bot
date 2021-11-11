@@ -1,82 +1,5 @@
 import discord
 
-class PaginatorButtons(discord.ui.Button):
-    def __init__(self, view, **kwargs):
-        super().__init__(**kwargs)
-        self.help = view.help
-        self.mapping = view.mapping
-        self.homepage = view.homepage
-        self.page = view.page
-        self.mbeds = view.mbeds
-
-    async def callback(self, interaction:discord.Interaction):
-        if self.emoji == "⏯":
-            await interaction.response.edit_message(embed=self.homepage)
-        if self.emoji == "⏮":
-            self.page -= 1
-            await interaction.response.edit_message(embed=self.mbeds[self.page], view=self.view)
-        if self.emoji == "⏹":
-            await interaction.message.delete()
-        if self.emoji == "⏭":
-            self.page += 1
-            await interaction.response.edit_message(embed=self.mbeds[self.page], view=self.view)
-
-class PaginatorView(discord.ui.View):
-    def __init__(self, help, mapping):
-        super().__init__(timeout=None)
-        self.help = help
-        self.mapping = mapping
-        self.homepage = discord.Embed(
-            color=self.help.context.bot.color,
-            title=F"{self.help.context.me.name}'s Help",
-            description="For more help or information use the buttons to change pages.",
-            timestamp=self.help.context.message.created_at
-        )
-        self.page = 0
-        self.mbeds = [self.homepage]
-        def gts(command):
-            return F"• **{command.qualified_name}** {command.signature} - {command.help or 'No help found...'}\n"
-        for cog, commands in self.mapping.items():
-            name = cog.qualified_name if cog else "Alone"
-            description = cog.description if cog else "Commands without category"
-            if not name.startswith("On"):
-                mbed = discord.Embed(
-                        color=self.help.context.bot.color,
-                        title=F"{self.help.emojis.get(name) if self.help.emojis.get(name) else '❓'} {name} Category",
-                        description=F"{description}\n\n{''.join(gts(command) for command in commands)}",
-                        timestamp=self.help.context.message.created_at
-                )
-                mbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
-                mbed.set_author(name=self.help.context.author, icon_url=self.help.context.author.display_avatar.url)
-                mbed.set_footer(text=F"<> is required | [] is optional | Page: {len(self.mbeds)}")
-                self.mbeds.append(mbed)
-        self.add_item(item=PaginatorButtons(emoji="⏯", style=discord.ButtonStyle.green, view=self))
-        self.add_item(item=PaginatorButtons(emoji="⏮", style=discord.ButtonStyle.blurple, disabled=True, view=self))
-        self.add_item(item=PaginatorButtons(emoji="⏹", style=discord.ButtonStyle.red, view=self))
-        self.add_item(item=PaginatorButtons(emoji="⏭", style=discord.ButtonStyle.blurple, view=self))
-        self.add_item(item=discord.ui.Button(emoji="🧇", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
-        self.add_item(item=discord.ui.Button(emoji="👨‍💻", label="Github", url="https://github.com/lvlahraam/Pemgu-Bot"))
-
-    async def on_timeout(self):
-        try:
-            await self.message.edit(view=None)
-        except discord.NotFound:
-            return
-
-    async def interaction_check(self, interaction:discord.Interaction):
-        if interaction.user.id == self.help.context.author.id:
-            return True
-        icheckmbed = discord.Embed(
-            color=self.help.context.bot.color,
-            title="You can't use this",
-            description=F"<@{interaction.user.id}> - Only <@{self.help.context.author.id}> can use that\nCause they did the command\nIf you wanted to use the command, do what they did",
-            timestamp=self.help.context.message.created_at
-        )
-        icheckmbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
-        icheckmbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
-        await interaction.response.send_message(embed=icheckmbed, ephemeral=True)
-        return False
-
 class SelectUI(discord.ui.Select):
     def __init__(self, view, **kwargs):
         super().__init__(**kwargs)
@@ -89,14 +12,11 @@ class SelectUI(discord.ui.Select):
 
     async def callback(self, interaction:discord.Interaction):
         for cog, commands in self.mapping.items():
-            name = cog.qualified_name if cog else "Alone"
-            description = cog.description if cog else "Commands without category"
-            cmds = cog.walk_commands() if cog else commands
-            if self.values[0] == name:
+            if self.values[0] == cog.qualified_name:
                 mbed = discord.Embed(
                     color=self.help.context.bot.color,
-                    title=F"{self.help.emojis.get(name) if self.help.emojis.get(name) else '❓'} {name} Category",
-                    description=F"{description}\n\n{''.join(self.gts(command) for command in cmds)}",
+                    title=F"{self.help.emojis.get(cog.qualified_name) if self.help.emojis.get(cog.qualified_name) else '❓'} {cog.qualified_name}",
+                    description=F"{cog.description}\n\n{''.join(self.gts(command) for command in cog.walk_commands())}",
                     timestamp=self.help.context.message.created_at
                 )
                 mbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
@@ -117,10 +37,8 @@ class SelectView(discord.ui.View):
         )
         options = []
         for cog, commands in self.mapping.items():
-            name = cog.qualified_name if cog else "Alone"
-            description = cog.description if cog else "Commands without category..."
-            if not name.startswith("On") and cog:
-                option = discord.SelectOption(emoji=self.help.emojis.get(name) if self.help.emojis.get(name) else '❓', label=F"{name} Category", description=description, value=name)
+            if cog and not cog.qualified_name.startswith("On") and not cog.qualified_name in self.help.context.bot._others:
+                option = discord.SelectOption(emoji=self.help.emojis.get(cog.qualified_name) if self.help.emojis.get(cog.qualified_name) else '❓', label=F"{cog.qualified_name} Category", description=cog.description, value=cog.qualified_name)
                 options.append(option)
         self.add_item(item=SelectUI(placeholder="Where do you want to go...", options=options, min_values=1, max_values=1, view=self))
         self.add_item(item=discord.ui.Button(emoji="➕", label="Invite", url=discord.utils.oauth_url(client_id=self.help.context.me.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions(administrator=True))))
