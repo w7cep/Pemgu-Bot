@@ -14,7 +14,7 @@ class OnError(commands.Cog):
             cfmbed = discord.Embed(
                 color=self.bot.color,
                 title=F"❌ An Error Occurred: {ctx.command}",
-                description=F"```diff\nerror.message\n```",
+                description=F"```diff\n{error.message}\n```",
                 timestamp=ctx.message.created_at
             )
             cfmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
