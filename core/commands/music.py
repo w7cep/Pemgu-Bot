@@ -10,7 +10,7 @@ class ViewMusic(discord.ui.View):
         self.ctx = ctx
         self.music = music
 
-    @discord.ui.button(label="Resume & Pause", style=discord.ButtonStyle.green)
+    @discord.ui.button(emoji="⏯", style=discord.ButtonStyle.green)
     async def ue(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_paused:
             await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
@@ -18,7 +18,7 @@ class ViewMusic(discord.ui.View):
         await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await self.ctx.voice_client.set_pause(pause=True)
 
-    @discord.ui.button(label="Stop", style=discord.ButtonStyle.red)
+    @discord.ui.button(emoji="⏹", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.queue.empty():
@@ -31,7 +31,7 @@ class ViewMusic(discord.ui.View):
             return await self.ctx.voice_client.stop()
         return await interaction.response.send_message("Stop: Nothing is playing", ephemeral=True)
 
-    @discord.ui.button(label="Destroy", style=discord.ButtonStyle.red)
+    @discord.ui.button(emoji="⏺", style=discord.ButtonStyle.red)
     async def destroy(self, button:discord.ui.Button, interaction:discord.Interaction):
         if not self.ctx.voice_client.queue.empty():
             for _ in range(self.ctx.voice_client.queue.qsize()):
@@ -45,7 +45,7 @@ class ViewMusic(discord.ui.View):
             await interaction.response.send_message("Destroyed", ephemeral=True)
         return await self.ctx.voice_client.destroy()
 
-    @discord.ui.button(label="Skip", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(emoji="⏭", style=discord.ButtonStyle.blurple)
     async def skip(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.queue.empty():
@@ -66,7 +66,7 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message(embed=npmbed, ephemeral=True)
         return await interaction.response.send_message.send("Queue: Nothing is playing", ephemeral=True)
 
-    @discord.ui.button(label="Queue", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.blurple)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
         if len(self.ctx.voice_client.lqueue) > 1:
             d = "\n".join(q for q in self.ctx.voice_client.lqueue)
@@ -80,7 +80,7 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message(embed=qumbed, ephemeral=True)
         return await self.nowplaying(interaction=interaction)
 
-    @discord.ui.button(label="Loop", style=discord.ButtonStyle.grey)
+    @discord.ui.button(emoji="🔁", style=discord.ButtonStyle.grey)
     async def loop(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             if not self.ctx.voice_client.loop:
@@ -90,7 +90,7 @@ class ViewMusic(discord.ui.View):
             return await interaction.response.send_message(F"Loop: turned off | {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await interaction.response.send_message.send("Loop: Nothing is playing", ephemeral=True)
 
-    @discord.ui.button(label="Lyrics", style=discord.ButtonStyle.grey)
+    @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
