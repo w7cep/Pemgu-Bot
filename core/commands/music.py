@@ -12,11 +12,13 @@ class ViewMusic(discord.ui.View):
 
     @discord.ui.button(emoji="⏯", style=discord.ButtonStyle.green)
     async def ue(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if self.ctx.voice_client.is_paused:
-            await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
-            return await self.ctx.voice_client.set_pause(pause=False)
-        await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
-        return await self.ctx.voice_client.set_pause(pause=True)
+        if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
+            if self.ctx.voice_client.is_paused:
+                await interaction.response.send_message(F"Resumed: {self.ctx.voice_client.current.title} | {self.ctx.voice_client.current.author}", ephemeral=True)
+                return await self.ctx.voice_client.set_pause(pause=False)
+            await interaction.response.send_message(F"Paused: {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+            return await self.ctx.voice_client.set_pause(pause=True)
+        return await interaction.response.send_message("Resume/Pause: Nothing is playing", ephemeral=True)
 
     @discord.ui.button(emoji="⏹", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -115,7 +117,7 @@ class ViewMusic(discord.ui.View):
                     if interaction.user.id == member.id: return True
                 await interaction.response.send_message(F"Only the people in {self.ctx.me.voice.channel.mention} can use this", ephemeral=True)
                 return False
-            await interaction.respoonse.send_message("You must be in voice channel", ephemeral=True)
+            await interaction.response.send_message("You must be in voice channel", ephemeral=True)
             return False
         await interaction.response.send_message("I'm not in a voice channel", ephemeral=True)
         return False
@@ -305,16 +307,15 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             if not (mtime) >= ctx.voice_client.current.length:
                                 sembed = discord.Embed(
                                     color=self.color,
-                                    title=F"Seeked to {self.duration(mtime)}",
-                                    description=F"Title: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
+                                    description=F"Seeked: {self.duration(mtime)}\nTitle: ({ctx.voice_client.current.title})[{ctx.voice_client.current.uri}]\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
                                 sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
                                 sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                                 await ctx.voice_client.seek(mtime)
                                 return await ctx.send(embed=sembed)
-                            return await ctx.send(F"Time need to be like 0:1:23")
-                        return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
+                            return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
+                        return await ctx.send(F"Time need to be like 0:1:23")
                     return await ctx.send("Nothing is playing")
                 return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
             return await ctx.send("You must be in a voice channel")
