@@ -20,10 +20,11 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     @commands.command(name="pp", help="Tells your or the given user's pp size")
     async def pp(self, ctx:commands.Context, user:discord.User=None):
         user = ctx.author if not user else user
+        size = random.randint(1, 35)
         ppmbed = discord.Embed(
             color=self.bot.color,
             title=F"{user}'s PP Size:",
-            description=F"8{'='*random.randint(1, 69)}D",
+            description=F"8{'='*size}D ({size}cm)",
             timestamp=ctx.message.created_at
         )
         ppmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
