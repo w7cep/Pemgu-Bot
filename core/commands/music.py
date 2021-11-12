@@ -298,7 +298,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 npmbed = discord.Embed(
                     color=self.color,
                     title="Playing:",
-                    description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\nNext: {ctx.voice_client.lqueue[1]}",
+                    description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\nNext: {ctx.voice_client.lqueue[1] if len(ctx.voice_client.lqueue) > 1 else 'Nothing is in the queue'}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
                 )
                 npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
