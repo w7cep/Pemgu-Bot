@@ -1,10 +1,8 @@
 import discord, asyncpg, os, aiohttp, pomice, openrobot.api_wrapper, random
-import ast, re, inspect
 import core.utils.help as help
 from discord.ext import commands
 
 async def create_pool_postgres():
-    await bot.wait_until_ready()
     bot.postgres = await asyncpg.create_pool(dsn=os.getenv("DATABASE_URL"))
     print("Created to the Postgres Pool")
 
@@ -23,7 +21,6 @@ async def get_prefix(bot, message:discord.Message):
     return commands.when_mentioned_or(prefix)(bot, message)
 
 async def create_session_aiohttp():
-    await bot.wait_until_ready()
     bot.session = aiohttp.ClientSession()
     print("Created a AioHttp Session")
 
@@ -138,6 +135,6 @@ async def blacklisted(ctx:commands.Context):
 bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"))
 
 bot.loop.run_until_complete(create_pool_postgres())
-bot.loop.create_task(create_session_aiohttp())
+bot.loop.run_until_complete(create_session_aiohttp())
 bot.loop.create_task(create_node_pomice())
 bot.run(os.getenv("TOKEN"))
