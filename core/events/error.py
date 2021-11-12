@@ -8,7 +8,7 @@ class OnError(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx:commands.Context):
-        await ctx.message.add_reaction("❎")
+        await ctx.message.add_reaction("✅")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx:commands.Context, error):
