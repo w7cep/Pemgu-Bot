@@ -68,7 +68,7 @@ class SelectView(discord.ui.View):
         icheckmbed = discord.Embed(
             color=self.help.context.bot.color,
             title="You can't use this",
-            description=F"<@{interaction.user.id}> - Only <@{self.help.context.author.id}> can use that\nCause they did the command\nIf you wanted to use the command, do what they did",
+            description=F"{interaction.user.mention} - Only {self.help.context.author.mention} can use that\nCause they did the command\nIf you wanted to use the command, do what they did",
             timestamp=self.help.context.message.created_at
         )
         icheckmbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
@@ -133,7 +133,7 @@ class ButtonView(discord.ui.View):
         icheckmbed = discord.Embed(
             color=self.help.context.bot.color,
             title="You can't use this",
-            description=F"<@{interaction.user.id}> - Only <@{self.help.context.author.id}> can use that\nCause they did the command\nIf you wanted to use the command, do what they did",
+            description=F"{interaction.user.mention} - Only {self.help.context.author.mention} can use that\nCause they did the command\nIf you wanted to use the command, do what they did",
             timestamp=self.help.context.message.created_at
         )
         icheckmbed.set_thumbnail(url=self.help.context.me.display_avatar.url)

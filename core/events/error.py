@@ -8,11 +8,11 @@ class OnError(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx:commands.Context):
-        await ctx.message.add_reaction("<:greenTick:596576670815879169>")
+        await ctx.message.add_reaction(":greenTick:596576670815879169")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx:commands.Context, error):
-        await ctx.message.add_reaction("<:redTick:596576672149667840>")
+        await ctx.message.add_reaction(":redTick:596576672149667840")
         if isinstance(error, commands.CommandInvokeError):
             error = error.original
         print("".join(traceback.format_exception(type(error), error,  error.__traceback__)))
