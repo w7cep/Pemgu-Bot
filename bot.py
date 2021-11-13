@@ -54,6 +54,9 @@ async def create_node_pomice():
     for n in lnodes:
         await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
+    for s in slnodes:
+        await bot.pomice.create_node(bot=bot, secure=True, host=s, port=443, password=sdnodes.get(s)["pw"], identifiersdnodes.get(s)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        print(F"Created a Secure Pomice Node: {s} - {sdnodes.get(s)["identifier"]
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
