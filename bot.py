@@ -26,14 +26,18 @@ async def create_session_aiohttp():
 
 async def create_node_pomice():
     await bot.wait_until_ready()
-    lnodes = ["lavalink.darrennathanael.com", "lava.link"]
+    lnodes = "lavalink.cjstevenson.xyz", "lavalink.cjstevenson.com", "lavalink.devz.cloud", "lavalink2.devz.cloud", "disbotlistlavalink.ml", "lavalink.mrpriyamyt.repl.co"]
     dnodes = {
-        "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "clover"},
-        "lava.link": {"port": "80", "pw": "math", "identifier": "math"}
+        "lavalink.cjstevenson.xyz": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
+        "lavalink.cjstevenson.com": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
+        "lavalink.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
+        "lavalink2.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
+        "disbotlistlavalink.ml": {"pw": "LAVA", "identifier": "LAVA"},
+        "lavalink.mrpriyamyt.repl.co": {"pw": "methisbigbrain", "identifier": "methisbigbrain"}
     }
     bot.pomice = pomice.NodePool()
     for n in lnodes:
-        await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+        await bot.pomice.create_node(bot=bot, host=n, secure=True, port=443, password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
         print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
 
 class PemguBase(commands.AutoShardedBot):
