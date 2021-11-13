@@ -26,7 +26,14 @@ async def create_session_aiohttp():
 
 async def create_node_pomice():
     await bot.wait_until_ready()
-    lnodes = "lavalink.cjstevenson.xyz", "lavalink.cjstevenson.com", "lavalink.devz.cloud", "lavalink2.devz.cloud", "disbotlistlavalink.ml", "lavalink.mrpriyamyt.repl.co"]
+    lnodes = [
+        "lavalink.cjstevenson.xyz",
+        "lavalink.cjstevenson.com",
+        "lavalink.devz.cloud",
+        "lavalink2.devz.cloud",
+        "disbotlistlavalink.ml",
+        "lavalink.mrpriyamyt.repl.co"
+    ]
     dnodes = {
         "lavalink.cjstevenson.xyz": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
         "lavalink.cjstevenson.com": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
