@@ -201,8 +201,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author} | {ctx.author.mention}")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
-            else:
-                return await ctx.send(F"Added {results if isinstance(results, pomice.Playlist) else results[0]} to the queue")
+            return await ctx.send(F"Added {results if isinstance(results, pomice.Playlist) else results[0]} to the queue")
         return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Stop
@@ -445,7 +444,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             tembed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
             tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
             return await track.ctx.send(embed=tembed)
-        return await player.play(track=player.loop)
+        await player.play(track=player.loop)
 
 def setup(bot):
     bot.add_cog(Music(bot))
