@@ -8,13 +8,12 @@ class OnError(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx:commands.Context):
-        await ctx.message.add_reaction("✅")
+        if ctx.me.guild_permissions.add_reactions: await ctx.message.add_reaction("✅")
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx:commands.Context, error):
-        await ctx.message.add_reaction("❎")
-        if isinstance(error, commands.CommandInvokeError):
-            error = error.original
+        if ctx.me.guild_permissions.add_reactions: await ctx.message.add_reaction("❎")
+        if isinstance(error, commands.CommandInvokeError): error = error.original
         print("".join(traceback.format_exception(type(error), error,  error.__traceback__)))
         errormbed = discord.Embed(
             color=self.bot.color,
