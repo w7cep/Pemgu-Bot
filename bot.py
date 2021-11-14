@@ -94,6 +94,12 @@ class PemguBase(commands.AutoShardedBot):
         color = random.choice(colors)
         return color
 
+    @property
+    def music_color(self):
+        colors = [0xFF0000, 0x1DB954, 0xFF5500]
+        color = random.choice(colors)
+        return color
+
     def trim(self, text: str, limit: int):
         text = text.strip()
         if len(text) > limit: return text[:limit-3] + "..."

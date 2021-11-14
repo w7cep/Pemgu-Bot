@@ -69,7 +69,7 @@ class ViewMusic(discord.ui.View):
     async def nowplaying(self, interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
             npmbed = discord.Embed(
-                color=self.music.color,
+                color=self.ctx.bot.music_color,
                 title="Playing:",
                 description=F"Title: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}{f'\nNext: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
@@ -84,7 +84,7 @@ class ViewMusic(discord.ui.View):
         if len(self.ctx.voice_client.lqueue) > 1:
             d = "\n".join(q for q in self.ctx.voice_client.lqueue)
             qumbed = discord.Embed(
-                color=self.music.color,
+                color=self.ctx.bot.music_color,
                 title="Queue",
                 description=self.ctx.bot.trim(d, 4095),
                 timestamp=self.ctx.message.created_at
@@ -99,7 +99,7 @@ class ViewMusic(discord.ui.View):
             lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
             if lyrics:
                 lymbed = discord.Embed(
-                    color=self.music.color,
+                    color=self.ctx.bot.music_color,
                     title=lyrics.title,
                     description=self.ctx.bot.trim(lyrics.lyrics, 4096),
                     timestamp=self.ctx.message.created_at
@@ -126,7 +126,6 @@ class ViewMusic(discord.ui.View):
 class Music(commands.Cog, description="Jamming out with these!"):
     def __init__(self, bot):
         self.bot = bot
-        self.color = 0x1DB954
 
     def duration(self, length):
         return '%d:%d:%d'%((length/(1000*60*60))%24, (length/(1000*60))%60, (length/1000)%60)
@@ -296,7 +295,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client:
             if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
                 npmbed = discord.Embed(
-                    color=self.color,
+                    color=self.bot.music_color,
                     title="Playing:",
                     description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}{f'\nNext: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
                     timestamp=ctx.voice_client.current.ctx.message.created_at
@@ -315,7 +314,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if len(ctx.voice_client.lqueue) > 1:
                 d = "\n".join(q for q in ctx.voice_client.lqueue)
                 qumbed = discord.Embed(
-                    color=self.color,
+                    color=self.bot.music_color,
                     title="Queue",
                     description=self.bot.trim(d, 4095),
                     timestamp=ctx.message.created_at
@@ -363,7 +362,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                             mtime = dtime.seconds*1000
                             if not (mtime) >= ctx.voice_client.current.length:
                                 sembed = discord.Embed(
-                                    color=self.color,
+                                    color=self.bot.music_color,
                                     description=F"Seeked: {self.duration(mtime)}\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                                     timestamp=ctx.message.created_at
                                 )
@@ -407,7 +406,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         lyrics = await self.bot.openrobot.lyrics(music)
         if lyrics:
             lymbed = discord.Embed(
-                color=self.color,
+                color=self.bot.music_color,
                 title=lyrics.title,
                 description=self.bot.trim(lyrics.lyrics, 4096),
                 timestamp=ctx.message.created_at
@@ -421,7 +420,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
         tsmbed = discord.Embed(
-            color=self.color,
+            color=self.bot.music_color,
             title="Playing:",
             description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
@@ -435,7 +434,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not player.loop:
             if player.queue.empty():
                 tembed = discord.Embed(
-                    color=self.color,
+                    color=self.bot.music_color,
                     title="Ended:",
                     description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
                     timestamp=track.ctx.message.created_at
