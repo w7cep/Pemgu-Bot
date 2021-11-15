@@ -117,17 +117,17 @@ bot = PemguBase(
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
-    c = discord.Color.blurple
+    co = discord.Color.blurple
     t = F"Current Commands for {bot.user}"
     # Every Command
     if option == "1":
         cmds = [c.name for c in bot.commands]
-        e = discord.Embed(color=c, title=t, description="\n".join(cmds))
+        e = discord.Embed(color=co, title=t, description="\n".join(cmds))
         await ctx.send(embed=e)
 
     # Every Command without Cog
     elif option == "2":
-        e = discord.Embed(color=c, title=t, description=", ".join(f'{c}' for c in bot.commands))
+        e = discord.Embed(color=co, title=t, description=", ".join(f'{c}' for c in bot.commands))
         await ctx.send(embed=e)
 
     # Every Command with help - signature but without Cog
@@ -136,7 +136,7 @@ async def _commands(ctx:commands.Context, option:str):
         for cmd in bot.commands:
             c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
         m = "\n".join(c)
-        e = discord.Embed(color=c, title=t, description=m[0:4096])
+        e = discord.Embed(color=co, title=t, description=m[0:4096])
         await ctx.send(embed=e)
 
     # Every Command with Cog and help - signature
