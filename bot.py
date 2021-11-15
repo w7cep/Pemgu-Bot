@@ -142,11 +142,11 @@ async def _commands(ctx:commands.Context, option:str):
         c = []
         for cog in sorted(bot.cogs):
             c.append(F"{cog}")
-        if not cog.startswith("On") and not cog == "Jishaku":
-            rcog = bot.get_cog(cog)
-        cmds = rcog.get_commands()
-        for cmd in cmds:
-            c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
+            if not cog.startswith("On") and not cog == "Jishaku":
+                rcog = bot.get_cog(cog)
+            cmds = rcog.get_commands()
+            for cmd in cmds:
+                c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
         m = "\n".join(c)
         e = discord.Embed(color=0x5865f2, title=F"Current Commands for {bot.user}", description=m[0:4096])
         await ctx.send(embed=e)
