@@ -134,47 +134,54 @@ class Music(commands.Cog, description="Jamming out with these!"):
         done = int((position/length)*size)
         return F"{'🔷'*done}{'🔶'*(size-done)}"
 
+    def bot_voice(ctx:commands.Context):
+        if ctx.voice_client:
+            return True
+        raise commands.CheckFailure("I'm not in a voice channel")
+
+    def user_voice(ctx:commands.Context):
+        if ctx.author.voice:
+            return True
+        raise commands.CheckFailure("You must be in voice channel")
+
+    def same_voice(ctx:commands.Context):
+        if ctx.me.voice.channel == ctx.author.voice.channel:
+            return True
+        raise commands.CheckFailure("You must be in the same voice channel")
+
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def player(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        await ctx.invoke(self.nowplaying)
-                        return await ctx.send("Pemgu.Player.exe", view=ViewMusic(ctx, self))
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            return await ctx.send("Pemgu.Player.exe", view=ViewMusic(ctx, self))
+        return await ctx.send("Nothing is playing")
 
     # Join
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
     @commands.guild_only()
+    @commands.check(user_voice)
     async def join(self, ctx:commands.Context):
         if not ctx.me.voice:
-            if ctx.author.voice:
-                await ctx.author.voice.channel.connect(cls=pomice.Player)
-                ctx.voice_client.queue = asyncio.Queue()
-                ctx.voice_client.lqueue = []
-                ctx.voice_client.loop = None
-                return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
+            await ctx.author.voice.channel.connect(cls=pomice.Player)
+            ctx.voice_client.queue = asyncio.Queue()
+            ctx.voice_client.lqueue = []
+            ctx.voice_client.loop = None
+            return await ctx.send(F"Joined the voice channel {ctx.author.voice.channel.mention}")
         await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Disconnect
     @commands.command(name="disconnect", aliases=["dc"], help="Disconnects from the voice channel")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def disconnect(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    await ctx.voice_client.destroy()                    
-                    return await ctx.send("Disconnected from the voice channel")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        await ctx.voice_client.destroy()                    
+        return await ctx.send("Disconnected from the voice channel")
 
     # Play
     @commands.command(name="play", aliases=["p"], help="Plays music with the given term, term can be a url or a query or a playlist")
@@ -207,194 +214,167 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Stop
     @commands.command(name="stop", aliases=["so"], help="Stops playing and Clears queue")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def stop(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        for _ in range(ctx.voice_client.queue.qsize()):
-                            ctx.voice_client.queue.get_nowait()
-                            ctx.voice_client.queue.task_done()
-                            ctx.voice_client.lqueue.pop(0)
-                        await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
-                        return await ctx.voice_client.stop()
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            for _ in range(ctx.voice_client.queue.qsize()):
+                ctx.voice_client.queue.get_nowait()
+                ctx.voice_client.queue.task_done()
+                ctx.voice_client.lqueue.pop(0)
+            await ctx.send(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+            return await ctx.voice_client.stop()
+        return await ctx.send("Nothing is playing")
 
     # Skip
     @commands.command(name="skip", aliases=["sk"], help="Skips the music")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def skip(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
-                        if not ctx.voice_client.queue.empty():
-                            await ctx.send(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
-                            return await ctx.voice_client.stop()
-                        return await ctx.send("There is nothing in the queue")
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing:
+            if not ctx.voice_client.queue.empty():
+                await ctx.send(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
+                return await ctx.voice_client.stop()
+            return await ctx.send("There is nothing in the queue")
+        return await ctx.send("Nothing is playing")
 
     # Resume
     @commands.command(name="resume", aliases=["ru"], help="Resumes the paused music")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def resume(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_paused:
-                        await ctx.voice_client.set_pause(pause=False)
-                        return await ctx.send("Resumed the music")
-                    return await ctx.send("The music is already playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_paused:
+            await ctx.voice_client.set_pause(pause=False)
+            return await ctx.send("Resumed the music")
+        return await ctx.send("The music is already playing")
 
     # Pause
     @commands.command(name="pause", aliases=["pu"], help="Pauses playing music")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def pause(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing:
-                        await ctx.voice_client.set_pause(pause=True)
-                        return await ctx.send("Paused the music")
-                    return await ctx.send("Music is already paused")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing:
+            await ctx.voice_client.set_pause(pause=True)
+            return await ctx.send("Paused the music")
+        return await ctx.send("Music is already paused")
 
     # Loop
     @commands.command(name="loop", aliases=["lp"], help="Loops over the music")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def loop(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        if not ctx.voice_client.loop:
-                            ctx.voice_client.loop = ctx.voice_client.current
-                            return await ctx.send(F"Loop has been turned on - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
-                        ctx.voice_client.loop = None
-                        return await ctx.send(F"Loop has been turned off - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            if not ctx.voice_client.loop:
+                ctx.voice_client.loop = ctx.voice_client.current
+                return await ctx.send(F"Loop has been turned on - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+            ctx.voice_client.loop = None
+            return await ctx.send(F"Loop has been turned off - {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
+        return await ctx.send("Nothing is playing")
 
     # NowPlaying
     @commands.command(name="nowplaying", aliases=["np"], help="Tells the playing music")
     @commands.guild_only()
+    @commands.check(bot_voice)
     async def nowplaying(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                npmbed = discord.Embed(
-                    color=self.bot.music_color,
-                    title="Playing:",
-                    description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
-                    timestamp=ctx.voice_client.current.ctx.message.created_at
-                )
-                npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
-                npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=npmbed)
-            return await ctx.send("Nothing is playing")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            npmbed = discord.Embed(
+                color=self.bot.music_color,
+                title="Playing:",
+                description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
+                timestamp=ctx.voice_client.current.ctx.message.created_at
+            )
+            npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+            npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+            return await ctx.send(embed=npmbed)
+        return await ctx.send("Nothing is playing")
 
     # Queue
     @commands.command(name="queue", aliases=["qu"], help="Shows the queue")
     @commands.guild_only()
+    @commands.check(bot_voice)
     async def queue(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if len(ctx.voice_client.lqueue) > 1:
-                d = "\n".join(q for q in ctx.voice_client.lqueue)
-                qumbed = discord.Embed(
-                    color=self.bot.music_color,
-                    title="Queue",
-                    description=self.bot.trim(d, 4095),
-                    timestamp=ctx.message.created_at
-                )
-                qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                return await ctx.send(embed=qumbed)
-            return await ctx.invoke(self.nowplaying)
-        await ctx.send("I'm not in a voice channel")
+        if len(ctx.voice_client.lqueue) > 1:
+            d = "\n".join(q for q in ctx.voice_client.lqueue)
+            qumbed = discord.Embed(
+                color=self.bot.music_color,
+                title="Queue",
+                description=self.bot.trim(d, 4095),
+                timestamp=ctx.message.created_at
+            )
+            qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+            return await ctx.send(embed=qumbed)
+        return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
     @commands.command(name="queueclear", aliases=["qucr"], help="Clears the queue")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def queue_clear(self, ctx:commands.Context):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if not ctx.voice_client.queue.empty():
-                        await ctx.invoke(self.queue)
-                        view = Confirm(ctx)
-                        await ctx.send("Do you want to clear the queue", view=view)
-                        await view.wait()
-                        if view.value:
-                            for _ in range(ctx.voice_client.queue.qsize()):
-                                ctx.voice_client.queue.get_nowait()
-                                ctx.voice_client.queue.task_done()
-                                ctx.voice_client.lqueue.pop(0)
-                            return await ctx.send("Queue has been cleared")
-                        return await ctx.send("Queue has not been cleared")
-                    return await ctx.send("Nothing is in the queue")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if not ctx.voice_client.queue.empty():
+            await ctx.invoke(self.queue)
+            view = Confirm(ctx)
+            await ctx.send("Do you want to clear the queue", view=view)
+            await view.wait()
+            if view.value:
+                for _ in range(ctx.voice_client.queue.qsize()):
+                    ctx.voice_client.queue.get_nowait()
+                    ctx.voice_client.queue.task_done()
+                    ctx.voice_client.lqueue.pop(0)
+                return await ctx.send("Queue has been cleared")
+            return await ctx.send("Queue has not been cleared")
+        return await ctx.send("Nothing is in the queue")
 
     # Seek
     @commands.command(name="seek", aliases=["se"], help="Seeks to the given time")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def seek(self, ctx:commands.Context, *, time:str=None):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        if ":" in time:
-                            time = time.split(":")
-                            dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
-                            mtime = dtime.seconds*1000
-                            if not (mtime) >= ctx.voice_client.current.length:
-                                sembed = discord.Embed(
-                                    color=self.bot.music_color,
-                                    description=F"Seeked: {self.duration(mtime)}\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
-                                    timestamp=ctx.message.created_at
-                                )
-                                sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
-                                sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-                                await ctx.voice_client.seek(mtime)
-                                return await ctx.send(embed=sembed)
-                            return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
-                        return await ctx.send(F"Time need to be like 0:1:23")
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            if ":" in time:
+                time = time.split(":")
+                dtime = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]), seconds=int(time[2]))
+                mtime = dtime.seconds*1000
+                if not (mtime) >= ctx.voice_client.current.length:
+                    sembed = discord.Embed(
+                        color=self.bot.music_color,
+                        description=F"Seeked: {self.duration(mtime)}\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
+                        timestamp=ctx.message.created_at
+                    )
+                    sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+                    sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                    await ctx.voice_client.seek(mtime)
+                    return await ctx.send(embed=sembed)
+                return await ctx.send(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
+            return await ctx.send(F"Time need to be like 0:1:23")
 
     # Volume
     @commands.command(name="volume", aliases=["vol"], help="Sets or Tells the volume of the music")
     @commands.guild_only()
+    @commands.check(bot_voice)
+    @commands.check(user_voice)
+    @commands.check(same_voice)
     async def volume(self, ctx:commands.Context, *, volume:int=None):
-        if ctx.voice_client:
-            if ctx.author.voice:
-                if ctx.me.voice.channel == ctx.author.voice.channel:
-                    if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-                        if volume:
-                            if not volume < 0 or not volume > 500:
-                                await ctx.voice_client.set_volume(volume)
-                                return await ctx.send(F"Volume has been changed to {volume}")
-                            return await ctx.send("The volume must be between 0 and 500")
-                        return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
-                    return await ctx.send("Nothing is playing")
-                return await ctx.send(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
-            return await ctx.send("You must be in a voice channel")
-        await ctx.send("I'm not in a voice channel")
+        if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            if volume:
+                if not volume < 0 or not volume > 500:
+                    await ctx.voice_client.set_volume(volume)
+                    return await ctx.send(F"Volume has been changed to {volume}")
+                return await ctx.send("The volume must be between 0 and 500")
+            return await ctx.send(F"The volume is currently at {ctx.voice_client.volume}")
+        return await ctx.send("Nothing is playing")
 
     # Lyrics
     @commands.command(name="lyrics", aliases=["ly"], help="Shows the lyrics for music")
