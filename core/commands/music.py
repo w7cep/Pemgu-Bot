@@ -145,7 +145,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         raise commands.CheckFailure("You must be in voice channel")
 
     def same_voice(ctx:commands.Context):
-        if ctx.me.voice:
+        if ctx.author.voice:
             if ctx.me.voice.channel == ctx.author.voice.channel:
                 return True
             raise commands.CheckFailure("You must be in the same voice channel")
