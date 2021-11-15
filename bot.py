@@ -120,7 +120,7 @@ async def _commands(ctx:commands.Context, option:str):
     # Every Command
     if option == "1":
         cmds = [c.name for c in bot.commands]
-        e = discord.Embed(description="\n".join(cmds))
+        e = discord.Embed(color=0x5865f2, title=F"Current Commands for {bot.user}", description="\n".join(cmds))
         await ctx.send(embed=e)
 
     # Every Command without Cog
