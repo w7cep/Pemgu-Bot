@@ -74,7 +74,7 @@ class ViewMusic(discord.ui.View):
                 description=F"Title: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
-            npmbed.set_thumbnail(url=self.ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+            npmbed.set_thumbnail(url=self.ctx.voice_client.current.thumbnail or discord.Embed.Empty)
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             return await interaction.response.send_message(embed=npmbed, ephemeral=True)
         return await interaction.response.send_message.send("Queue: Nothing is playing", ephemeral=True)
@@ -294,7 +294,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=ctx.voice_client.current.ctx.message.created_at
             )
-            npmbed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+            npmbed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
             npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             return await ctx.send(embed=npmbed)
         return await ctx.send("Nothing is playing")
@@ -355,7 +355,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                         description=F"Seeked: {self.duration(mtime)}\nTitle: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                         timestamp=ctx.message.created_at
                     )
-                    sembed.set_thumbnail(url=ctx.voice_client.current.info.get("thumbnail") or discord.Embed.Empty)
+                    sembed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
                     sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                     await ctx.voice_client.seek(mtime)
                     return await ctx.send(embed=sembed)
@@ -407,7 +407,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}",
             timestamp=track.ctx.message.created_at
         )
-        tsmbed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
+        tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
         await track.ctx.send(embed=tsmbed)
 
@@ -421,7 +421,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
                     timestamp=track.ctx.message.created_at
                 )
-                tembed.set_thumbnail(url=track.info.get("thumbnail") or discord.Embed.Empty)
+                tembed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
                 tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
                 return await track.ctx.send(embed=tembed)
             player.lqueue.pop(0)
