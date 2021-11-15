@@ -146,7 +146,7 @@ async def _commands(ctx:commands.Context, option:str):
             for cmd in cmds:
                 c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
         m = "\n".join(c)
-        e = discord.Embed(color=c, title=t, description=m[:4096])
+        e = discord.Embed(color=co, title=t, description=m[:4096])
         await ctx.send(embed=e)
 
 @bot.command(name="news", aliases=["new"], help="Shows the latest news")
