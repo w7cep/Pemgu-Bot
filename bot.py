@@ -115,7 +115,42 @@ bot = PemguBase(
     allowed_mentions=discord.AllowedMentions.none()
 )
 
-@bot.command(name="news", aliases=["new"])
+@bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
+async def commands(ctx:commands.Context, option:str):
+    # Every Command
+    if option == "1":
+        cmds = [c.name for c in bot.commands]
+        e = discord.Embed(description="\n".join(cmds))
+        await ctx.send(embed=e)
+
+    # Every Command without Cog
+    if option == "2":
+        e = discord.Embed(color=0x5865f2, title=F"Current Commands for {bot.user}", description=", ".join(f'{c}' for c in bot.commands))
+        await ctx.send(embed=e)
+
+    # Every Command with help - signature but without Cog
+    if option == "3":
+        c = []
+        for cmd in bot.commands:
+            c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
+        m = "\n".join(c)
+        e = discord.Embed(color=0x5865f2, title=F"Current Commands for {bot.user}", description=m[0:4096])
+        await ctx.send(embed=e)
+
+    # Every Command with Cog and help - signature
+    if option == "4":
+        c = []
+        for cog in sorted(bot.cogs):
+            c.append(F"{cog}")
+        rcog = bot.get_cog(cog)
+        cmds = rcog.get_commands()
+        for cmd in cmds:
+            c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
+        m = "\n".join(c)
+        e = discord.Embed(color=0x5865f2, title=F"Current Commands for {bot.user}", description=m[0:4096])
+        await ctx.send(embed=e)
+
+@bot.command(name="news", aliases=["new"], help="Shows the latest news")
 async def news(ctx:commands.Context):
     message = await bot.http.get_message(898287740267937813, 908136879944253490)
     newmbed = discord.Embed(
