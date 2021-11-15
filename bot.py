@@ -117,7 +117,7 @@ bot = PemguBase(
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
-    c = 0x5865F2
+    c = discord.Color.blurple
     t = F"Current Commands for {bot.user}"
     # Every Command
     if option == "1":
