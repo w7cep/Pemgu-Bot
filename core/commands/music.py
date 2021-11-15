@@ -134,22 +134,22 @@ class Music(commands.Cog, description="Jamming out with these!"):
         done = int((position/length)*size)
         return F"{'🔷'*done}{'🔶'*(size-done)}"
 
-    def bot_voice(self, ctx:commands.Context):
+    def bot_voice(ctx:commands.Context):
         if ctx.voice_client:
             return True
         raise commands.CheckFailure("I'm not in a voice channel")
 
-    def user_voice(self, ctx:commands.Context):
+    def user_voice(ctx:commands.Context):
         if ctx.author.voice:
             return True
         raise commands.CheckFailure("You must be in voice channel")
 
-    def same_voice(self, ctx:commands.Context):
+    def same_voice(ctx:commands.Context):
         if ctx.me.voice:
             if ctx.me.voice.channel == ctx.author.voice.channel:
                 return True
             raise commands.CheckFailure("You must be in the same voice channel")
-        raise commands.check(self.user_voice)
+        raise commands.CheckFailure("You must be in voice channel")
 
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
