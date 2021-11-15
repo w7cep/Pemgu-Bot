@@ -142,7 +142,8 @@ async def _commands(ctx:commands.Context, option:str):
         c = []
         for cog in sorted(bot.cogs):
             c.append(F"{cog}")
-        rcog = bot.get_cog(cog)
+        if not cog.startswith("On") and not cog == "Jishaku":
+            rcog = bot.get_cog(cog)
         cmds = rcog.get_commands()
         for cmd in cmds:
             c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
