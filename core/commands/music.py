@@ -395,7 +395,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
             lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             return await ctx.send(embed=lymbed)
-        return await ctx.send(F"Didn't found any lyrics for {music}")
+        await ctx.send(F"Didn't found any lyrics for {music}")
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):

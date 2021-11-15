@@ -12,17 +12,18 @@ class SelectUI(discord.ui.Select):
 
     async def callback(self, interaction:discord.Interaction):
         for cog, commands in self.mapping.items():
-            if self.values[0] == cog.qualified_name:
-                mbed = discord.Embed(
-                    color=self.help.context.bot.color,
-                    title=F"{self.help.emojis.get(cog.qualified_name) if self.help.emojis.get(cog.qualified_name) else '❓'} {cog.qualified_name}",
-                    description=F"{cog.description}\n\n{''.join(self.gts(command) for command in cog.walk_commands())}",
-                    timestamp=self.help.context.message.created_at
-                )
-                mbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
-                mbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
-                mbed.set_footer(text="<> is required | [] is optional")
-                await interaction.response.edit_message(embed=mbed)
+            if cog:
+                if self.values[0] == cog.qualified_name:
+                    mbed = discord.Embed(
+                        color=self.help.context.bot.color,
+                        title=F"{self.help.emojis.get(cog.qualified_name) if self.help.emojis.get(cog.qualified_name) else '❓'} {cog.qualified_name}",
+                        description=F"{cog.description}\n\n{''.join(self.gts(command) for command in cog.walk_commands())}",
+                        timestamp=self.help.context.message.created_at
+                    )
+                    mbed.set_thumbnail(url=self.help.context.me.display_avatar.url)
+                    mbed.set_author(name=interaction.user, icon_url=interaction.user.display_avatar.url)
+                    mbed.set_footer(text="<> is required | [] is optional")
+                    await interaction.response.edit_message(embed=mbed)
 
 class SelectView(discord.ui.View):
     def __init__(self, help, mapping):
