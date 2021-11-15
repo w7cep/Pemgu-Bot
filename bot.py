@@ -119,18 +119,15 @@ bot = PemguBase(
 async def _commands(ctx:commands.Context, option:str):
     co = discord.Color.blurple
     t = F"Current Commands for {bot.user}"
-    # Every Command
     if option == "1":
         cmds = [c.name for c in bot.commands]
         e = discord.Embed(color=co, title=t, description="\n".join(cmds))
         await ctx.send(embed=e)
 
-    # Every Command without Cog
     elif option == "2":
         e = discord.Embed(color=co, title=t, description=", ".join(f'{c}' for c in bot.commands))
         await ctx.send(embed=e)
 
-    # Every Command with help - signature but without Cog
     elif option == "3":
         c = []
         for cmd in bot.commands:
@@ -139,7 +136,6 @@ async def _commands(ctx:commands.Context, option:str):
         e = discord.Embed(color=co, title=t, description=m[0:4096])
         await ctx.send(embed=e)
 
-    # Every Command with Cog and help - signature
     elif option == "4":
         c = []
         for cog in sorted(bot.cogs):
