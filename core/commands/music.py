@@ -101,7 +101,7 @@ class ViewMusic(discord.ui.View):
                 lymbed = discord.Embed(
                     color=self.ctx.bot.music_color,
                     title=lyrics.title,
-                    description=self.ctx.bot.trim(lyrics.lyrics, 4096),
+                    description=lyrics.lyrics[:4096],
                     timestamp=self.ctx.message.created_at
                 )
                 lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
@@ -392,7 +392,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             lymbed = discord.Embed(
                 color=self.bot.music_color,
                 title=lyrics.title,
-                description=self.bot.trim(lyrics.lyrics, 4096),
+                description=lyrics.lyrics[:4096],
                 timestamp=ctx.message.created_at
             )
             lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
