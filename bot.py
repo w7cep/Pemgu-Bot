@@ -117,26 +117,19 @@ bot = PemguBase(
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
-    co = discord.Color.blurple()
-    t = F"Current Commands for {bot.user}"
+    cmdsmbed = discord.Embed(color=discord.Color.blurple())
+    cmdsmbed.set_footer(text=F"{bot.user} Commands")
     if option == "1":
-        cmds = [c.name for c in bot.commands]
-        e = discord.Embed(color=co, title=t, description="\n".join(cmds))
-        await ctx.send(embed=e)
+        cmdsmbed.description = ", ".join(f'{c}' for c in bot.commands)
 
     elif option == "2":
-        e = discord.Embed(color=co, title=t, description=", ".join(f'{c}' for c in bot.commands))
-        await ctx.send(embed=e)
-
-    elif option == "3":
         c = []
         for cmd in bot.commands:
             c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
         m = "\n".join(c)
-        e = discord.Embed(color=co, title=t, description=m[0:4096])
-        await ctx.send(embed=e)
+        cmdsmbed.description = m[0:4096]
 
-    elif option == "4":
+    elif option == "3":
         c = []
         for cog in sorted(bot.cogs):
             c.append(F"{cog}")
@@ -146,8 +139,8 @@ async def _commands(ctx:commands.Context, option:str):
             for cmd in cmds:
                 c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
         m = "\n".join(c)
-        e = discord.Embed(color=co, title=t, description=m[:4096])
-        await ctx.send(embed=e)
+        cmdsmbed.description = m[:4096]
+    await ctx.reply(embed=cmdsmbed)
 
 @bot.command(name="news", aliases=["new"], help="Shows the latest news")
 async def _news(ctx:commands.Context):
@@ -159,7 +152,7 @@ async def _news(ctx:commands.Context):
         timestamp=ctx.message.created_at
     )
     newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-    await ctx.send(embed=newmbed)
+    await ctx.reply(embed=newmbed)
 
 @bot.check
 async def blacklisted(ctx:commands.Context):
