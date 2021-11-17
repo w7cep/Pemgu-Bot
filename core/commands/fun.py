@@ -9,12 +9,12 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     # Say
     @commands.command(name="say", help="Says your text")
     async def say(self, ctx:commands.Context, *, text:str):
-        await ctx.send(F"{text} | {ctx.author.mention}")
+        await ctx.reply(F"{text} | {ctx.author.mention}")
 
     # Sarcasm
     @commands.command(name="sarcasm", help="Says your text in a sarcastic way")
     async def sarcasm(self, ctx:commands.Context, *, text:str):
-        await ctx.send(F"{''.join(c.upper() if i % 2 == 0 else c for i, c in enumerate(text))} | {ctx.author.mention}")
+        await ctx.reply(F"{''.join(c.upper() if i % 2 == 0 else c for i, c in enumerate(text))} | {ctx.author.mention}")
 
     # PP
     @commands.command(name="pp", help="Tells your or the given user's pp size")
@@ -28,7 +28,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         ppmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=ppmbed)
+        await ctx.reply(embed=ppmbed)
 
     # Ship
     @commands.command(name="ship", aliases=["sp"], help="Ships you or the given member with the other given member")
@@ -45,7 +45,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         elif number >= 25 and number < 50:  spmbed.description = F"`{number}%` - Can see a sparkle 💖"
         elif number >= 50 and number <= 75:  spmbed.description = F"`{number}%` - I can see pumping 💓"
         elif number > 75:  spmbed.description = F"`{number}%` - CanI can see a lot of love 💘"
-        await ctx.send(embed=spmbed)
+        await ctx.reply(embed=spmbed)
 
     # Counter
     @commands.command(name="counter", aliases=["ctr"], help="Starts an counter")
@@ -57,7 +57,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         )
         ctrmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = fv.CounterView(ctx)
-        view.message = await ctx.send(embed=ctrmbed, view=view)
+        view.message = await ctx.reply(embed=ctrmbed, view=view)
 
     # Nitro
     @commands.command(name="nitro", help="Gifts free Nitro")
@@ -70,7 +70,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         )
         bnitrombed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = fv.NitroView(ctx)
-        view.message = await ctx.send(embed=bnitrombed, view=view)
+        view.message = await ctx.reply(embed=bnitrombed, view=view)
 
     # Token
     @commands.command(name="token", aliases=["tn"], help="Sends an random token")
@@ -85,7 +85,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         tnmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=tnmbed)
+        await ctx.reply(embed=tnmbed)
 
     # Meme
     @commands.command(name="meme", aliases=["me"], help="Shows a random meme")
@@ -101,7 +101,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         )
         membed.set_image(url=response['image'])
         membed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=membed)
+        await ctx.reply(embed=membed)
 
     # Quote
     @commands.command(name="quote", aliases=["qe"], help="Tells you a random quote")
@@ -117,7 +117,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         qembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=qembed)
+        await ctx.reply(embed=qembed)
 
     # Fact
     @commands.command(name="fact", aliases=["fc"], help="Tells you a random fact")
@@ -132,7 +132,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         fcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=fcmbed)
+        await ctx.reply(embed=fcmbed)
 
     # Joke
     @commands.command(name="joke", aliases=["jk"], help="Tells you a random joke")
@@ -147,7 +147,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         jkmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=jkmbed)
+        await ctx.reply(embed=jkmbed)
 
     # 8Ball
     @commands.command(name="8ball", aliases=["8b"], help="Gives you a random answer for your given question")
@@ -162,7 +162,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         _8bmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=_8bmbed)
+        await ctx.reply(embed=_8bmbed)
 
     # Roast
     @commands.command(name="roast", aliases=["rt"], help="Roasts you or the given user")
@@ -178,7 +178,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
             timestamp=ctx.message.created_at
         )
         rtmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=rtmbed)
+        await ctx.reply(embed=rtmbed)
 
     # Tweet
     @commands.command(name="tweet", aliases=["tw"], help="Sends a preview from you or the given user with the given text")
@@ -195,7 +195,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         )
         twmbed.set_image(url="attachment://tweet.png")
         twmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(file=discord.File(fp=response, filename="tweet.png"), embed=twmbed)
+        await ctx.reply(file=discord.File(fp=response, filename="tweet.png"), embed=twmbed)
 
 def setup(bot):
     bot.add_cog(Fun(bot))
