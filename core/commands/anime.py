@@ -19,7 +19,7 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         )
         sfwmbed.set_image(url=response.get('tags')[0].get('images')[0].get('url'))
         sfwmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=sfwmbed)
+        await ctx.reply(embed=sfwmbed)
     
     # NWaifu
     @commands.command(name="nwaifu", help="Sends an random NSFW Waifu Image")
@@ -36,7 +36,7 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         )
         nsfwmbed.set_image(url=response.get('tags')[0].get('images')[0].get('url'))
         nsfwmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=nsfwmbed)
+        await ctx.reply(embed=nsfwmbed)
 
 def setup(bot):
     bot.add_cog(Anime(bot))
