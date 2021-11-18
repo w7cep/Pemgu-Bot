@@ -388,7 +388,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         tsmbed = discord.Embed(
             color=self.bot.music_color,
             title="Playing:",
-            description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
+            description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}\n{f'Next: {track..voice_client.lqueue[1]}' if len(track.ctx.voice_client.lqueue) > 1 else ''}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
