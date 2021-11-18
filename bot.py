@@ -17,7 +17,7 @@ async def get_prefix(bot, message:discord.Message):
         prefix = bot.prefixes[message.guild.id] = postgres
     else:
         prefix = bot.prefixes[message.guild.id] = bot.default_prefix
-    print(F"Cached {F'{prefix}/d' if not postgres else F'{postgres}/p'} | {message.guild.name} - {message.guild.id}")
+    print(F"Cached {prefix}{'/d' if not postgres else '/p'} | {message.guild.name} - {message.guild.id}")
     return commands.when_mentioned_or(prefix)(bot, message)
 
 async def create_session_aiohttp():

@@ -10,7 +10,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
     @commands.group(name="prefix", aliases=["pf"], help="Setting up the prefix with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def prefix(self, ctx:commands.Context):
-        await ctx.send_help("prefix")
+        await ctx.reply_help("prefix")
 
     # Prefix-Status
     @prefix.command(name="status", aliases=["st"], help="Shows the status for prefix")
@@ -23,7 +23,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             timestamp=ctx.message.created_at
         )
         pfstmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=pfstmbed)
+        await ctx.reply(embed=pfstmbed)
 
     # Prefix-Change
     @prefix.command(name="change", aliases=["ch"], help="Changes the prefix to the new given text")
@@ -39,7 +39,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         if text == prefix:
             pfchmbed.title = "Prefix is the same"
             pfchmbed.description = prefix
-            return await ctx.send(embed=pfchmbed)
+            return await ctx.reply(embed=pfchmbed)
         if not prefix:
             await self.bot.postgres.execute("INSERT INTO prefixes(guild_name,guild_id,prefix) VALUES ($1,$2,$3)", ctx.guild.name, ctx.guild.id, text)
         else:
@@ -47,7 +47,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         self.bot.prefixes[ctx.guild.id] = text
         pfchmbed.title = "Changed prefix:"
         pfchmbed.description = text
-        await ctx.send(embed=pfchmbed)
+        await ctx.reply(embed=pfchmbed)
 
     # Prefix-Reset
     @prefix.command(name="reset", aliases=["rs"], help="Resets the prefix")
@@ -64,16 +64,16 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             await self.bot.postgres.execute("DELETE FROM prefixes WHERE guild_id=$1", ctx.guild.id)
             pfrsmbed.title = "Resetted to:"
             pfrsmbed.description = self.bot.prefixes[ctx.guild.id] = self.bot.default_prefix
-            return await ctx.send(embed=pfrsmbed)
+            return await ctx.reply(embed=pfrsmbed)
         pfrsmbed.title = "Prefix was never changed"
         pfrsmbed.description = self.bot.prefixes[ctx.guild.id]
-        await ctx.send(embed=pfrsmbed)
+        await ctx.reply(embed=pfrsmbed)
 
     # Welcome
     @commands.group(name="welcome", aliases=["wel"], help="Setting up the welcomer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def welcome(self, ctx:commands.Context):
-        await ctx.send_help("welcome")
+        await ctx.reply_help("welcome")
 
     # Welcome-Status
     @welcome.command(name="status", aliases=["st"], help="Shows the status for welcome")
@@ -92,7 +92,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             ch = discord.utils.get(ctx.guild.text_channels, id=(await self.bot.postgres.fetchval("SELECT ch FROM welcome WHERE guild_id=$1", ctx.guild.id)))
             welstmbed.title = "Status for welcome"
             welstmbed.description = F"Turned On\n{msg}\n{ch.mention}"
-        await ctx.send(embed=welstmbed)
+        await ctx.reply(embed=welstmbed)
 
     # Welcome-Toggle
     @welcome.command(name="toggle", aliases=["tg"], help="Toggles off or on the welcome")
@@ -111,7 +111,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         else:
             await self.bot.postgres.execute("DELETE FROM welcome WHERE guild_id=$1", ctx.guild.id)
             welchmbed.title = "Welcome has been turned off"
-        await ctx.send(embed=welchmbed)
+        await ctx.reply(embed=welchmbed)
 
     # Welcome-Channel
     @welcome.command(name="channel", aliases=["ch"], help="Changes the welcome channel to the new given channel")
@@ -132,7 +132,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             await self.bot.postgres.execute("UPDATE welcome SET ch=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
             byechmbed.title = "Welcome channel has been changed to:"
             byechmbed.description = channel.mention
-        await ctx.send(embed=byechmbed)
+        await ctx.reply(embed=byechmbed)
 
     # Welcome-Message
     @welcome.command(name="message", aliases=["msg"], help="Changes the welcome message to the new given message")
@@ -151,13 +151,13 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             await self.bot.postgres.execute("INSERT INTO welcome(guild_name,guild_id,msg) VALUES($1,$2,$3)", ctx.guild.name, ctx.guild.id, msg)
         else:
             await self.bot.postgres.execute("UPDATE welcome SET msg=$1 WHERE guild_id=$2", msg, ctx.guild.id)
-        await ctx.send(embed=welmsgmbed)
+        await ctx.reply(embed=welmsgmbed)
 
     # Goodbye
     @commands.group(name="goodbye", aliases=["bye"], help="Setting up the goodbyer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def goodbye(self, ctx:commands.Context):
-        await ctx.send_help("goodbye")
+        await ctx.reply_help("goodbye")
 
     # Goodbye-Status
     @goodbye.command(name="status", aliases=["st"], help="Changes the status for goodbye")
@@ -176,7 +176,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             ch = discord.utils.get(ctx.guild.text_channels, id=(await self.bot.postgres.fetchval("SELECT ch FROM goodbye WHERE guild_id=$1", ctx.guild.id)))
             byestmbed.title = "Status for goodbye"
             byestmbed.description = F"Turned On\n{msg}\n{ch.mention}"
-        await ctx.send(embed=byestmbed)
+        await ctx.reply(embed=byestmbed)
 
     # Goodbye-Toggle
     @goodbye.command(name="toggle", aliases=["tg"], help="Toggles off or on the goodbye")
@@ -195,7 +195,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         else:
             await self.bot.postgres.execute("DELETE FROM goodbye WHERE guild_id=$1", ctx.guild.id)
             byechmbed.title = "Goodbye has been turned off"
-        await ctx.send(embed=byechmbed)
+        await ctx.reply(embed=byechmbed)
 
     # Goodbye-Channel
     @goodbye.command(name="channel", aliases=["ch"], help="Changes the goodbye channel to the new given channel")
@@ -216,7 +216,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             await self.bot.postgres.execute("UPDATE goodbye SET ch=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
             byechmbed.title = "Goodbye channel has been changed to:"
             byechmbed.description = channel.mention
-        await ctx.send(embed=byechmbed)
+        await ctx.reply(embed=byechmbed)
 
     # Goodbye-Message
     @goodbye.command(name="message", aliases=["msg"], help="Changes the goodbye message to the new given message")
@@ -237,7 +237,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             await self.bot.postgres.execute("UPDATE goodbye SET msg=$1 WHERE guild_id=$2", msg, ctx.guild.id)
             byemsgmbed.title = "Goodbye message has been changed to:"
             byemsgmbed.description = msg
-        await ctx.send(embed=byemsgmbed)
+        await ctx.reply(embed=byemsgmbed)
 
     # Leave
     @commands.command(name="leave", aliases=["lae"], help="Makes the bot leave")
@@ -249,11 +249,11 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
         )
         laembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = Confirm(ctx)
-        view.message = await ctx.send(content="Are you sure you want the bot to leave:", view=view)
+        view.message = await ctx.reply(content="Are you sure you want the bot to leave:", view=view)
         await view.wait()
         if view.value:
             laembed.title = F"{self.bot.user} has left"
-            await ctx.send(embed=laembed, delete_after=2.5)
+            await ctx.reply(embed=laembed, delete_after=2.5)
             await ctx.me.guild.leave()
 
 def setup(bot):

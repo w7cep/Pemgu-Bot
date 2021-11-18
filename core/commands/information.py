@@ -27,7 +27,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             timestamp=ctx.message.created_at
         )
         abmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=abmbed, view=view)
+        await ctx.reply(embed=abmbed, view=view)
 
     # ServerList
     @commands.command(name="serverlist", aliases=["sl"], help="Gives the list of bot's servers")
@@ -43,7 +43,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             timestamp=ctx.message.created_at
         )
         slmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=slmbed)
+        await ctx.reply(embed=slmbed)
 
     # Invite
     @commands.command(name="invite", aliases=["ie"], help="Makes an invite link for the bot or the given bot")
@@ -56,7 +56,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         iembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if not bot.bot:
             iembed.title = "The given user is not a bot"
-            return await ctx.send(embed=iembed)
+            return await ctx.reply(embed=iembed)
         link = discord.utils.oauth_url(client_id=bot.id, scopes=('bot', 'applications.commands'), permissions=discord.Permissions.all())
         iembed.url = link
         ggurl = F"https://top.gg/bot/{bot.id}"
@@ -64,7 +64,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         if session.status != 404:
             iembed.description = F"[Top.gg]({ggurl})"
         iembed.title = F"Here is the invite link for adding the {bot}"
-        await ctx.send(embed=iembed)
+        await ctx.reply(embed=iembed)
 
     # Ping
     @commands.command(name="ping", aliases=["pi"], help="Shows bot's ping")
@@ -76,7 +76,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         unpimbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         tstart = time.perf_counter()
-        unpimsg = await ctx.send(embed=unpimbed)
+        unpimsg = await ctx.reply(embed=unpimbed)
         tend = time.perf_counter()
         pstart = time.perf_counter()
         await self.bot.postgres.fetch("SELECT 1")
@@ -103,7 +103,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         if command is None:
             srcmbed.title = F"Click here for the source code of this bot"
             srcmbed.url = source_url
-            return await ctx.send(embed=srcmbed)
+            return await ctx.reply(embed=srcmbed)
         if command == 'help':
             src = type(self.bot.help_command)
             module = src.__module__
@@ -114,7 +114,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 srcmbed.url = source_url
                 srcmbed.title = F"Click here for the source code of this bot"
                 srcmbed.description = "I couldn't find that command"
-                return await ctx.send(embed=srcmbed)
+                return await ctx.reply(embed=srcmbed)
             src = obj.callback.__code__
             module = obj.callback.__module__
             filename = src.co_filename
@@ -129,7 +129,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         srcmbed.url = final_url
         srcmbed.title = F"Click here for the source code of the `{prefix}{command}` command"
         srcmbed.set_footer(text=f"{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}\n{ctx.author}", icon_url=ctx.author.display_avatar)
-        await ctx.send(embed=srcmbed)
+        await ctx.reply(embed=srcmbed)
 
     # Color
     @commands.command(name="color", aliases=["clr"], help="Gives info about the given color")
@@ -149,7 +149,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         clrmbed.set_thumbnail(url=response.get("image"))
         clrmbed.set_image(url=response.get("image_gradient"))
         clrmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=clrmbed)
+        await ctx.reply(embed=clrmbed)
 
     # Colors
     @commands.command(name="colors", aliases=["clrs"], help="Gives you the colors from the given image")
@@ -166,7 +166,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         clrsmbed.set_image(url="attachment://colors.png")
         clrsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(file=discord.File(fp=response, filename="colors.png"), embed=clrsmbed)
+        await ctx.reply(file=discord.File(fp=response, filename="colors.png"), embed=clrsmbed)
 
     # Avatar
     @commands.command(name="avatar", aliases=["av"], help="Shows your or another user's avatar")
@@ -179,7 +179,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         avmbed.set_image(url=user.display_avatar.url)
         avmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=avmbed)
+        await ctx.reply(embed=avmbed)
 
     # Banner
     @commands.command(name="banner", aliases=["br"], help="Shows your or another user's banner")
@@ -195,7 +195,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             brmbed.title = F"{user}'s Banner"
             brmbed.set_image(url=fetch.banner.url)
         else: brmbed.title = F"{user} doesn't have banner"
-        await ctx.send(embed=brmbed)
+        await ctx.reply(embed=brmbed)
 
     # UserInfo
     @commands.command(name="userinfo", aliases=["ui"], help="Shows user info")
@@ -233,7 +233,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         uimbed.set_thumbnail(url=member.display_avatar.url)
         if fetch.banner: uimbed.set_image(url=fetch.banner.url)
         uimbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=uimbed)
+        await ctx.reply(embed=uimbed)
 
     # Permissions
     @commands.command(name="permissions", aliases=["perms"], help="Shows your or the given member's permissions")
@@ -258,7 +258,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             permsmbed.add_field(name="✅ Allowed:", value="\n".join(a for a in ai))
         if len(di) != 0:
             permsmbed.add_field(name="❎ Denied:", value="\n".join(d for d in di))
-        await ctx.send(embed=permsmbed)
+        await ctx.reply(embed=permsmbed)
 
     # Spotify
     @commands.command(name="spotify", aliases=["sy"], help="Shows your or the given member's spotify activity")
@@ -284,12 +284,12 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 spotifymbed.description = "\n".join(s for s in si)
                 spotifymbed.set_author(name=member, icon_url=member.display_avatar.url)
                 spotifymbed.set_thumbnail(url=activity.album_cover_url)
-                await ctx.send(embed=spotifymbed)
+                await ctx.reply(embed=spotifymbed)
                 break
         else:
             spotifymbed.color = self.bot.color
             spotifymbed.title = F"{member} is not listening to Spotify"
-            await ctx.send(embed=spotifymbed)
+            await ctx.reply(embed=spotifymbed)
 
     # Icon
     @commands.command(name="icon", aliases=["ic"], help="Shows the server's icon")
@@ -304,7 +304,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         if ctx.guild.icon:
             icmbed.set_thumbnail(url=ctx.guild.icon.url)
         else: icmbed.title = F"{ctx.guild.name} doesn't have icon"
-        await ctx.send(embed=icmbed)
+        await ctx.reply(embed=icmbed)
 
     # ServerInfo
     @commands.command(name="serverinfo", aliases=["si"], help="Shows the server's info")
@@ -346,7 +346,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         simbed.add_field(name="Server-Information:", value="\n".join(s for s in si), inline=False)
         if ctx.guild.icon: simbed.set_thumbnail(url=ctx.guild.icon.url)
         if ctx.guild.banner: simbed.set_image(url=ctx.guild.banner.url)
-        await ctx.send(embed=simbed)
+        await ctx.reply(embed=simbed)
 
     # EmojiInfo
     @commands.command(name="emojiinfo", aliases=["ei"], help="Gives information about the given emoji")
@@ -369,7 +369,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         emmbed.set_image(url=emoji.url)
         emmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=emmbed)
+        await ctx.reply(embed=emmbed)
 
 def setup(bot):
     bot.add_cog(Information(bot))

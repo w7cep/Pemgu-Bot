@@ -22,7 +22,7 @@ class OnError(commands.Cog):
             timestamp=ctx.message.created_at
         )
         errormbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=errormbed)
+        await ctx.reply(embed=errormbed)
     
 def setup(bot):
     bot.add_cog(OnError(bot))

@@ -31,7 +31,7 @@ class MinimalHelp(commands.MinimalHelpCommand):
         mhmbed.set_footer(text="[] means the argument is optional. | <> means the argument is required.")
         for page in self.paginator.pages:
             mhmbed.description = page
-            await self.context.send(embed=mhmbed)
+            await self.context.reply(embed=mhmbed)
 
 class CustomHelp(commands.HelpCommand):
     def __init__(self):
@@ -60,7 +60,7 @@ class CustomHelp(commands.HelpCommand):
         view.homepage.add_field(name="Arguments:", value="[] means the argument is optional.\n<> means the argument is required.\n***DO NOT USE THESE WHEN DOING A COMMAND***")
         view.homepage.set_thumbnail(url=self.context.me.display_avatar.url)
         view.homepage.set_author(name=self.context.author, icon_url=self.context.author.display_avatar.url)
-        view.message = await self.context.send(embed=view.homepage, view=view)
+        view.message = await self.context.reply(embed=view.homepage, view=view)
         return
 
     # Help Cog
@@ -76,7 +76,7 @@ class CustomHelp(commands.HelpCommand):
         hcogmbed.set_thumbnail(url=self.context.me.display_avatar.url)
         hcogmbed.set_author(name=self.context.author, icon_url=self.context.author.display_avatar.url)
         hcogmbed.set_footer(text="<> is required | [] is optional")
-        await self.context.send(embed=hcogmbed)
+        await self.context.reply(embed=hcogmbed)
         return
 
     # Help Command
@@ -99,7 +99,7 @@ class CustomHelp(commands.HelpCommand):
         hcmdmbed.add_field(name="Usable", value=can_run)
         if command._buckets and (cooldown := command._buckets._cooldown):
             hcmdmbed.add_field(name="Cooldown", value=F"{cooldown.rate} per {cooldown.per:.0f} seconds")
-        await self.context.send(embed=hcmdmbed)
+        await self.context.reply(embed=hcmdmbed)
         return
 
     # Help Group
@@ -124,7 +124,7 @@ class CustomHelp(commands.HelpCommand):
         hgroupmbed.add_field(name="Usable", value=can_run)
         if command._buckets and (cooldown := command._buckets._cooldown):
             hgroupmbed.add_field(name="Cooldown", value=F"{cooldown.rate} per {cooldown.per:.0f} seconds")
-        await self.context.send(embed=hgroupmbed)
+        await self.context.reply(embed=hgroupmbed)
         return
 
     # Help Error
@@ -136,5 +136,5 @@ class CustomHelp(commands.HelpCommand):
         )
         herrormbed.set_thumbnail(url=self.context.me.display_avatar.url)
         herrormbed.set_author(name=self.context.author, icon_url=self.context.author.display_avatar.url)
-        await self.context.send(embed=herrormbed)
+        await self.context.reply(embed=herrormbed)
         return

@@ -34,14 +34,14 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         try:
             exec(to_compile, env)
         except Exception as e:
-            return await ctx.send(f"```py\n{e.__class__.__name__}: {e}\n```")
+            return await ctx.reply(f"```py\n{e.__class__.__name__}: {e}\n```")
         func = env["func"]
         try:
             with contextlib.redirect_stdout(stdout):
                 ret = await func()
         except Exception as e:
             value = stdout.getvalue()
-            await ctx.send(f"```py\n{value}{traceback.format_exc()}\n```")
+            await ctx.reply(f"```py\n{value}{traceback.format_exc()}\n```")
         else:
             value = stdout.getvalue()
             try:
@@ -50,9 +50,9 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
                 pass
             if ret is None:
                 if value:
-                    await ctx.send(f"```py\n{value}\n```")
+                    await ctx.reply(f"```py\n{value}\n```")
             else:
-                await ctx.send(f"```py\n{value}{ret}\n```")
+                await ctx.reply(f"```py\n{value}{ret}\n```")
 
     # Load
     @commands.command(name="load", help="Loads the given cog")
@@ -65,7 +65,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         )
         loadmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         self.bot.load_extension(cog)
-        await ctx.send(embed=loadmbed)
+        await ctx.reply(embed=loadmbed)
 
     # Unload
     @commands.command(name="unload", help="Unloads the given cog")
@@ -78,7 +78,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         )
         unloadmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         self.bot.unload_extension(cog)
-        await ctx.send(embed=unloadmbed)
+        await ctx.reply(embed=unloadmbed)
   
     # Reload
     @commands.command(name="reload", help="Reloads the given or every cog")
@@ -107,10 +107,10 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
                 except Exception as error:
                     reloadmbed.description += F"❎ - {event}\n"
                     reloadmbed.description += F"❎ - {error}\n"
-            return await ctx.send(embed=reloadmbed)
+            return await ctx.reply(embed=reloadmbed)
         reloadmbed.title = F"Reloaded {cog}."
         self.bot.reload_extension(cog)
-        await ctx.send(embed=reloadmbed)
+        await ctx.reply(embed=reloadmbed)
 
     # Toggle
     @commands.command(name="toggle", help="Toggles on and off the given command")
@@ -119,10 +119,10 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         command = self.bot.get_command(command)
         if not command.enabled:
             command.enabled = True
-            await ctx.send(F"Enabled {command.name} command")
+            await ctx.reply(F"Enabled {command.name} command")
         else:
             command.enabled = False
-            await ctx.send(F"Disabled {command.name} command.")
+            await ctx.reply(F"Disabled {command.name} command.")
 
     # Repeat
     @commands.command(name="repeat", help="Repeats the given commands the amounts of given time")
@@ -130,7 +130,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     async def repeat(self, ctx:commands.Context, time:int, command:str):
         for _ in range(1, time+1):
             await self.bot.process_commands(command)
-        await ctx.send(F"Repeated `{command}` - `{time}` times")
+        await ctx.reply(F"Repeated `{command}` - `{time}` times")
 
     # Leaves
     @commands.command(name="lives", help="Leaves from the given guilds")
@@ -144,7 +144,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             timestamp=ctx.message.created_at
         )
         view = cum.Confirm(ctx)
-        view.message = await ctx.send(content="Are you sure you want the bot to live the given guild?", embed=livesmbed, view=view)
+        view.message = await ctx.reply(content="Are you sure you want the bot to live the given guild?", embed=livesmbed, view=view)
         await view.wait()
         if view.value:
             await g.leave()
@@ -159,7 +159,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             timestamp=ctx.message.created_at
         )
         shutdownmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(embed=shutdownmbed)
+        await ctx.reply(embed=shutdownmbed)
         await self.bot.close()
 
     # Blacklist
@@ -182,7 +182,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
                 for users in blacklisted:
                     user = self.bot.get_user(users["user_id"])
                     blacklistsmbed.description += F"{user} | {user.mention} - {users['reason']}\n"
-            return await ctx.send(embed=blacklistsmbed)
+            return await ctx.reply(embed=blacklistsmbed)
         blacklisted = await self.bot.postgres.fetchval("SELECT user_id FROM blacklist WHERE user_id=$1", user.id)
         blacklistmbed = discord.Embed(
             color=self.bot.color,
@@ -195,7 +195,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         else:
             await self.bot.postgres.execute("DELETE FROM blacklist WHERE user_id=$1", user.id)
             blacklistmbed.title = F"Removed {user} from blacklist"
-        await ctx.send(embed=blacklistmbed)
+        await ctx.reply(embed=blacklistmbed)
 
     # Screenshot
     @commands.command(name="screenshot", aliases=["ss"], help="Gives a preview from the given website")
@@ -212,7 +212,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
         )
         ssmbed.set_image(url="attachment://screenshot.png")
         ssmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.send(file=discord.File(fp=response, filename="screenshot.png"), embed=ssmbed)
+        await ctx.reply(file=discord.File(fp=response, filename="screenshot.png"), embed=ssmbed)
 
 def setup(bot):
     bot.add_cog(Owner(bot))

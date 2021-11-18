@@ -16,7 +16,7 @@ class Game(commands.Cog, description="Arcade but without having to go outside!")
         )
         rpsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = gv.RPSView(ctx)
-        view.message = await ctx.send(embed=rpsmbed, view=view)
+        view.message = await ctx.reply(embed=rpsmbed, view=view)
 
     # Coinflip
     @commands.command(name="coinflip", aliases=["cf"], help="Starts an Coin-Flip game")
@@ -28,7 +28,7 @@ class Game(commands.Cog, description="Arcade but without having to go outside!")
         )
         cfmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = gv.CFView(ctx)
-        view.message = await ctx.send(embed=cfmbed, view=view)
+        view.message = await ctx.reply(embed=cfmbed, view=view)
 
     # Guess
     @commands.command(name="guess", aliases=["gs"], help="Starts an Guessing game")
@@ -40,13 +40,13 @@ class Game(commands.Cog, description="Arcade but without having to go outside!")
         )
         gsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         view = gv.GuessView(ctx)
-        view.message = await ctx.send(embed=gsmbed, view=view)
+        view.message = await ctx.reply(embed=gsmbed, view=view)
 
     # TicTacToe
     @commands.command(name="tictactoe", aliases=["ttt"], help="Starts an Tic-Tac-Toe game")
     @commands.is_owner()
     async def tictactoe(self, ctx:commands.Context):
-        await ctx.send(content="Tic Tac Toe: X goes first", view=gv.TicTacToeView())
+        await ctx.reply(content="Tic Tac Toe: X goes first", view=gv.TicTacToeView())
 
 def setup(bot):
     bot.add_cog(Game(bot))

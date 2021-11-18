@@ -28,7 +28,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         ubnmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await member.send(embed=ubnmbed)
         await ctx.guild.ban(member, reason=F"{ctx.author}\n{reason}")
-        await ctx.send(embed=abnmbed)
+        await ctx.reply(embed=abnmbed)
 
     # Unban
     @commands.command(name="unban", aliases=["un"], help="Unbans the given user")
@@ -53,7 +53,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         uunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await user.send(embed=uunmbed)
         await ctx.guild.unban(user)
-        await ctx.send(embed=aunmbed)
+        await ctx.reply(embed=aunmbed)
 
     # Kick
     @commands.command(name="kick", aliases=["kc"], help="Kicks the given user")
@@ -78,7 +78,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         ukcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await member.send(embed=ukcmbed)
         await ctx.guild.kick(user=member, reason=reason)
-        await ctx.send(embed=akcmbed)
+        await ctx.reply(embed=akcmbed)
 
     # AddRole
     @commands.command(name="addrole", aliases=["ae"], help="Adds the given role to the given user")
@@ -95,13 +95,13 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         aembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if role.position > ctx.author.top_role.position:
             aembed.title = F"{role} is higher than {member}"
-            return await ctx.send(embed=aembed)
+            return await ctx.reply(embed=aembed)
         if role in member.roles:
             aembed.title = "Already has:"
-            return await ctx.send(embed=aembed)
+            return await ctx.reply(embed=aembed)
         await member.add_roles(role)
         aembed.title = "Added:"
-        await ctx.send(embed=aembed)
+        await ctx.reply(embed=aembed)
     
     # RemoveRole
     @commands.command(name="removerole", aliases=["re"], help="Removes the given role from the given user")
@@ -118,13 +118,13 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         rembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if role.position > ctx.author.top_role.position:
             rembed.title = F"{role} is higher than {member}"
-            return await ctx.send(embed=rembed)
+            return await ctx.reply(embed=rembed)
         if role in member.roles:
             await member.remove_roles(role)
             rembed.title = "Removed:"
-            return await ctx.send(embed=rembed)
+            return await ctx.reply(embed=rembed)
         rembed.title = "Doesn't have:"
-        await ctx.send(embed=rembed)
+        await ctx.reply(embed=rembed)
 
     # Slowmode
     @commands.command(name="slowmode", aliases=["sm"], help="Changes the slowmode of this or the given channel to the given seconds")
@@ -141,13 +141,13 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         smmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if seconds > 21600:
             smmbed.title = F"Seconds cannot be more than 21600"
-            return await ctx.send(embed=smmbed)
+            return await ctx.reply(embed=smmbed)
         if channel.slowmode_delay == seconds:
             smmbed.title = "Channel is already at the same slowmode:"
-            return await ctx.send(embed=smmbed)
+            return await ctx.reply(embed=smmbed)
         await channel.edit(reason=F"Channel: {channel.mention}\nSeconds: {seconds}\nBy: {ctx.author}", slowmode_delay=seconds)
         smmbed.title = "Changed the slowdown:"
-        await ctx.send(embed=smmbed)
+        await ctx.reply(embed=smmbed)
 
     # Lock
     @commands.command(name="lock", aliases=["lc"], help="Locks this or the given channel")
@@ -172,11 +172,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         lcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if not channel.permissions_for(ctx.guild.default_role).send_messages:
             lcmbed.title = "Is already locked:"
-            return await ctx.send(embed=lcmbed)
+            return await ctx.reply(embed=lcmbed)
         else:
             await channel.set_permissions(ctx.guild.default_role, overwrite=over)
             lcmbed.title = "Locked:"
-            await ctx.send(embed=lcmbed)
+            await ctx.reply(embed=lcmbed)
 
     # Unlock
     @commands.command(name="unlock", aliases=["ulc"], help="Unlocks this or the given channel")
@@ -201,11 +201,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         ulcmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if channel.permissions_for(ctx.guild.default_role).send_messages:
             ulcmbed.title = "Is already unlocked:"
-            return await ctx.send(embed=ulcmbed)
+            return await ctx.reply(embed=ulcmbed)
         else:
             await channel.set_permissions(ctx.guild.default_role, overwrite=over)
             ulcmbed.title = "Unlocked:"
-            await ctx.send(embed=ulcmbed)
+            await ctx.reply(embed=ulcmbed)
 
     # Mute
     @commands.command(name="mute", aliases=["mt"], help="Mutes  or Unmutes the given user")
@@ -234,19 +234,19 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
                 timestamp=ctx.message.created_at
             )
             crmtmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-            await ctx.send(embed=crmtmbed)
+            await ctx.reply(embed=crmtmbed)
             for channel in ctx.guild.channels:
                 await channel.set_permissions(muterole, add_reactions=False, send_messages=False, connect=False, speak=False, create_public_threads=False, create_private_threads=False)
         if muterole in member.roles:
             mtmbed.title = F"UnMuted:"
             mtmbed.description = F"UnMuted: {member.mention}\n{reason}\n{muterole.mention}"
             await member.remove_roles(muterole, reason=F"Un{ctx.author}\n{reason}")
-            await ctx.send(embed=mtmbed)
+            await ctx.reply(embed=mtmbed)
         else:
             mtmbed.title = F"Muted:"
             mtmbed.description = F"{member.mention}\n{reason}\n{muterole.mention}"
             await member.add_roles(muterole, reason=F"{ctx.author}\n{reason}")
-            await ctx.send(embed=mtmbed)
+            await ctx.reply(embed=mtmbed)
 
     # Clear
     @commands.command(name="clear", aliases=["cr"], help="Deletes messages with the given amount")
@@ -261,10 +261,10 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         pumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if amount > 100:
             pumbed.title = "Can't clear more than 100 messages"
-            return await ctx.send(embed=pumbed, delete_after=5)
+            return await ctx.reply(embed=pumbed, delete_after=5)
         await ctx.channel.purge(limit=amount+1)
         pumbed.title = F"Deleted {amount} amount of messages"
-        await ctx.send(embed=pumbed, delete_after=5)
+        await ctx.reply(embed=pumbed, delete_after=5)
 
     # EmojiAdd
     @commands.command(name="emojiadd", aliases=["ea"], help="Creates a emoji based on the given name and image")
@@ -279,11 +279,11 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         eambed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if not len(ctx.message.attachments) > 0:
             eambed.title = "You need to provide an image"
-            return await ctx.send(embed=eambed)
+            return await ctx.reply(embed=eambed)
         emoji = await ctx.guild.create_custom_emoji(name=name, image=(await ctx.message.attachments[0].read()), reason=F"Added by: {ctx.author}")
         eambed.title = "Created the emoji:"
         eambed.set_image(url=emoji.url)
-        await ctx.send(embed=eambed)
+        await ctx.reply(embed=eambed)
 
     # EmojiRemove
     @commands.command(name="emojiremove", aliases=["er"], help="Removes the given emoji")
@@ -299,7 +299,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         ermbed.set_image(url=emoji.url)
         ermbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await emoji.delete()
-        await ctx.send(embed=ermbed)
+        await ctx.reply(embed=ermbed)
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
