@@ -96,7 +96,7 @@ class PemguBase(commands.AutoShardedBot):
 
     @property
     def music_color(self):
-        colors = [0xFF0000, 0x1DB954, 0xFA243C, 0xFF5500]
+        colors = [0xFF0000, 0x1DB954, 0xFA243C, 0x159FBE, 0xFF5500, 0xFFFF64]
         color = random.choice(colors)
         return color
 
