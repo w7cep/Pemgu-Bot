@@ -359,7 +359,8 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             F"***Requires-Colons:*** {emoji.require_colons}",
             F"***Available:*** {emoji.available}",
             F"***Twitch:*** {emoji.managed}",
-            F"***Created-At:*** {discord.utils.format_dt(emoji.created_at)}"
+            F"***Created-At:*** {discord.utils.format_dt(emoji.created_at, style='f')} ({discord.utils.format_dt(emoji.created_at, style='R')})"
+            F"***Guild:*** {emoji.guild}"
         ]
         emmbed = discord.Embed(
             color=self.bot.color,
@@ -367,7 +368,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             description="\n".join(e for e in ei),
             timestamp=ctx.message.created_at
         )
-        emmbed.set_image(url=emoji.url)
+        emmbed.set_thumbnail(url=emoji.url)
         emmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=emmbed)
 
