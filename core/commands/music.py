@@ -385,8 +385,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     async def lyrics(self, ctx:commands.Context, *, music:str=None):
         if not music:
-            if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
-            else: raise commands.CheckFailure("Since I'm not in a voice channel\nYou need to pass a music")
+            if ctx.voice_client: music = ctx.voice_client.current.title
+            else: raise commands.CheckFailure("Since I'm not in a voice channel you need to pass a music")
         lyrics = await self.bot.openrobot.lyrics(music)
         if lyrics:
             lymbed = discord.Embed(
