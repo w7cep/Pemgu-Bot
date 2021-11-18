@@ -168,13 +168,16 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.command(name="join", aliases=["jn"], help="Joins a voice channel")
     @commands.guild_only()
     @commands.check(user_voice)
-    async def join(self, ctx:commands.Context):
+    async def join(self, ctx:commands.Context, channel:discord.VoiceChannel=None):
+        channel = ctx.author.voice.channel if not channel else channel
         if not ctx.me.voice:
-            await ctx.author.voice.channel.connect(cls=pomice.Player)
-            ctx.voice_client.queue = asyncio.Queue()
-            ctx.voice_client.lqueue = []
-            ctx.voice_client.loop = None
-            return await ctx.reply(F"Joined the voice channel {ctx.author.voice.channel.mention}")
+            if channel.permissions_for(ctx.me).connect:
+                await ctx.author.voice.channel.connect(cls=pomice.Player)
+                ctx.voice_client.queue = asyncio.Queue()
+                ctx.voice_client.lqueue = []
+                ctx.voice_client.loop = None
+                return await ctx.reply(F"Joined the voice channel {ctx.author.voice.channel.mention}")
+            return await ctx.reply("I don't have permission to join that channel")
         await ctx.reply(F"Someone else is using to me in {ctx.me.voice.channel.mention}")
 
     # Disconnect
