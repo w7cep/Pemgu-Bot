@@ -108,7 +108,7 @@ class ViewMusic(discord.ui.View):
                 lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
                 lymbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 return await interaction.response.send_message(embed=lymbed, ephemeral=True)
-            return await interaction.response.send_message(F"Lyrics: Didn't found any, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
+            return await interaction.response.send_message(F"Lyrics: Didn't find any, {self.ctx.voice_client.current.title} - {self.ctx.voice_client.current.author}", ephemeral=True)
         return await interaction.response.send_message.send("Lyrics: Nothing is playing", ephemeral=True)
 
     async def interaction_check(self, interaction:discord.Interaction):
@@ -398,7 +398,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
             lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
             return await ctx.reply(embed=lymbed)
-        await ctx.reply(F"Didn't found any lyrics for {music}")
+        await ctx.reply(F"Didn't find any lyrics for {music}")
 
     @commands.Cog.listener()
     async def on_pomice_track_start(self, player:pomice.Player, track:pomice.Track):
