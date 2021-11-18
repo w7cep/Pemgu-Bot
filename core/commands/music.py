@@ -156,8 +156,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Player
     @commands.command(name="player", help="Shows you the ultimate player")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def player(self, ctx:commands.Context):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
@@ -183,8 +181,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Disconnect
     @commands.command(name="disconnect", aliases=["dc"], help="Disconnects from the voice channel")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def disconnect(self, ctx:commands.Context):
         await ctx.voice_client.destroy()                    
@@ -221,8 +217,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Stop
     @commands.command(name="stop", aliases=["so"], help="Stops playing and Clears queue")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def stop(self, ctx:commands.Context):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
@@ -237,8 +231,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Skip
     @commands.command(name="skip", aliases=["sk"], help="Skips the music")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def skip(self, ctx:commands.Context):
         if ctx.voice_client.is_playing:
@@ -251,8 +243,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Resume
     @commands.command(name="resume", aliases=["ru"], help="Resumes the paused music")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def resume(self, ctx:commands.Context):
         if ctx.voice_client.is_paused:
@@ -263,8 +253,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Pause
     @commands.command(name="pause", aliases=["pu"], help="Pauses playing music")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def pause(self, ctx:commands.Context):
         if ctx.voice_client.is_playing:
@@ -275,8 +263,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Loop
     @commands.command(name="loop", aliases=["lp"], help="Loops over the music")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def loop(self, ctx:commands.Context):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
@@ -324,8 +310,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Queue-Clear
     @commands.command(name="queueclear", aliases=["qucr"], help="Clears the queue")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def queue_clear(self, ctx:commands.Context):
         if not ctx.voice_client.queue.empty():
@@ -345,8 +329,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Seek
     @commands.command(name="seek", aliases=["se"], help="Seeks to the given time")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def seek(self, ctx:commands.Context, *, time:str=None):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
@@ -370,8 +352,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
     # Volume
     @commands.command(name="volume", aliases=["vol"], help="Sets or Tells the volume of the music")
     @commands.guild_only()
-    @commands.check(bot_voice)
-    @commands.check(user_voice)
     @commands.check(same_voice)
     async def volume(self, ctx:commands.Context, *, volume:int=None):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
