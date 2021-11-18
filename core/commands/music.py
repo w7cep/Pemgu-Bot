@@ -386,7 +386,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def lyrics(self, ctx:commands.Context, *, music:str=None):
         if not music:
             if ctx.voice_client: music = F"{ctx.voice_client.current.title} {ctx.voice_client.current.author}"
-            else: return await ctx.reply("Since I'm not in a voice channel\nYou need to pass a music")
+            else: raise commands.CheckFailure("Since I'm not in a voice channel\nYou need to pass a music")
         lyrics = await self.bot.openrobot.lyrics(music)
         if lyrics:
             lymbed = discord.Embed(
@@ -397,7 +397,6 @@ class Music(commands.Cog, description="Jamming out with these!"):
             )
             lymbed.set_thumbnail(url=lyrics.images.track or discord.Embed.Empty)
             lymbed.set_author(name=lyrics.artist, icon_url=lyrics.images.background or discord.Embed.Empty)
-            lymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             return await ctx.reply(embed=lymbed)
         await ctx.reply(F"Didn't found any lyrics for {music}")
 
