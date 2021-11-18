@@ -388,7 +388,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if ctx.voice_client: music = ctx.voice_client.current.title
             else: raise commands.CheckFailure("Since I'm not in a voice channel you need to pass a music")
         lyrics = await self.bot.openrobot.lyrics(music)
-        if lyrics:
+        if lyrics.lyrics:
             lymbed = discord.Embed(
                 color=self.bot.music_color,
                 title=lyrics.title,
