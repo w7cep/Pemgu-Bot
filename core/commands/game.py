@@ -9,11 +9,11 @@ class RPSButtons(discord.ui.Button):
         self.useroption = view.useroption
     async def callback(self, interaction:discord.Interaction):
         if self.label == "Rock":
-            self.useroption = "🗻Rock"
+            self.useroption = "Rock"
         elif self.label == "Paper":
-            self.useroption = "🧻Paper"
-        elif self.label == "✂️Scissors":
-            self.useroption = "✂️Scissors"
+            self.useroption = "Paper"
+        elif self.label == "Scissors":
+            self.useroption = "Scissors"
         self.view.clear_items()
         if self.useroption == self.botoption:
             tierpsmbed = discord.Embed(
@@ -24,9 +24,9 @@ class RPSButtons(discord.ui.Button):
             tierpsmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
             await interaction.response.edit_message(embed=tierpsmbed, view=self.view)
         else:
-            if self.useroption == "🗻Rock" and self.botoption == "✂️Scissors" \
-               or self.useroption == "🧻Paper" and self.botoption == "🗻Rock" \
-                   or self.useroption == "✂️Scissors" and self.botoption == "🧻Paper":
+            if self.useroption == "Rock" and self.botoption == "Scissors" \
+               or self.useroption == "Paper" and self.botoption == "Rock" \
+                   or self.useroption == "Scissors" and self.botoption == "Paper":
                         wonrpsmbed = discord.Embed(
                             color=self.ctx.bot.color,
                             description=F"You chose **{self.useroption}**, But, I chose **{self.botoption}**, You won / I lost",
@@ -34,9 +34,9 @@ class RPSButtons(discord.ui.Button):
                         )
                         wonrpsmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                         await interaction.response.edit_message(embed=wonrpsmbed, view=self.view)
-            elif self.useroption == "✂️Scissors" and self.botoption == "🗻Rock" \
-                or self.useroption == "🗻Rock" and self.botoption == "🧻Paper" \
-                    or self.useroption == "🧻Paper" and self.botoption == "✂️Scissors":
+            elif self.useroption == "Scissors" and self.botoption == "Rock" \
+                or self.useroption == "Rock" and self.botoption == "Paper" \
+                    or self.useroption == "Paper" and self.botoption == "Scissors":
                         lostrpsmbed = discord.Embed(
                             color=self.ctx.bot.color,
                             description=F"I chose **{self.botoption}**, But, You chose **{self.useroption}**, I won / You lost",
@@ -48,7 +48,7 @@ class RPSView(discord.ui.View):
     def __init__(self, ctx):
         super().__init__(timeout=None)
         self.ctx = ctx
-        self.botoption = random.choice(["🗻Rock", "🧻Paper", "✂️Scissors"])
+        self.botoption = random.choice(["Rock", "Paper", "Scissors"])
         self.useroption = ""
         self.add_item(item=RPSButtons(emoji="🗻", label="Rock", style=discord.ButtonStyle.green, view=self))
         self.add_item(item=RPSButtons(emoji="🧻", label="Paper", style=discord.ButtonStyle.red, view=self))
