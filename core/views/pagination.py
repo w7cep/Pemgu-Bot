@@ -14,7 +14,7 @@ class ViewPaginator(discord.ui.View):
         if self.embed == 0: button.disabled = True
         await interaction.response.edit_message(embed=self.embeds[self.embed], view=button.view)
 
-    @discord.ui.button(emoji="⏹", style=discord.ButtonStyle.delete)
+    @discord.ui.button(emoji="⏹", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
         await interaction.message.delete()
 

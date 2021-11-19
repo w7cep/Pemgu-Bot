@@ -1,6 +1,6 @@
 import discord, pomice, re, asyncio, datetime
 from discord.ext import commands
-from core.views import confirm, paginator
+from core.views import confirm, pagination
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
@@ -299,10 +299,10 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def queue(self, ctx:commands.Context):
         if len(ctx.voice_client.lqueue) > 1:
             es = []
-            pag = commands.Paginator()
+            paginator = commands.Paginator()
             for i in ctx.voice_client.lqueue:
-                pag.add_line(str(i))
-            for page in pag.pages:
+                paginator.add_line(str(i))
+            for page in paginator.pages:
                 qumbed = discord.Embed(
                     color=self.bot.music_color,
                     title="Queue",
@@ -311,7 +311,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-            return await ctx.reply(embed=es[0], view=paginator.ViewPaginator(ctx, es))
+            return await ctx.reply(embed=es[0], view=pagination.ViewPagination(ctx, es))
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
