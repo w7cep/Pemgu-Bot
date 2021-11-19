@@ -171,6 +171,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if not ctx.me.voice:
             if channel.permissions_for(ctx.me).connect:
                 await ctx.author.voice.channel.connect(cls=pomice.Player)
+                await ctx.guild.change_voice_state(self_deaf=True)
                 ctx.voice_client.queue = asyncio.Queue()
                 ctx.voice_client.lqueue = []
                 ctx.voice_client.loop = None
