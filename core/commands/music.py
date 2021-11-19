@@ -86,7 +86,7 @@ class ViewPlayer(discord.ui.View):
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
             for i in self.ctx.voice_client.lqueue:
-                paginator.add_line(F"#{counter} | {i}")
+                paginator.add_line(F"#{counter}  {i}")
                 counter += 1
             for page in paginator.pages:
                 qumbed = discord.Embed(
@@ -310,7 +310,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
             for i in ctx.voice_client.lqueue:
-                paginator.add_line(F"#{counter} | {i}")
+                paginator.add_line(F"#{counter}  {i}")
                 counter += 1
             for page in paginator.pages:
                 qumbed = discord.Embed(
