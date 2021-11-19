@@ -1,6 +1,6 @@
 import discord
 
-class ViewPaginator(discord.ui.View):
+class ViewPagination(discord.ui.View):
     def __init__(self, ctx, embeds):
         super().__init__(timeout=None)
         self.ctx = ctx
