@@ -1,10 +1,10 @@
 import discord, pomice, re, asyncio, datetime
 from discord.ext import commands
-from core.views.confirm import Confirm
+from core.views import confirm, paginator
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
-class ViewMusic(discord.ui.View):
+class ViewPlayer(discord.ui.View):
     def __init__(self, ctx, music):
         super().__init__(timeout=None)
         self.ctx = ctx
@@ -159,7 +159,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.check(full_voice)
     async def player(self, ctx:commands.Context):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
-            return await ctx.reply("Pemgu.Player.exe", view=ViewMusic(ctx, self))
+            return await ctx.reply("Pemgu.Player.exe", view=ViewPlayer(ctx, self))
         return await ctx.reply("Nothing is playing")
 
     # Join
@@ -298,15 +298,20 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.check(bot_voice)
     async def queue(self, ctx:commands.Context):
         if len(ctx.voice_client.lqueue) > 1:
-            d = "\n".join(q for q in ctx.voice_client.lqueue)
-            qumbed = discord.Embed(
-                color=self.bot.music_color,
-                title="Queue",
-                description=self.bot.trim(d, 4095),
-                timestamp=ctx.message.created_at
-            )
-            qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-            return await ctx.reply(embed=qumbed)
+            es = []
+            pag = commands.Paginator()
+            for i in ctx.voice_client.lqueue:
+                pag.add_line(str(i))
+            for page in pag.pages:
+                qumbed = discord.Embed(
+                    color=self.bot.music_color,
+                    title="Queue",
+                    description=page,
+                    timestamp=ctx.message.created_at
+                )
+                qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+                es.append(qumbed)
+            return await ctx.reply(embed=es[0], view=paginator.ViewPaginator(ctx, es))
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
@@ -316,7 +321,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def queue_clear(self, ctx:commands.Context):
         if not ctx.voice_client.queue.empty():
             await ctx.invoke(self.queue)
-            view = Confirm(ctx)
+            view = confirm.Confirm(ctx)
             await ctx.reply("Do you want to clear the queue", view=view)
             await view.wait()
             if view.value:
