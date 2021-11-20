@@ -48,7 +48,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             )
             slmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             sles.append(slmbed)
-        await ctx.reply(embed=slmbed, view=pagination.ViewPagination(ctx, sles))
+        await ctx.reply(embed=sles[0], view=pagination.ViewPagination(ctx, sles))
 
     # Invite
     @commands.command(name="invite", aliases=["ie"], help="Makes an invite link for the bot or the given bot")
