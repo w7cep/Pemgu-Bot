@@ -82,7 +82,7 @@ class ViewPlayer(discord.ui.View):
     @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.grey)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
         if len(self.ctx.voice_client.lqueue) > 1:
-            counter = 0
+            counter = 1
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
             for i in self.ctx.voice_client.lqueue:
@@ -307,7 +307,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.check(bot_voice)
     async def queue(self, ctx:commands.Context):
         if len(ctx.voice_client.lqueue) > 1:
-            counter = 0
+            counter = 1
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
             for i in ctx.voice_client.lqueue:
