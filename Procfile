@@ -1,1 +1,1 @@
-web: python bot.py && java -jar Lavalink.jar
+worker: python bot.py
