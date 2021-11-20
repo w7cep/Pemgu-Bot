@@ -97,7 +97,7 @@ class ViewPlayer(discord.ui.View):
                 )
                 qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 es.append(qumbed)
-            return await interaction.response.send_message(embed=qumbed, view=pagination.ViewPagination(self.ctx, es), ephemeral=True)
+            return await interaction.response.send_message(embed=qumbed, view=pagination.ViewPagination(self.ctx, es) if len(es) > 1 else None, ephemeral=True)
         return await self.nowplaying()
 
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
@@ -321,7 +321,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-            return await ctx.reply(embed=es[0], view=pagination.ViewPagination(ctx, es))
+            return await ctx.reply(embed=es[0], view=pagination.ViewPagination(ctx, es) if len(es) > 1 else None)
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
@@ -406,7 +406,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         tsmbed = discord.Embed(
             color=self.bot.music_color,
             title="Playing:",
-            description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(player.position, track.length)} | {self.duration(player.position)} - {self.duration(track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 1 else ''}",
+            description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 1 else ''}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
@@ -420,7 +420,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 tembed = discord.Embed(
                     color=self.bot.music_color,
                     title="Ended:",
-                    description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.bar(track.length, track.length)} | {self.duration(track.length)} - {self.duration(track.length)}",
+                    description=F"Title: [{track.title}]({track.uri})\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}",
                     timestamp=track.ctx.message.created_at
                 )
                 tembed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
