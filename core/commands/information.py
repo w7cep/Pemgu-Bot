@@ -37,7 +37,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         sles = []
         paginator = commands.Paginator(prefix=None, suffix=None)
         for guild in self.bot.guilds:
-            paginator.add_line(F"#{counter} {guild.name} - {guild.id} | {guild.owner.mention} {guild.owner.name}#{guild.owner.discriminator}")
+            paginator.add_line(F"#{counter} {guild.name}")
             counter += 1
         for page in paginator.pages:
             slmbed = discord.Embed(

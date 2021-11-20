@@ -1,6 +1,7 @@
 import discord, asyncpg, os, aiohttp, pomice, openrobot.api_wrapper, random
 import core.utils.help as help
 from discord.ext import commands
+from core.views import pagination
 
 async def create_pool_postgres():
     bot.postgres = await asyncpg.create_pool(dsn=os.getenv("DATABASE_URL"))
@@ -114,6 +115,18 @@ bot = PemguBase(
     intents=discord.Intents.all(),
     allowed_mentions=discord.AllowedMentions(everyone=False, users=False, roles=False, replied_user=True)
 )
+
+@bot.command(name="pages")
+async def _pages(ctx:commands.Context):
+    t = ["one", "two", "tre"]
+    s = []
+    for i in t:
+        e = discord.Embed(
+            color=discord.Color.blurple(),
+            title=i
+        )
+        s.append(e)
+    await ctx.send(embed=s[0], view=pagination.ViewPagination(ctx, s))
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
