@@ -1,5 +1,6 @@
 import discord, os, sys, time, inspect, io, typing
 from discord.ext import commands
+from core.views import pagination
 
 class Information(commands.Cog, description="Stalking people is wrong and bad!"):
     def __init__(self, bot):
@@ -32,18 +33,22 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     # ServerList
     @commands.command(name="serverlist", aliases=["sl"], help="Gives the list of bot's servers")
     async def serverlist(self, ctx:commands.Context):
-        si = []
+        counter = 1
+        sles = []
+        paginator = commands.Paginator(prefix=None, suffix=None)
         for guild in self.bot.guilds:
-            si.append(F"{guild.name} - {guild.id} | {guild.owner.mention} {guild.owner.name}#{guild.owner.discriminator}")
-        sis = "\n".join(s for s in si)
-        slmbed = discord.Embed(
-            color=self.bot.color,
-            title=F"Bot's Servers {len(self.bot.guilds)}",
-            description=self.bot.trim(sis, 2049),
-            timestamp=ctx.message.created_at
-        )
-        slmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await ctx.reply(embed=slmbed)
+            paginator.add_line(F"#{counter}{guild.name} - {guild.id} | {guild.owner.mention} {guild.owner.name}#{guild.owner.discriminator}")
+            counter += 1
+        for page in paginator.pages:
+            slmbed = discord.Embed(
+                color=self.bot.color,
+                title=F"Servers {len(self.bot.guilds)}",
+                description=page,
+                timestamp=ctx.message.created_at
+            )
+            slmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+            sles.append(slmbed)
+        await ctx.reply(embed=slmbed, view=pagination.ViewPagination(ctx, sles))
 
     # Invite
     @commands.command(name="invite", aliases=["ie"], help="Makes an invite link for the bot or the given bot")
