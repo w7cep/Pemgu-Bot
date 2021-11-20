@@ -21,20 +21,20 @@ class ViewPagination(discord.ui.View):
 
     @discord.ui.button(emoji="⏩", style=discord.ButtonStyle.green, disabled=False)
     async def next(self, button:discord.ui.Button, interaction:discord.Interaction):
-        print("main" + ", ".join(e for e in self.embeds), self.embed)
+        print("main", self.embed)
         if self.previous.disabled: self.previous.disabled = False
         self.embed += 1
-        print("add" + ", ".join(e for e in self.embeds), self.embed)
+        print("add", self.embed)
         if self.embed >= (len(self.embeds)-1):
-            print("if" + ", ".join(e for e in self.embeds), self.embed)
+            print("if", self.embed)
             embed = self.embeds[:-1]
-            print("if2" + ", ".join(e for e in self.embeds), self.embed)
+            print("if2", self.embed)
             button.disabled = True
-            print("if3" + ", ".join(e for e in self.embeds), self.embed)
+            print("if3", self.embed)
         else: 
-            print("else" + ", ".join(e for e in self.embeds), self.embed)
+            print("else", self.embed)
             embed = self.embeds[self.embed]
-            print("else2" + ", ".join(e for e in self.embeds), self.embed)
+            print("else2", self.embed)
         await interaction.response.edit_message(embed=embed, view=button.view)
 
     async def on_timeout(self):
