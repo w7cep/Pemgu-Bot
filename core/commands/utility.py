@@ -60,7 +60,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
     # Notes
     @commands.group(name="notes", aliases=["note"], help="Taking notes with these, Consider using subcommands", invoke_without_command=True)
     async def notes(self, ctx:commands.Context):
-        await ctx.reply_help("notes")
+        await ctx.send_help("notes")
 
     # Notes-List
     @notes.command(name="list", aliases=["lt"], help="Shows every of your or the given user's notes")

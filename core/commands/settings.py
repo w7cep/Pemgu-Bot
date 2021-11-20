@@ -10,7 +10,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
     @commands.group(name="prefix", aliases=["pf"], help="Setting up the prefix with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def prefix(self, ctx:commands.Context):
-        await ctx.reply_help("prefix")
+        await ctx.send_help("prefix")
 
     # Prefix-Status
     @prefix.command(name="status", aliases=["st"], help="Shows the status for prefix")
@@ -73,7 +73,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
     @commands.group(name="welcome", aliases=["wel"], help="Setting up the welcomer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def welcome(self, ctx:commands.Context):
-        await ctx.reply_help("welcome")
+        await ctx.send_help("welcome")
 
     # Welcome-Status
     @welcome.command(name="status", aliases=["st"], help="Shows the status for welcome")
@@ -157,7 +157,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
     @commands.group(name="goodbye", aliases=["bye"], help="Setting up the goodbyer with these, Consider using subcommands", invoke_without_command=True)
     @commands.guild_only()
     async def goodbye(self, ctx:commands.Context):
-        await ctx.reply_help("goodbye")
+        await ctx.send_help("goodbye")
 
     # Goodbye-Status
     @goodbye.command(name="status", aliases=["st"], help="Changes the status for goodbye")
