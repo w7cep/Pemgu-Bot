@@ -166,6 +166,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.check(full_voice)
     async def player(self, ctx:commands.Context):
         if ctx.voice_client.is_playing or ctx.voice_client.is_paused:
+            await ctx.invoke(self.nowplaying)
             return await ctx.reply("Pemgu.Player.exe", view=ViewPlayer(ctx, self))
         return await ctx.reply("Nothing is playing")
 

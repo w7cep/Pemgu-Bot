@@ -1,4 +1,5 @@
 import discord
+from discord import embeds
 
 class ViewPagination(discord.ui.View):
     def __init__(self, ctx, embeds):
@@ -23,7 +24,7 @@ class ViewPagination(discord.ui.View):
         if self.previous.disabled: self.previous.disabled = False
         self.embed += 1
         if len(self.embeds) <= self.embed: button.disabled = True
-        await interaction.response.edit_message(embed=self.embeds[self.embed], view=button.view)
+        await interaction.response.edit_message(embed=self.embeds[self.embed] if len(self.embeds) > self.embed else None, view=button.view)
 
     async def interaction_check(self, interaction:discord.Interaction):
         if interaction.user.id == self.ctx.message.author.id:
