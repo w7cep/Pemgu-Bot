@@ -23,7 +23,7 @@ class ViewPagination(discord.ui.View):
     async def next(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.previous.disabled: self.previous.disabled = False
         if len(self.embeds) == self.embed:
-            embed = self.embeds[self.embed]
+            embed = self.embeds[:-1]
             button.disabled = True
         else: 
             self.embed += 1
