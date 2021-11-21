@@ -157,11 +157,12 @@ async def _commands(ctx:commands.Context, option:str):
 
 @bot.command(name="news", aliases=["new"], help="Shows the latest news")
 async def _news(ctx:commands.Context):
-    message = await bot.http.get_message(898287740267937813, 908136879944253490)
+    channel = self.bot.get_channel(898287740267937813)
+    message = await channel.fetch_message(908136879944253490)
     newmbed = discord.Embed(
         color=bot.color,
         title="Latest News",
-        description=message.get("content"),
+        description=message.content,
         timestamp=ctx.message.created_at
     )
     newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
