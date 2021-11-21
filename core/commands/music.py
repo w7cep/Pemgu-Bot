@@ -249,6 +249,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         if ctx.voice_client.is_playing:
             if not ctx.voice_client.queue.empty():
                 await ctx.reply(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
+                ctx.voice_client.loop = None
                 return await ctx.voice_client.stop()
             return await ctx.reply("There is nothing in the queue")
         return await ctx.reply("Nothing is playing")
