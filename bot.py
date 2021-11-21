@@ -165,9 +165,9 @@ async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel
             color=bot.color,
             title="Raw Message",
             description=F"```json\n{message}\n```",
-            timestamp=message.created_at
+            timestamp=ctx.message.created_at
         )
-        rawmbed.set_footer(text=message.author, icon_url=message.author.display_avatar.url)
+        rawmbed.set_footer(text=ctx.message.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=rawmbed)
     except discord.NotFound:
         return await ctx.reply("Could not find the message")
