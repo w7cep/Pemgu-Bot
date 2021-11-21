@@ -126,7 +126,7 @@ async def _pages(ctx:commands.Context):
             title=i
         )
         s.append(e)
-    await ctx.send(embed=s[0], view=pagination.ViewPagination(ctx, s))
+    await pagination.ViewPagination(ctx, s).start()
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
