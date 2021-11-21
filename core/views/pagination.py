@@ -18,6 +18,7 @@ class ViewPagination(discord.ui.View):
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
     async def previous(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.next.disabled: self.next.disabled = False
+        if self.last.disabled: self.last.disabled = False
         self.embed -= 1
         if self.embed == 0: button.disabled = True
         await interaction.response.edit_message(embed=self.embeds[self.embed], view=button.view)
@@ -29,6 +30,7 @@ class ViewPagination(discord.ui.View):
     @discord.ui.button(emoji="⏩", style=discord.ButtonStyle.green, disabled=False)
     async def next(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.previous.disabled: self.previous.disabled = False
+        if self.first.disabled: self.first.disabled = False
         self.embed += 1
         if self.embed >= (len(self.embeds)-1):
             embed = self.embeds[-1]
