@@ -369,7 +369,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     sembed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
                     sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                     view = discord.ui.View()
-                    view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=self.ctx.voice_client.current.uri))
+                    view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=ctx.voice_client.current.uri))
                     await ctx.voice_client.seek(mtime)
                     return await ctx.reply(embed=sembed, view=view)
                 return await ctx.reply(F"Time needs to be between 0 or {datetime.timedelta(milliseconds=ctx.voice_client.current.length)}")
