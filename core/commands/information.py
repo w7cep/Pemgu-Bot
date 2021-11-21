@@ -354,7 +354,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         await ctx.reply(embed=simbed)
 
     # Emojis
-    @commands.command(name="emojis", aliases=["es"], help="Shows every emoji or every emoji with the given name")
+    @commands.command(name="emojis", aliases=["es"], help="Shows every emoji with or without the given name")
     @commands.guild_only()
     async def emojis(self, ctx:commands.Context, *, name:str=None):
         ps = []
