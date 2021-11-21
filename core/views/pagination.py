@@ -12,7 +12,7 @@ class ViewPagination(discord.ui.View):
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
         button.disabled = True
-        self.counter.label = F"{len(self.pages)}/{len(self.pages)}"
+        self.counter.label = F"0/{len(self.pages)}"
         await interaction.response.edit_message(embed=self.pages[0], view=button.view)
 
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
