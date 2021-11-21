@@ -1,4 +1,4 @@
-import discord, typing
+import discord, typing, datetime
 from discord.ext import commands
 
 class Moderation(commands.Cog, description="Was someone being bad?"):
@@ -135,7 +135,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         channel = ctx.channel if not channel else channel
         smmbed = discord.Embed(
             color=self.bot.color,
-            description=F"{channel.mention}\n{seconds}",
+            description=F"{channel.mention}\n{datetime.timedelta(seconds=seconds)}",
             timestamp=ctx.message.created_at
         )
         smmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
