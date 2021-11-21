@@ -301,7 +301,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             npmbed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
             npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             view = discord.ui.View()
-            view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=self.ctx.voice_client.current.uri))
+            view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=ctx.voice_client.current.uri))
             return await ctx.reply(embed=npmbed, view=view)
         return await ctx.reply("Nothing is playing")
 
