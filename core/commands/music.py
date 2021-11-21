@@ -237,6 +237,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     ctx.voice_client.queue.task_done()
             for _ in range(len(ctx.voice_client.lqueue)):
                 ctx.voice_client.lqueue.pop(0)
+            ctx.voice_client.loop = None
             await ctx.reply(F"Stopped: {ctx.voice_client.current.title} - {ctx.voice_client.current.author}")
             return await ctx.voice_client.stop()
         return await ctx.reply("Nothing is playing")
@@ -248,8 +249,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def skip(self, ctx:commands.Context):
         if ctx.voice_client.is_playing:
             if not ctx.voice_client.queue.empty():
-                await ctx.reply(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
                 ctx.voice_client.loop = None
+                await ctx.reply(F"Skipped: {ctx.voice_client.current.title} | {ctx.voice_client.current.author}")
                 return await ctx.voice_client.stop()
             return await ctx.reply("There is nothing in the queue")
         return await ctx.reply("Nothing is playing")
