@@ -18,10 +18,10 @@ class ViewPagination(discord.ui.View):
 
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
     async def previous(self, button:discord.ui.Button, interaction:discord.Interaction):
-        self.counter.label = F"{self.page+1}/{len(self.pages)}"
+        self.page -= 1
+        self.counter.label = F"{self.page}/{len(self.pages)}"
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
-        self.page -= 1
         if self.page == 0:
             button.disabled = True
             if not self.first.disabled: self.first.disabled = True
@@ -33,10 +33,10 @@ class ViewPagination(discord.ui.View):
 
     @discord.ui.button(emoji="⏩", style=discord.ButtonStyle.green, disabled=False)
     async def next(self, button:discord.ui.Button, interaction:discord.Interaction):
+        self.page += 1
         self.counter.label = F"{self.page+1}/{len(self.pages)}"
         if self.previous.disabled: self.previous.disabled = False
         if self.first.disabled: self.first.disabled = False
-        self.page += 1
         if self.page >= (len(self.pages)-1):
             embed = self.pages[-1]
             button.disabled = True
