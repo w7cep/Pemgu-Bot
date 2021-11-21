@@ -71,7 +71,7 @@ class ViewPlayer(discord.ui.View):
             npmbed = discord.Embed(
                 color=self.ctx.bot.music_color,
                 title="Playing:",
-                description=F"Title: {self.ctx.voice_client.current.title}\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {datetime.timedelta(milliseconds=self.ctx.voice_client.position)} - {datetime.timedelta(milliseconds=self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {self.ctx.voice_client.current.title}\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.thumbnail or discord.Embed.Empty)
@@ -214,13 +214,13 @@ class Music(commands.Cog, description="Jamming out with these!"):
             if isinstance(results, pomice.Playlist):
                 for track in results.tracks:
                     await ctx.voice_client.queue.put(track)
-                    ctx.voice_client.lqueue.append(F"{track.title} - {track.author} | {ctx.author.mention} / {datetime.timedelta(milliseconds=track.lenght)}")
+                    ctx.voice_client.lqueue.append(F"{track.title} - {track.author} | {ctx.author.mention} / {self.duration(track.length)}")
             elif isinstance(results, pomice.Track):
                 await ctx.voice_client.queue.put(results)
-                ctx.voice_client.lqueue.append(F"{results.title} - {results.author} | {ctx.author.mention} / {datetime.timedelta(milliseconds=results.length)}")
+                ctx.voice_client.lqueue.append(F"{results.title} - {results.author} | {ctx.author.mention} / {self.duration(results.length)}")
             else:
                 await ctx.voice_client.queue.put(results[0])
-                ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author} | {ctx.author.mention} / {datetime.timedelta(milliseconds=results[0].length)}")
+                ctx.voice_client.lqueue.append(F"{results[0].title} - {results[0].author} | {ctx.author.mention} / {self.duration(results[0].length)}")
             if not ctx.voice_client.is_playing:
                 return await ctx.voice_client.play(track=(await ctx.voice_client.queue.get()))
             return await ctx.reply(F"Added {results if isinstance(results, pomice.Playlist) else results[0]} to the queue")
@@ -295,7 +295,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             npmbed = discord.Embed(
                 color=self.bot.music_color,
                 title="Playing:",
-                description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {datetime.timedelta(milliseconds=ctx.voice_client.position)} - {datetime.timedelta(milliseconds=ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
@@ -363,16 +363,16 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     sembed = discord.Embed(
                         color=self.bot.music_color,
                         title=F"Seeked: {self.duration(mtime)}",
-                        description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {datetime.timedelta(milliseconds=ctx.voice_client.current.length)}",
+                        description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(mtime, ctx.voice_client.current.length)} | {self.duration(mtime)} - {self.duration(ctx.voice_client.current.length)}",
                         timestamp=ctx.message.created_at
                     )
                     sembed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
                     sembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                     view = discord.ui.View()
-                    view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=ctx.voice_client.current.uri))
+                    view.add_item(item=discord.ui.Button(emoji="🔗", label="URL", url=self.ctx.voice_client.current.uri))
                     await ctx.voice_client.seek(mtime)
                     return await ctx.reply(embed=sembed, view=view)
-                return await ctx.reply(F"Time needs to be between 0 or {datetime.timedelta(milliseconds=ctx.voice_client.current.length)}")
+                return await ctx.reply(F"Time needs to be between 0 or {self.duration(ctx.voice_client.current.length)}")
             return await ctx.reply(F"Time need to be like 0:1:23")
 
     # Volume
@@ -414,7 +414,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         tsmbed = discord.Embed(
             color=self.bot.music_color,
             title="Playing:",
-            description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {datetime.timedelta(milliseconds=track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 1 else ''}",
+            description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 1 else ''}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
@@ -430,7 +430,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 tembed = discord.Embed(
                     color=self.bot.music_color,
                     title="Ended:",
-                    description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {datetime.timedelta(milliseconds=track.length)}",
+                    description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}",
                     timestamp=track.ctx.message.created_at
                 )
                 tembed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
