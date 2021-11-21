@@ -360,7 +360,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         ps = []
         for emoji in ctx.guild.emojis:
             if name:
-                if name in emoji.name: ps.append(emoji)
+                if name in emoji.name.lower(): ps.append(emoji)
             else: ps.append(emoji)
         if not ps: return await ctx.send(F"Couldn't find any emoji with {name}")
         es = []
