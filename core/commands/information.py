@@ -363,7 +363,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 if name in emoji.name.lower(): ps.append(emoji)
             else: ps.append(emoji)
         if not ps: return await ctx.send(F"Couldn't find any emoji with {name}")
-        if len(ps) > 1: return await ctx.invoke(self.emojiinfo(ctx, ps[0]))
+        if len(ps) > 1: return await ctx.invoke(self.emojiinfo)
         es = []
         for p in ps:
             ei = [
