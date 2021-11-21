@@ -119,7 +119,7 @@ bot = PemguBase(
 @bot.command(name="news", aliases=["new"], help="Shows the latest news")
 async def _news(ctx:commands.Context):
     channel = bot.get_channel(898287740267937813)
-    message = await channel.fetch_message(908136879944253490)
+    message = await channel.fetch_message(911989557816356864)
     newmbed = discord.Embed(
         color=bot.color,
         title="Latest News",
@@ -157,9 +157,9 @@ async def _commands(ctx:commands.Context, option:str):
     await ctx.reply(embed=cmdsmbed)
 
 @bot.command(name="raw", help="Shows the raw data for the given message from here or the given channel")
-async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel.id=None):
+async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel=None):
     try:
-        channel_id = ctx.channel.id if not channel else channel
+        channel_id = ctx.channel.id if not channel else channel.id
         message = await bot.http.get_message(channel_id, message_id)
         rawmbed = discord.Embed(
             color=bot.color,
@@ -169,7 +169,7 @@ async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel
         )
         rawmbed.set_footer(text=message.author, icon_url=message.author.display_avatar.url)
         await ctx.reply(embed=rawmbed)
-    except:
+    except discord.NotFound:
         return await ctx.reply("Could not find the message")
 
 @bot.command(name="pages")
