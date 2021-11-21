@@ -98,7 +98,7 @@ class ViewPlayer(discord.ui.View):
                 qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 es.append(qumbed)
             return await interaction.response.send_message(embed=es[0], view=pagination.ViewPagination(self.ctx, es) if len(es) > 1 else None, ephemeral=True)
-        return await self.nowplaying()
+        return await self.nowplaying
 
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
