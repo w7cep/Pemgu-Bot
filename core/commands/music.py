@@ -71,12 +71,14 @@ class ViewPlayer(discord.ui.View):
             npmbed = discord.Embed(
                 color=self.ctx.bot.music_color,
                 title="Playing:",
-                description=F"Title: [{self.ctx.voice_client.current.title}]({self.ctx.voice_client.current.uri})\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {self.ctx.voice_client.current.title}\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.thumbnail or discord.Embed.Empty)
             npmbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
-            return await interaction.response.send_message(embed=npmbed, ephemeral=True)
+            view = discord.ui.View()
+            view.add_item(item=discord.ui.Button(label="URL", emoji="🔗", url=self.ctx.voice_client.current.uri))
+            return await interaction.response.send_message(embed=npmbed, view=view, ephemeral=True)
         return await interaction.response.send_message.send("Queue: Nothing is playing", ephemeral=True)
 
     @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.grey)
@@ -293,12 +295,14 @@ class Music(commands.Cog, description="Jamming out with these!"):
             npmbed = discord.Embed(
                 color=self.bot.music_color,
                 title="Playing:",
-                description=F"Title: [{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
                 timestamp=ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
             npmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-            return await ctx.reply(embed=npmbed)
+            view = discord.ui.View()
+            view.add_item(item=discord.ui.Button(label="URL", emoji="🔗", url=self.ctx.voice_client.current.uri))
+            return await ctx.reply(embed=npmbed, view=view)
         return await ctx.reply("Nothing is playing")
 
     # Queue
@@ -412,7 +416,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
         )
         tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
         tsmbed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
-        await track.ctx.reply(embed=tsmbed)
+        view = discord.ui.View()
+        view.add_item(item=discord.ui.Button(label="URL", emoji="🔗", url=track.uri))
+        await track.ctx.reply(embed=tsmbed, view=view)
 
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player:pomice.Player, track:pomice.Track, reason:str):
@@ -426,6 +432,8 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 tembed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
                 tembed.set_footer(text=track.requester, icon_url=track.requester.display_avatar.url)
+                view = discord.ui.View()
+                view.add_item(item=discord.ui.Button(label="URL", emoji="🔗", url=track.uri))
                 return await track.ctx.reply(embed=tembed)
             player.lqueue.pop(0)
             return await player.play(track=(await player.queue.get()))
