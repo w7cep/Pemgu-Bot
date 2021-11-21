@@ -377,8 +377,11 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             ]
             e = discord.Embed(
                 color=discord.Color.blurple(),
+                description="\n".join(e for e in ei),
+                timestamp=ctx.message.created_at
             )
             e.set_image(url=p.url)
+            e.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             es.append(e)
         await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
 
