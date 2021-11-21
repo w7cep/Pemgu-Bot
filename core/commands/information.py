@@ -363,6 +363,8 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 if name in emoji.name.lower(): ps.append(emoji)
                 else: return await ctx.send(F"Couldn't find any emoji with {name}")
             else: ps.append(emoji)
+        if len(ps) > 1:
+            return await ctx.invoke(self.emojiinfo(ctx, ps[0]))
         es = []
         for p in ps:
             ei = [
@@ -382,7 +384,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
             e.set_thumbnail(url=p.url)
             e.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
             es.append(e)
-        await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
+        await pagination.ViewPagination(ctx, es).start()
 
     # EmojiInfo
     @commands.command(name="emojiinfo", aliases=["ei"], help="Gives information about the given emoji")
