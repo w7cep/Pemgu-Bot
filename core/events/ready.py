@@ -15,7 +15,7 @@ class OnReady(commands.Cog):
             "The Bot is online now"
         ]
         print("\n".join(o for o in oni))
-        await self.bot.change_presence(activity=discord.Game(name=F"@{self.bot.user.name} for prefix | {self.bot.default_prefix} help for help"))
+        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
 
 def setup(bot):
     bot.add_cog(OnReady(bot))
