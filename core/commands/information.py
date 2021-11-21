@@ -353,6 +353,35 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         if ctx.guild.banner: simbed.set_image(url=ctx.guild.banner.url)
         await ctx.reply(embed=simbed)
 
+    # Emojis
+    @commands.command(name="emojis", aliases=["es"], help="Shows every emoji or every emoji with the given name")
+    @commands.guild_only()
+    async def emojis(self, ctx:commands.Context, *, name:str=None):
+        ps = []
+        for emoji in ctx.guild.emojis:
+            if name:
+                if emoji.name.startswith(name):
+                    ps.append(emoji)
+            else:
+                ps.append(emoji)
+        es = []
+        for p in ps:
+            ei = [
+                F"***Name:*** {p.name}",
+                F"***ID:*** {p.id}",
+                F"***Animated:*** {p.animated}",
+                F"***Requires-Colons:*** {p.require_colons}",
+                F"***Available:*** {p.available}",
+                F"***Twitch:*** {p.managed}",
+                F"***Created-At:*** {discord.utils.format_dt(p.created_at, style='f')} ({discord.utils.format_dt(p.created_at, style='R')})"
+            ]
+            e = discord.Embed(
+                color=discord.Color.blurple(),
+            )
+            e.set_image(url=p.url)
+            es.append(e)
+        await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
+
     # EmojiInfo
     @commands.command(name="emojiinfo", aliases=["ei"], help="Gives information about the given emoji")
     @commands.guild_only()
