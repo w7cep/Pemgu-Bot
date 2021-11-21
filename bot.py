@@ -116,17 +116,18 @@ bot = PemguBase(
     allowed_mentions=discord.AllowedMentions(everyone=False, users=False, roles=False, replied_user=True)
 )
 
-@bot.command(name="pages")
-async def _pages(ctx:commands.Context):
-    t = ["one", "two", "tre"]
-    s = []
-    for i in t:
-        e = discord.Embed(
-            color=discord.Color.blurple(),
-            title=i
-        )
-        s.append(e)
-    await pagination.ViewPagination(ctx, s).start()
+@bot.command(name="news", aliases=["new"], help="Shows the latest news")
+async def _news(ctx:commands.Context):
+    channel = bot.get_channel(898287740267937813)
+    message = await channel.fetch_message(908136879944253490)
+    newmbed = discord.Embed(
+        color=bot.color,
+        title="Latest News",
+        description=message.content,
+        timestamp=ctx.message.created_at
+    )
+    newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+    await ctx.reply(embed=newmbed)
 
 @bot.command(name="commands", aliases=["cmds"], help="Shows every command available")
 async def _commands(ctx:commands.Context, option:str):
@@ -155,18 +156,30 @@ async def _commands(ctx:commands.Context, option:str):
         cmdsmbed.description = m[:4096]
     await ctx.reply(embed=cmdsmbed)
 
-@bot.command(name="news", aliases=["new"], help="Shows the latest news")
-async def _news(ctx:commands.Context):
-    channel = self.bot.get_channel(898287740267937813)
-    message = await channel.fetch_message(908136879944253490)
-    newmbed = discord.Embed(
+@bot.command(name="raw", help="Shows the raw data for the given message from here or the given channel")
+async def _raw(ctx:commands.Context, message_id:discord.Message.id, channel_id:discord.TextChannel.id=None):
+    channel_id = ctx.channel.id if not channel_id else channel_id
+    message = await bot.http.get_message(channel_id, message_id)
+    rawmbed = discord.Embed(
         color=bot.color,
-        title="Latest News",
-        description=message.content,
-        timestamp=ctx.message.created_at
+        title="Raw Message",
+        description=F"```json\n{message}\n```",
+        timestamp=message.created_at
     )
-    newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-    await ctx.reply(embed=newmbed)
+    rawmbed.set_footer(text=message.author, icon_url=message.author.display_avatar.url)
+    await ctx.reply(embed=rawmbed)
+
+@bot.command(name="pages")
+async def _pages(ctx:commands.Context):
+    t = ["one", "two", "tre"]
+    s = []
+    for i in t:
+        e = discord.Embed(
+            color=discord.Color.blurple(),
+            title=i
+        )
+        s.append(e)
+    await pagination.ViewPagination(ctx, s).start()
 
 @bot.check
 async def blacklisted(ctx:commands.Context):
