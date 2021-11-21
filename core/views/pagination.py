@@ -7,7 +7,14 @@ class ViewPagination(discord.ui.View):
         self.ctx = ctx
         self.embed = 0
         self.embeds = embeds
-    
+
+    @discord.ui.button(emoji="⏮️", style=discord.ButtonStyle.blurple, disabled=True)
+    async def first(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.next.disabled: self.next.disabled = False
+        if self.last.disabled: self.last.disabled = False
+        button.disabled = True
+        await interaction.response.edit_message(embed=self.embeds[0], view=button.view)
+
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
     async def previous(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.next.disabled: self.next.disabled = False
@@ -29,6 +36,14 @@ class ViewPagination(discord.ui.View):
         else: 
             embed = self.embeds[self.embed]
         await interaction.response.edit_message(embed=embed, view=button.view)
+
+    @discord.ui.button(emoji="⏭️", style=discord.ButtonStyle.blurple, disabled=False)
+    async def last(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if self.previous.disabled: self.previous.disabled = False
+        if self.first.disabled: self.first.disabled = False
+        if not self.next.disabled: self.next.disabled = True
+        button.disabled = True
+        await interaction.response.edit_message(embed=self.embeds[-1], view=button.view)
 
     async def on_timeout(self):
         if self.children:
