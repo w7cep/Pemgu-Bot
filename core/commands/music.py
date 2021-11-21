@@ -99,7 +99,7 @@ class ViewPlayer(discord.ui.View):
                 )
                 qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 es.append(qumbed)
-            return await interaction.response.send_message(embed=es[0], view=pagination.ViewPagination(self.ctx, es) if len(es) > 1 else None, ephemeral=True)
+            return await pagination.ViewPagination(self.ctx, es).start(interaction) if len(es) > 1 else await interaction.response.send_message(embed=es[0], ephemeral=True)
         return await self.nowplaying(interaction)
 
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
@@ -326,9 +326,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-                if len(es) > 1:
-                    return await pagination.ViewPagination(ctx, es).start()
-            return await ctx.reply(embed=es[0])
+                return await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear

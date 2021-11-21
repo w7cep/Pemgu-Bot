@@ -59,9 +59,11 @@ class ViewPagination(discord.ui.View):
     async def counter(self, button:discord.ui.Button, interaction:discord.Interaction):
         return
 
-    async def start(self):
+    async def start(self, interaction:discord.Interaction=None):
         print(len(self.pages))
         self.counter.label = F"1/{len(self.pages)}"
+        if interaction:
+            return await interaction.response.send_message(embed=self.pages[0], view=self, ephemeral=True)
         await self.ctx.reply(embed=self.pages[0], view=self) 
 
     async def on_timeout(self):
