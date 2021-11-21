@@ -157,17 +157,20 @@ async def _commands(ctx:commands.Context, option:str):
     await ctx.reply(embed=cmdsmbed)
 
 @bot.command(name="raw", help="Shows the raw data for the given message from here or the given channel")
-async def _raw(ctx:commands.Context, message_id:discord.Message.id, channel_id:discord.TextChannel.id=None):
-    channel_id = ctx.channel.id if not channel_id else channel_id
-    message = await bot.http.get_message(channel_id, message_id)
-    rawmbed = discord.Embed(
-        color=bot.color,
-        title="Raw Message",
-        description=F"```json\n{message}\n```",
-        timestamp=message.created_at
-    )
-    rawmbed.set_footer(text=message.author, icon_url=message.author.display_avatar.url)
-    await ctx.reply(embed=rawmbed)
+async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel.id=None):
+    try:
+        channel_id = ctx.channel.id if not channel else channel
+        message = await bot.http.get_message(channel_id, message_id)
+        rawmbed = discord.Embed(
+            color=bot.color,
+            title="Raw Message",
+            description=F"```json\n{message}\n```",
+            timestamp=message.created_at
+        )
+        rawmbed.set_footer(text=message.author, icon_url=message.author.display_avatar.url)
+        await ctx.reply(embed=rawmbed)
+    except:
+        return await ctx.reply("Could not find the message")
 
 @bot.command(name="pages")
 async def _pages(ctx:commands.Context):
