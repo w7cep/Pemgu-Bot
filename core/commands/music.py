@@ -216,7 +216,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                     await ctx.voice_client.queue.put(track)
                     ctx.voice_client.lqueue.append(F"{track.title} - {track.author} | {ctx.author.mention} / {self.duration(track.length)}")
             elif isinstance(results, pomice.Track):
-                await ctx.voice_client.queue.put(results.title)
+                await ctx.voice_client.queue.put(results)
                 ctx.voice_client.lqueue.append(F"{results.title} - {results.author} | {ctx.author.mention} / {self.duration(results.length)}")
             else:
                 await ctx.voice_client.queue.put(results[0])
@@ -315,7 +315,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
             for i in ctx.voice_client.lqueue:
-                paginator.add_line(F"#{counter}  {i}")
+                paginator.add_line(F"#{counter} {i}")
                 counter += 1
             for page in paginator.pages:
                 qumbed = discord.Embed(
@@ -326,7 +326,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-                return await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
+            return await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
