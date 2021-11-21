@@ -359,7 +359,9 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     async def emojis(self, ctx:commands.Context, *, name:str=None):
         ps = []
         for emoji in ctx.guild.emojis:
-            if emoji.name.startswith(name): ps.append(emoji) if name else ps.append(emoji)
+            if name:
+                if emoji.name.startswith(name): ps.append(emoji)
+            else: ps.append(emoji)
         es = []
         for p in ps:
             ei = [
