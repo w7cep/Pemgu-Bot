@@ -145,7 +145,7 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
         if channel.slowmode_delay == seconds:
             smmbed.title = "Channel is already at the same slowmode:"
             return await ctx.reply(embed=smmbed)
-        await channel.edit(reason=F"Channel: {channel.mention}\nSeconds: {seconds}\nBy: {ctx.author}", slowmode_delay=seconds)
+        await channel.edit(reason=F"Channel: {channel.mention}\nSeconds: {datetime.timedelta(seconds=seconds)}\nBy: {ctx.author}", slowmode_delay=seconds)
         smmbed.title = "Changed the slowdown:"
         await ctx.reply(embed=smmbed)
 
