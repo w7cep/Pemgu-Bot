@@ -1,27 +1,28 @@
 import discord
-from discord import embeds
 
 class ViewPagination(discord.ui.View):
-    def __init__(self, ctx, embeds):
+    def __init__(self, ctx, pages):
         super().__init__(timeout=None)
         self.ctx = ctx
-        self.embed = 0
-        self.embeds = embeds
+        self.page = 0
+        self.pages = pages
 
     @discord.ui.button(emoji="⏮️", style=discord.ButtonStyle.blurple, disabled=True)
     async def first(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
         button.disabled = True
-        await interaction.response.edit_message(embed=self.embeds[0], view=button.view)
+        self.counter.label = F"{len(self.pages)}/{len(self.pages)}"
+        await interaction.response.edit_message(embed=self.pages[0], view=button.view)
 
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
     async def previous(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
-        self.embed -= 1
-        if self.embed == 0: button.disabled = True
-        await interaction.response.edit_message(embed=self.embeds[self.embed], view=button.view)
+        self.page -= 1
+        if self.page == 0: button.disabled = True
+        self.counter.label = F"{self.page}/{len(self.pages)}"
+        await interaction.response.edit_message(embed=self.pages[self.page], view=button.view)
 
     @discord.ui.button(emoji="⏹", style=discord.ButtonStyle.red)
     async def stop(self, button:discord.ui.Button, interaction:discord.Interaction):
@@ -31,12 +32,13 @@ class ViewPagination(discord.ui.View):
     async def next(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.previous.disabled: self.previous.disabled = False
         if self.first.disabled: self.first.disabled = False
-        self.embed += 1
-        if self.embed >= (len(self.embeds)-1):
-            embed = self.embeds[-1]
+        self.page += 1
+        if self.page >= (len(self.pages)-1):
+            embed = self.pages[-1]
             button.disabled = True
         else: 
-            embed = self.embeds[self.embed]
+            embed = self.pages[self.page]
+        self.counter.label = F"{self.page}/{len(self.pages)}"
         await interaction.response.edit_message(embed=embed, view=button.view)
 
     @discord.ui.button(emoji="⏭️", style=discord.ButtonStyle.blurple, disabled=False)
@@ -45,7 +47,16 @@ class ViewPagination(discord.ui.View):
         if self.first.disabled: self.first.disabled = False
         if not self.next.disabled: self.next.disabled = True
         button.disabled = True
-        await interaction.response.edit_message(embed=self.embeds[-1], view=button.view)
+        self.counter.label = F"{len(self.pages)}/{len(self.pages)}"
+        await interaction.response.edit_message(embed=self.pages[-1], view=button.view)
+
+    @discord.ui.button(style=discord.ButtonStyle.gray, disabled=True)
+    async def counter(self, button:discord.ui.Button, interaction:discord.Interaction):
+        return
+
+    async def start(self):
+        self.counter.label = f"0/{len(self.pages)}"
+        await self.ctx.reply(embed=self.pages[0], view=self) 
 
     async def on_timeout(self):
         if self.children:

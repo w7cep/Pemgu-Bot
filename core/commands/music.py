@@ -326,7 +326,9 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-            return await ctx.reply(embed=es[0], view=pagination.ViewPagination(ctx, es) if len(es) > 1 else None)
+                if len(es) > 1:
+                    return await pagination.ViewPagination(ctx, es).start()
+            return await ctx.reply(embed=es[0])
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
