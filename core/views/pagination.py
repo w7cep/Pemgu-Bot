@@ -12,7 +12,7 @@ class ViewPagination(discord.ui.View):
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
         button.disabled = True
-        self.counter.label = F"0/{len(self.pages)}"
+        self.counter.label = F"1/{len(self.pages)}"
         await interaction.response.edit_message(embed=self.pages[0], view=button.view)
 
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
@@ -55,7 +55,8 @@ class ViewPagination(discord.ui.View):
         return
 
     async def start(self):
-        self.counter.label = f"0/{len(self.pages)}"
+        print(len(self.pages))
+        self.counter.label = F"1/{len(self.pages)}"
         await self.ctx.reply(embed=self.pages[0], view=self) 
 
     async def on_timeout(self):
