@@ -80,7 +80,6 @@ async def create_node_pomice():
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.activity = discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.guilds)} and {len(self.users)}")
         self.prefixes = {}
         self.default_prefix = ".m"
         self.afks = {}
