@@ -27,6 +27,7 @@ async def create_session_aiohttp():
 
 async def create_node_pomice():
     await bot.wait_until_ready()
+    bot.pomice = pomice.NodePool()
     lnodes = [
         "lavalinknl.ml",
         "unit1.nighthost.tech",
@@ -59,20 +60,23 @@ async def create_node_pomice():
         "lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "methisbigbrain"},
         "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "identifier"}
     }
-    bot.pomice = pomice.NodePool()
     await bot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="clover", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+    print("UnSecure Nodes")
     for n in lnodes:
-        print("UnSecure Nodes")
         try:
             await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
             print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
-        except Exception as e: print(e)
+        except Exception as e:
+            print(e)
+            pass
+    print("Secure Nodes")
     for s in slnodes:
-        print("Secure Nodes")
         try:
             await bot.pomice.create_node(bot=bot, secure=True, host=s, port=443, password=sdnodes.get(s)["pw"], identifier=sdnodes.get(s)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
             print(F"Created a Secure Pomice Node: {s} - {sdnodes.get(s)['identifier']}")
-        except Exception as e: print(e)
+        except Exception as e:
+            print(e)
+            pass
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):

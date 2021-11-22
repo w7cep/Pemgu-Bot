@@ -12,7 +12,7 @@ class OnReady(commands.Cog):
             F"Logged in as: {self.bot.user} - {self.bot.user.id}",
             F"Main prefix is: {self.bot.default_prefix}",
             F"Servers bot is in: {len(self.bot.guilds)}",
-            "The Bot is online now"
+            F"Users bot is seeing: {len(self.bot.users)}",
         ]
         print("\n".join(o for o in ori))
         await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
