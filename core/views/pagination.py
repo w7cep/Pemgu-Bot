@@ -19,7 +19,7 @@ class ViewPagination(discord.ui.View):
     @discord.ui.button(emoji="⏪", style=discord.ButtonStyle.green, disabled=True)
     async def previous(self, button:discord.ui.Button, interaction:discord.Interaction):
         self.page -= 1
-        self.counter.label = F"{self.page}/{len(self.pages)}"
+        self.counter.label = F"{self.page+1}/{len(self.pages)}"
         if self.next.disabled: self.next.disabled = False
         if self.last.disabled: self.last.disabled = False
         if self.page == 0:
