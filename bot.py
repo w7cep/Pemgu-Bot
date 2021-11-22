@@ -28,20 +28,20 @@ async def create_session_aiohttp():
 async def create_node_pomice():
     await bot.wait_until_ready()
     bot.pomice = pomice.NodePool()
-    lnodes = [
-        "lavalinknl.ml",
-        "unit1.nighthost.tech",
-        "lavalink.darrennathanael.com",
-        "lava.link",
-        "node1.cjstevenson.com"
-    ]
-    dnodes = {
-        "lavalinknl.ml": {"port": "2333", "pw": "Raccoon", "identifier": "lavalinknl.ml"},
-        "unit1.nighthost.tech": {"port": "23549", "pw": "emilylava", "identifier": "unit1.nighthost.tech"},
-        "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "lavalink.darrennathanael.com"},
-        "lava.link": {"port": "80", "pw": "quartz", "identifier": "lava.link"},
-        "node1.cjstevenson.com": {"port": "25503", "pw": "lookbehindyou", "identifier": "node1.cjstevenson.com"}
-    }
+    # lnodes = [
+    #     "lavalinknl.ml",
+    #     "unit1.nighthost.tech",
+    #     "lavalink.darrennathanael.com",
+    #     "lava.link",
+    #     "node1.cjstevenson.com"
+    # ]
+    # dnodes = {
+    #     "lavalinknl.ml": {"port": "2333", "pw": "Raccoon", "identifier": "lavalinknl.ml"},
+    #     "unit1.nighthost.tech": {"port": "23549", "pw": "emilylava", "identifier": "unit1.nighthost.tech"},
+    #     "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "lavalink.darrennathanael.com"},
+    #     "lava.link": {"port": "80", "pw": "quartz", "identifier": "lava.link"},
+    #     "node1.cjstevenson.com": {"port": "25503", "pw": "lookbehindyou", "identifier": "node1.cjstevenson.com"}
+    # }
     slnodes = [
         "lavalink.devz.cloud",
         "lavalink2.devz.cloud",
@@ -60,14 +60,14 @@ async def create_node_pomice():
         "www.lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "lavalink-priyam.ml"},
         "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "lavalink-replit.rainandrewandre.repl.co"}
     }
-    print("UnSecure Nodes")
-    for n in lnodes:
-        try:
-            await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-            print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
-        except Exception as e:
-            print(e)
-            pass
+    # print("UnSecure Nodes")
+    # for n in lnodes:
+    #     try:
+    #         await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+    #         print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
+    #     except Exception as e:
+    #         print(e)
+    #         pass
     print("Secure Nodes")
     for s in slnodes:
         try:
