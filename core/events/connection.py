@@ -8,13 +8,7 @@ class OnConnect(commands.Cog):
     @commands.Cog.listener()
     async def on_connect(self):
         self.bot.uptime = discord.utils.utcnow()
-        oni = [
-            F"Logged in as: {self.bot.user} - {self.bot.user.id}",
-            F"Main prefix is: {self.bot.default_prefix}",
-            F"Servers bot is in: {len(self.bot.guilds)}",
-            F"Users bot is seeing: {len(self.bot.users)}",
-        ]
-        print("\n".join(o for o in oni))
+        print(F"Logged in as: {self.bot.user} - {self.bot.user.id}\nConnected to discord.")
 
 class OnReady(commands.Cog):
     def __init__(self, bot):
@@ -22,6 +16,8 @@ class OnReady(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
+        print(F"Readied as: {self.bot.user} - {self.bot.user.id}\nReady in discord.")
+        
         await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
 
 class OnDisconnect(commands.Cog):
