@@ -36,11 +36,11 @@ async def create_node_pomice():
         "node1.cjstevenson.com"
     ]
     dnodes = {
-        "lavalinknl.ml": {"port": "2333", "pw": "Raccoon", "identifier": "Raccoon"},
-        "unit1.nighthost.tech": {"port": "23549", "pw": "emilylava", "identifier": "emilylava"},
-        "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "clover"},
-        "lava.link": {"port": "80", "pw": "quartz", "identifier": "quartz"},
-        "node1.cjstevenson.com": {"port": "25503", "pw": "lookbehindyou", "identifier": "lookbehindyou"}
+        "lavalinknl.ml": {"port": "2333", "pw": "Raccoon", "identifier": "lavalinknl.ml"},
+        "unit1.nighthost.tech": {"port": "23549", "pw": "emilylava", "identifier": "unit1.nighthost.tech"},
+        "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "lavalink.darrennathanael.com"},
+        "lava.link": {"port": "80", "pw": "quartz", "identifier": "lava.link"},
+        "node1.cjstevenson.com": {"port": "25503", "pw": "lookbehindyou", "identifier": "node1.cjstevenson.com"}
     }
     slnodes = [
         "lavalink.devz.cloud",
@@ -52,15 +52,14 @@ async def create_node_pomice():
         "lavalink-replit.rainandrewandre.repl.co"
     ]
     sdnodes = {
-        "lavalink.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
-        "lavalink2.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
-        "lavalink.devin-dev.xyz": {"pw": "lava123", "identifier": "lava123"},
-        "lava.devin-dev.xyz": {"pw": "lava123", "identifier": "lava123"},
-        "disbotlistlavalink.ml": {"pw": "LAVA", "identifier": "LAVA"},
-        "lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "methisbigbrain"},
-        "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "identifier"}
+        "lavalink.devz.cloud": {"pw": "mathiscool", "identifier": "lavalink.devz.cloud"},
+        "lavalink2.devz.cloud": {"pw": "mathiscool", "identifier": "lavalink2.devz.cloud"},
+        "lavalink.devin-dev.xyz": {"pw": "lava123", "identifier": "lavalink.devin-dev.xyz"},
+        "lava.devin-dev.xyz": {"pw": "lava123", "identifier": "lava.devin-dev.xyz"},
+        "disbotlistlavalink.ml": {"pw": "LAVA", "identifier": "disbotlistlavalink.ml"},
+        "lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "lavalink-priyam.ml"},
+        "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "lavalink-replit.rainandrewandre.repl.co"}
     }
-    await bot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="clover", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
     print("UnSecure Nodes")
     for n in lnodes:
         try:
