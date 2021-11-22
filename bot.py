@@ -48,7 +48,7 @@ async def create_node_pomice():
         "lavalink.devin-dev.xyz",
         "lava.devin-dev.xyz",
         "disbotlistlavalink.ml",
-        "lavalink-priyam.ml",
+        "www.lavalink-priyam.ml",
         "lavalink-replit.rainandrewandre.repl.co"
     ]
     sdnodes = {
@@ -57,7 +57,7 @@ async def create_node_pomice():
         "lavalink.devin-dev.xyz": {"pw": "lava123", "identifier": "lavalink.devin-dev.xyz"},
         "lava.devin-dev.xyz": {"pw": "lava123", "identifier": "lava.devin-dev.xyz"},
         "disbotlistlavalink.ml": {"pw": "LAVA", "identifier": "disbotlistlavalink.ml"},
-        "lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "lavalink-priyam.ml"},
+        "www.lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "lavalink-priyam.ml"},
         "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "lavalink-replit.rainandrewandre.repl.co"}
     }
     print("UnSecure Nodes")
@@ -211,6 +211,6 @@ async def blacklisted(ctx:commands.Context):
 bot.openrobot = openrobot.api_wrapper.AsyncClient(token=os.getenv("OPENROBOT"))
 
 bot.loop.run_until_complete(create_pool_postgres())
-bot.loop.run_until_complete(create_session_aiohttp())
+bot.loop.create_task(create_session_aiohttp())
 bot.loop.create_task(create_node_pomice())
 bot.run(os.getenv("TOKEN"))

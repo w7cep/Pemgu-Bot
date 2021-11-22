@@ -17,5 +17,16 @@ class OnReady(commands.Cog):
         print("\n".join(o for o in ori))
         await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
 
+class OnDisconnect(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+    
+    @commands.Cog.listener()
+    async def on_disconnect(self):
+        print(F"Logged off as: {self.bot.user} - {self.bot.user.id}\nDisconnected from discord.")
+        if not self.bot.session.closed:
+            await self.bot.session.close()
+
 def setup(bot):
     bot.add_cog(OnReady(bot))
+    bot.add_cog(OnDisconnect(bot))
