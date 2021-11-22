@@ -183,7 +183,7 @@ async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel
         rawmbed = discord.Embed(
             color=bot.color,
             title="Raw Message",
-            description=F"```json\n{json.dumps(message['content'], indent=4)}\n```\n{message['author']}\n{discord.utils.format_dt(message['created_at'], style='f')} ({discord.utils.format_dt(message['created_at'], style='R')})",
+            description=F"```json\n{json.dumps(message, indent=4)}\n```",
             timestamp=ctx.message.created_at
         )
         rawmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
