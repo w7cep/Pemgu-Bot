@@ -15,7 +15,6 @@ class OnConnect(commands.Cog):
             F"Users bot is seeing: {len(self.bot.users)}",
         ]
         print("\n".join(o for o in oni))
-        await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
 
 class OnDisconnect(commands.Cog):
     def __init__(self, bot):

@@ -80,6 +80,7 @@ async def create_node_pomice():
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.activity = discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.guilds)} and {len(self.users)}")
         self.prefixes = {}
         self.default_prefix = ".m"
         self.afks = {}
@@ -97,6 +98,7 @@ class PemguBase(commands.AutoShardedBot):
         self.load_extension("jishaku")
         os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
         os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
+        os.environ["GIT_DISCOVERY_ACROSS_FILESYSTEM"] = "True"
         self.get_command("jsk").hidden = True
 
     async def close(self):
