@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands
 
-class OnReady(commands.Cog):
+class OnConnect(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_connect(self):
         self.bot.uptime = discord.utils.utcnow()
         oni = [
             F"Logged in as: {self.bot.user} - {self.bot.user.id}",
@@ -18,4 +18,4 @@ class OnReady(commands.Cog):
         await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.competing, name=F"{len(self.bot.guilds)} and {len(self.bot.users)}"))
 
 def setup(bot):
-    bot.add_cog(OnReady(bot))
+    bot.add_cog(OnConnect(bot))

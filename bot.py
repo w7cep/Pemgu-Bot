@@ -28,37 +28,51 @@ async def create_session_aiohttp():
 async def create_node_pomice():
     await bot.wait_until_ready()
     lnodes = [
+        "lavalinknl.ml",
+        "unit1.nighthost.tech",
         "lavalink.darrennathanael.com",
-        "lava.link"
+        "lava.link",
+        "node1.cjstevenson.com"
     ]
     dnodes = {
+        "lavalinknl.ml": {"port": "2333", "pw": "Raccoon", "identifier": "Raccoon"},
+        "unit1.nighthost.tech": {"port": "23549", "pw": "emilylava", "identifier": "emilylava"},
         "lavalink.darrennathanael.com": {"port": "80", "pw": "clover", "identifier": "clover"},
-        "lava.link": {"port": "80", "pw": "math", "identifier": "math"}
+        "lava.link": {"port": "80", "pw": "quartz", "identifier": "quartz"},
+        "node1.cjstevenson.com": {"port": "25503", "pw": "lookbehindyou", "identifier": "lookbehindyou"}
     }
     slnodes = [
-        "lavalink.cjstevenson.xyz",
-        "lavalink.cjstevenson.com",
         "lavalink.devz.cloud",
         "lavalink2.devz.cloud",
+        "lavalink.devin-dev.xyz",
+        "lava.devin-dev.xyz",
         "disbotlistlavalink.ml",
-        "lavalink.mrpriyamyt.repl.co"
+        "lavalink-priyam.ml",
+        "lavalink-replit.rainandrewandre.repl.co"
     ]
     sdnodes = {
-        "lavalink.cjstevenson.xyz": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
-        "lavalink.cjstevenson.com": {"pw": "lookbehindyou", "identifier": "lookbehindyou"},
         "lavalink.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
         "lavalink2.devz.cloud": {"pw": "mathiscool", "identifier": "mathiscool"},
+        "lavalink.devin-dev.xyz": {"pw": "lava123", "identifier": "lava123"},
+        "lava.devin-dev.xyz": {"pw": "lava123", "identifier": "lava123"},
         "disbotlistlavalink.ml": {"pw": "LAVA", "identifier": "LAVA"},
-        "lavalink.mrpriyamyt.repl.co": {"pw": "methisbigbrain", "identifier": "methisbigbrain"}
+        "lavalink-priyam.ml": {"pw": "methisbigbrain", "identifier": "methisbigbrain"},
+        "lavalink-replit.rainandrewandre.repl.co": {"pw": "maybeiwasboring", "identifier": "identifier"}
     }
     bot.pomice = pomice.NodePool()
     await bot.pomice.create_node(bot=bot, host="lavalink.darrennathanael.com", port="80", password="clover", identifier="clover", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-    # for n in lnodes:
-    #     await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-    #     print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
-    # for s in slnodes:
-    #     await bot.pomice.create_node(bot=bot, secure=True, host=s, port=443, password=sdnodes.get(s)["pw"], identifier=sdnodes.get(s)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
-    #     print(F"Created a Secure Pomice Node: {s} - {sdnodes.get(s)['identifier']}")
+    for n in lnodes:
+        print("UnSecure Nodes")
+        try:
+            await bot.pomice.create_node(bot=bot, host=n, port=dnodes.get(n)["port"], password=dnodes.get(n)["pw"], identifier=dnodes.get(n)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+            print(F"Created a Pomice Node: {n} - {dnodes.get(n)['identifier']}")
+        except Exception as e: print(e)
+    for s in slnodes:
+        print("Secure Nodes")
+        try:
+            await bot.pomice.create_node(bot=bot, secure=True, host=s, port=443, password=sdnodes.get(s)["pw"], identifier=sdnodes.get(s)["identifier"], spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+            print(F"Created a Secure Pomice Node: {s} - {sdnodes.get(s)['identifier']}")
+        except Exception as e: print(e)
 
 class PemguBase(commands.AutoShardedBot):
     def __init__(self, **kwargs):
