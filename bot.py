@@ -197,7 +197,7 @@ async def _pages(ctx:commands.Context):
     s = []
     for i in t:
         e = discord.Embed(
-            color=discord.Color.blurple(),
+            color=bot.color,
             title=i
         )
         s.append(e)
