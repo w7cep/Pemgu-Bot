@@ -119,11 +119,12 @@ bot = PemguBase(
 @bot.command(name="news", aliases=["new"], help="Shows the latest news")
 async def _news(ctx:commands.Context):
     channel = bot.get_channel(898287740267937813)
-    message = await channel.fetch_message(911989557816356864)
+    async for message in channel.history(limit=1):
+        m = "No updates!" if not message else message
     newmbed = discord.Embed(
         color=bot.color,
         title="Latest News",
-        description=message.content,
+        description=F"{m.content}\n{m.author}\n{discord.utils.format_dt(m.created_at, style='f')} ({discord.utils.format_dt(m.created_at, style='R')})",        
         timestamp=ctx.message.created_at
     )
     newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -164,7 +165,7 @@ async def _raw(ctx:commands.Context, message_id:int, channel:discord.TextChannel
         rawmbed = discord.Embed(
             color=bot.color,
             title="Raw Message",
-            description=F"```json\n{(await message.json())}\n```",
+            description=F"```json\n{message}\n```",
             timestamp=ctx.message.created_at
         )
         rawmbed.set_footer(text=ctx.message.author, icon_url=ctx.author.display_avatar.url)
