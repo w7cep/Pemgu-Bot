@@ -297,7 +297,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
             npmbed = discord.Embed(
                 color=self.bot.music_color,
                 title="Playing:",
-                description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {ctx.voice_client.current.title}\nBy: {ctx.voice_client.current.author}\nRequester: {ctx.voice_client.current.requester.mention}\nDuration: {self.bar(ctx.voice_client.position, ctx.voice_client.current.length)} | {self.duration(ctx.voice_client.position)} - {self.duration(ctx.voice_client.current.length)}\n{f'Next: {ctx.voice_client.lqueue[1]}' if len(ctx.voice_client.lqueue) > 2 else ''}",
                 timestamp=ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=ctx.voice_client.current.thumbnail or discord.Embed.Empty)
@@ -416,7 +416,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         tsmbed = discord.Embed(
             color=self.bot.music_color,
             title="Playing:",
-            description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 1 else ''}",
+            description=F"Title: {track.title}\nBy: {track.author}\nRequester: {track.requester.mention}\nDuration: {self.duration(track.length)}\n{f'Next: {player.lqueue[1]}' if len(player.lqueue) > 2 else ''}",
             timestamp=track.ctx.message.created_at
         )
         tsmbed.set_thumbnail(url=track.thumbnail or discord.Embed.Empty)
