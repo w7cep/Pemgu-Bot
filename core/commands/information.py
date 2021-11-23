@@ -269,32 +269,43 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.command(name="spotify", aliases=["sy"], help="Shows your or the given member's spotify activity")
     async def spotify(self, ctx:commands.Context, member:discord.Member=None):
         member = ctx.author if not member else member
-        spotifymbed = discord.Embed(
+        symbed = discord.Embed(
             timestamp=ctx.message.created_at
         )
-        spotifymbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        symbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         for activity in member.activities:
             if isinstance(activity, discord.Spotify):
+                params = {
+                    'title': activity.title,
+                    'cover_url': activity.album_cover_url,
+                    'duration_seconds': activity.duration.seconds,
+                    'start_timestamp': activity.start.timestamp(),
+                    'artists': activity.artists[0]
+                }
+                session = await self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params)
+                response = io.BytesIO(await session.read())
+                session.close()
+                await ctx.reply(file=discord.File(fp=response, filename="tweet.png"), embed=twmbed)
                 si = [
                     F"**Artists:** {', '.join(artist for artist in activity.artists)}",
                     F"**Album:** {activity.album}",
-                    F"**Duration:** {time.strftime('%H:%M:%S', time.gmtime(activity.duration.total_seconds()))}",
                     F"**Track-ID:** {activity.track_id}",
                     F"**Party-ID:** {activity.party_id}",
-                    F"**Listening-Since:** {discord.utils.format_dt(activity.created_at, style='f')} ({discord.utils.format_dt(activity.created_at, style='R')})"
+                    F"**Listening-Since:** {discord.utils.format_dt(activity.start, style='R')}"
                 ]
-                spotifymbed.color = activity.color
-                spotifymbed.url = activity.track_url
-                spotifymbed.title = activity.title
-                spotifymbed.description = "\n".join(s for s in si)
-                spotifymbed.set_author(name=member, icon_url=member.display_avatar.url)
-                spotifymbed.set_thumbnail(url=activity.album_cover_url)
-                await ctx.reply(embed=spotifymbed)
+                symbed.color = activity.color
+                symbed.url = activity.track_url
+                symbed.title = activity.title
+                symbed.description = "\n".join(s for s in si)
+                symbed.set_author(name=member, icon_url=member.display_avatar.url)
+                symbed.set_thumbnail(url=activity.album_cover_url)
+                symbed.set_image(url="attachment://spotify.png")
+                await ctx.reply(file=discord.File(fp=response, filename="spotify.png"), embed=symbed)
                 break
         else:
-            spotifymbed.color = self.bot.color
-            spotifymbed.title = F"{member} is not listening to Spotify"
-            await ctx.reply(embed=spotifymbed)
+            symbed.color = self.bot.color
+            symbed.title = F"{member} is not listening to Spotify"
+            await ctx.reply(embed=symbed)
 
     # Icon
     @commands.command(name="icon", aliases=["ic"], help="Shows the server's icon")
