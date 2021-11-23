@@ -284,7 +284,6 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 }
                 session = await self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params)
                 response = io.BytesIO(await session.read())
-                session.close()
                 si = [
                     F"**Artists:** {', '.join(artist for artist in activity.artists)}",
                     F"**Album:** {activity.album}",
