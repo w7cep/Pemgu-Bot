@@ -141,11 +141,15 @@ class ViewVote(discord.ui.View):
         self.message = message
         self.vote = 0
         self.voters = voters
+        self.already = []
     
     @discord.ui.button(emoji="👍", style=discord.ButtonStyle.primary)
     async def upvote(self, button:discord.ui.Button, interaction:discord.Interaction):
+        if interaction.user.id in self.already:
+            return await interaction.response.send_message(content=F"{interaction.user.mention} you can't vote more than one time", ephemeral=True)
         self.vote += 1
         self.counter.label = F"{self.vote}/{self.voters}"
+        self.already.append(interaction.user.id)
         if self.vote == self.voters:
             button.disabled = True
             await interaction.response.edit_message(content=F"{self.usage} cause everyone had voted", view=button.view)
