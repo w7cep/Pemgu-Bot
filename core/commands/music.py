@@ -168,7 +168,7 @@ class ViewVote(discord.ui.View):
             description=F"Vote for {self.usage}\nTimeout is {self.timeout}",
             timestamp=self.ctx.message.created_at,
         )
-        votembed.set_footer(text=self.ctx.author, icon_url=self.ctx.author.avatar_url)
+        votembed.set_footer(text=self.ctx.author, icon_url=self.ctx.author.avatar.url)
         await interaction.response.send_message(embed=votembed, view=self) if interaction else await self.ctx.reply(embed=votembed, view=self)
 
     async def on_timeout(self):
