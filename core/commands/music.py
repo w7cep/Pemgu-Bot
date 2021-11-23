@@ -162,7 +162,7 @@ class ViewVote(discord.ui.View):
         votembed = discord.Embed(
             title="Voting starts",
             description=F"Vote for {self.usage}\nTimeout is {self.timeout}",
-            timestmap=self.ctx.message.created_at,
+            timestamp=self.ctx.message.created_at,
         )
         votembed.set_footer(text=self.ctx.author, icon_url=self.ctx.author.avatar_url)
         await interaction.response.send_message(embed=votembed, view=self) if interaction else await self.ctx.reply(embed=votembed, view=self)
