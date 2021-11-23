@@ -80,7 +80,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         for stuff in notes:
             tasks.append(F"[{counter}.]({stuff['jump_url']}) {stuff['task']}\n")
             counter += 1
-        notelistmbed.title=F"{user}\ 's notes:"
+        notelistmbed.title=F"{user.name}'s notes:"
         notelistmbed.description="".join(task for task in tasks)
         await ctx.reply(embed=notelistmbed)
 
