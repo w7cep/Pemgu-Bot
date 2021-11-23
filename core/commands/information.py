@@ -317,7 +317,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         icmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if ctx.guild.icon:
-            icmbed.set_thumbnail(url=ctx.guild.icon.url)
+            icmbed.set_image(url=ctx.guild.icon.url)
         else: icmbed.title = F"{ctx.guild.name} doesn't have icon"
         await ctx.reply(embed=icmbed)
 
