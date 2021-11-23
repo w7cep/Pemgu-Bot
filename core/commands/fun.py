@@ -72,7 +72,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         size = random.randint(1, 35)
         ppmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user}'s PP Size:",
+            title=F"{user}\ 's PP Size:",
             description=F"8{'='*size}D ({size}cm)",
             timestamp=ctx.message.created_at
         )
@@ -239,7 +239,7 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         session.close()
         twmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user}'s tweet",
+            title=F"{user}\ 's tweet",
             timestamp=ctx.message.created_at
         )
         twmbed.set_image(url="attachment://tweet.png")

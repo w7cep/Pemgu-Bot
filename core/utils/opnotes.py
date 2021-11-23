@@ -16,7 +16,7 @@ async def notes_list(self, ctx:commands.Context, user:discord.User=None):
     if not notes: 
         notelistmbed.title = F"{user} doesn't have any note"
         return await ctx.reply(embed=notelistmbed)
-    notelistmbed.title=F"{user}'s notes:"
+    notelistmbed.title=F"{user}\ 's notes:"
     notelistmbed.description="\n".join(F"[{n['position']}.]({n['jump_url']}) {n['note']}" for n in notes)
     await ctx.reply(embed=notelistmbed)
 

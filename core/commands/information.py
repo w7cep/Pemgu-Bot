@@ -166,7 +166,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         session.close()
         clrsmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user}'s image colors",
+            title=F"{user}\ 's image colors",
             timestamp=ctx.message.created_at
         )
         clrsmbed.set_image(url="attachment://colors.png")
@@ -179,7 +179,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         user = ctx.author if not user else user
         avmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{user}'s Avatar",
+            title=F"{user}\ 's Avatar",
             timestamp=ctx.message.created_at
         )
         avmbed.set_image(url=user.display_avatar.url)
@@ -197,7 +197,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         brmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         if fetch.banner:
-            brmbed.title = F"{user}'s Banner"
+            brmbed.title = F"{user}\ 's Banner"
             brmbed.set_image(url=fetch.banner.url)
         else: brmbed.title = F"{user} doesn't have banner"
         await ctx.reply(embed=brmbed)
@@ -230,7 +230,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         ]
         uimbed = discord.Embed(
             color=self.bot.color if not fetch.accent_color else fetch.accent_color,
-            title=F"{member}'s' Information",
+            title=F"{member}\ 's Information",
             timestamp=ctx.message.created_at
         )
         uimbed.add_field(name="Global-Information:", value="\n".join(g for g in gi), inline=False)
@@ -255,7 +255,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 di.append(permission)
         permsmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{member}'s Permissions",
+            title=F"{member}\ 's Permissions",
             timestamp=ctx.message.created_at
         )
         permsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -312,7 +312,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     async def icon(self, ctx:commands.Context):
         icmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{ctx.guild}'s Icon",
+            title=F"{ctx.guild}\ 's Icon",
             timestamp=ctx.message.created_at
         )
         icmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -353,7 +353,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         ]
         simbed = discord.Embed(
             color=self.bot.color,
-            title=F"{ctx.guild.name}'s Information",
+            title=F"{ctx.guild.name}\ 's Information",
             timestamp=ctx.message.created_at
         )
         simbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
@@ -410,7 +410,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         ]
         emmbed = discord.Embed(
             color=self.bot.color,
-            title=F"{emoji.name}'s Information",
+            title=F"{emoji.name}\ 's Information",
             description="\n".join(e for e in ei),
             timestamp=ctx.message.created_at
         )

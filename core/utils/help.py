@@ -22,7 +22,7 @@ class MinimalHelp(commands.MinimalHelpCommand):
     async def send_pages(self):
         mhmbed = discord.Embed(
             color=self.context.bot.color,
-            title=F"{self.context.me.name}'s Help",
+            title=F"{self.context.me.name}\ 's Help",
             timestamp=self.context.message.created_at
         )
         mhmbed.set_thumbnail(url=self.context.me.display_avatar.url)
@@ -61,7 +61,7 @@ class SelectView(discord.ui.View):
         self.mapping = mapping
         self.homepage = discord.Embed(
             color=self.help.context.bot.color,
-            title=F"{self.help.context.me.name}'s Help",
+            title=F"{self.help.context.me.name}\ 's Help",
             description="For more help or information use the menu.",
             timestamp=self.help.context.message.created_at
         )
@@ -133,7 +133,7 @@ class ButtonView(discord.ui.View):
         self.mapping = mapping
         self.homepage = discord.Embed(
             color=self.help.context.bot.color,
-            title=F"{self.help.context.me.name}'s Help",
+            title=F"{self.help.context.me.name}\ 's Help",
             description="For more help or information use and click on the buttons.",
             timestamp=self.help.context.message.created_at
         )
