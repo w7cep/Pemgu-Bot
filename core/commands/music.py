@@ -71,7 +71,7 @@ class ViewPlayer(discord.ui.View):
             npmbed = discord.Embed(
                 color=self.ctx.bot.music_color,
                 title="Playing:",
-                description=F"Title: {self.ctx.voice_client.current.title}\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 1 else ''}",
+                description=F"Title: {self.ctx.voice_client.current.title}\nBy: {self.ctx.voice_client.current.author}\nRequester: {self.ctx.voice_client.current.requester.mention}\nDuration: {self.music.bar(self.ctx.voice_client.position, self.ctx.voice_client.current.length)} | {self.music.duration(self.ctx.voice_client.position)} - {self.music.duration(self.ctx.voice_client.current.length)}\n{f'Next: {self.ctx.voice_client.lqueue[1]}' if len(self.ctx.voice_client.lqueue) > 2 else ''}",
                 timestamp=self.ctx.voice_client.current.ctx.message.created_at
             )
             npmbed.set_thumbnail(url=self.ctx.voice_client.current.thumbnail or discord.Embed.Empty)
@@ -83,7 +83,7 @@ class ViewPlayer(discord.ui.View):
 
     @discord.ui.button(emoji="🎦", style=discord.ButtonStyle.grey)
     async def queue(self, button:discord.ui.Button, interaction:discord.Interaction):
-        if len(self.ctx.voice_client.lqueue) > 1:
+        if len(self.ctx.voice_client.lqueue) > 2:
             counter = 1
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
@@ -312,7 +312,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     @commands.guild_only()
     @commands.check(bot_voice)
     async def queue(self, ctx:commands.Context):
-        if len(ctx.voice_client.lqueue) > 1:
+        if len(ctx.voice_client.lqueue) > 2:
             counter = 1
             es = []
             paginator = commands.Paginator(prefix=None, suffix=None)
