@@ -144,7 +144,6 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         if session.status != 200:
             raise commands.BadColorArgument
         response = await session.json()
-        session.close()
         clrmbed = discord.Embed(
             color=color,
             title=F"Information about: {response.get('name')}",
@@ -163,7 +162,6 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         user = ctx.author if not user else user
         session = await self.bot.session.get(F"https://api.dagpi.xyz/image/colors/?url={user.avatar.with_format('png')}", headers=self.dagpi)
         response = io.BytesIO(await session.read())
-        session.close()
         clrsmbed = discord.Embed(
             color=self.bot.color,
             title=F"{user.name}'s image colors",
@@ -284,7 +282,6 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
                 }
                 session = await self.bot.session.get("https://api.jeyy.xyz/discord/spotify", params=params)
                 response = io.BytesIO(await session.read())
-                session.close()
                 si = [
                     F"**Artists:** {', '.join(artist for artist in activity.artists)}",
                     F"**Album:** {activity.album}",

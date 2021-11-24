@@ -55,7 +55,8 @@ class PemguBase(commands.AutoShardedBot):
         self.get_command("jsk").hidden = True
 
     async def close(self):
-        await self.session.close()
+        if not self.session.closed:
+            await self.session.close()
         await super().close()
 
     @property

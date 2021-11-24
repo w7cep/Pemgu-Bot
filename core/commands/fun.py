@@ -126,7 +126,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def token(self, ctx:commands.Context):
         session = await self.bot.session.get("https://some-random-api.ml/bottoken")
         response = await session.json()
-        session.close()
         tnmbed = discord.Embed(
             color=self.bot.color,
             title="Here is your token",
@@ -141,7 +140,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def meme(self, ctx:commands.Context):
         session = await self.bot.session.get("https://some-random-api.ml/meme")
         response = await session.json()
-        session.close()
         membed = discord.Embed(
             color=self.bot.color,
             title="Here is a random meme for you",
@@ -158,7 +156,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         mode = random.choice(["quotes", "today", "author", "random"])
         session = await self.bot.session.get(F"https://zenquotes.io/api/{mode}")
         response = await session.json(content_type=None)
-        session.close()
         qembed = discord.Embed(
             color=self.bot.color,
             title="Here is a random quote",
@@ -173,7 +170,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def fact(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/fact", headers=self.dagpi)
         response = await session.json()
-        session.close()
         fcmbed = discord.Embed(
             color=self.bot.color,
             title="Here is a random fact",
@@ -188,7 +184,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def joke(self, ctx:commands.Context):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/joke", headers=self.dagpi)
         response = await session.json()
-        session.close()
         jkmbed = discord.Embed(
             color=self.bot.color,
             title="Here is a random joke",
@@ -203,7 +198,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
     async def _8ball(self, ctx:commands.Context, *, question:str):
         session = await self.bot.session.get("https://api.dagpi.xyz/data/8ball", headers=self.dagpi)
         response = await session.json()
-        session.close()
         _8bmbed = discord.Embed(
             color=self.bot.color,
             title="Here is your answer",
@@ -219,7 +213,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         user = ctx.author if not user else user
         session = await self.bot.session.get("https://api.dagpi.xyz/data/roast", headers=self.dagpi)
         response = await session.json()
-        session.close()
         rtmbed = discord.Embed(
             color=self.bot.color,
             title=F"Roasting {user}",
@@ -236,7 +229,6 @@ class Fun(commands.Cog, description="You sad? Use these to at least have a smile
         user = ctx.author if not user else user
         session = await self.bot.session.get(F"https://api.dagpi.xyz/image/tweet/?url={user.avatar.with_format('png')}&username={user.name}&text={text}", headers=self.dagpi)
         response = io.BytesIO(await session.read())
-        session.close()
         twmbed = discord.Embed(
             color=self.bot.color,
             title=F"{user.name}'s tweet",

@@ -204,7 +204,6 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
     async def screenshot(self, ctx:commands.Context, *, website:str):
         session = await self.bot.session.get(F"https://api.screenshotmachine.com?key=a95edd&url={website}&dimension=1024x768")
         response = io.BytesIO(await session.read())
-        session.close()
         ssmbed = discord.Embed(
             color=self.bot.color,
             title="Here is your screenshot",
