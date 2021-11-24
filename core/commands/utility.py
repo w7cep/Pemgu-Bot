@@ -1,6 +1,6 @@
 import discord, expr, asyncio
 from discord.ext import commands
-from core.views.confirm import ViewConfirm
+from core.views import confirm
 
 class Utility(commands.Cog, description="Useful stuff that are open to everyone"):
     def __init__(self, bot):
@@ -138,7 +138,7 @@ class Utility(commands.Cog, description="Useful stuff that are open to everyone"
         if not notes:
             noteclearmbed.title = "You don't have any note"
             return await ctx.reply(embed=noteclearmbed)
-        view = ViewConfirm(ctx)
+        view = confirm.ViewConfirm(ctx)
         view.message = await ctx.reply(content="Are you sure if you want to clear everything:", view=view)
         await view.wait()
         if view.value:

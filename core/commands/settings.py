@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from core.views.confirm import ViewConfirm
+from core.views import confirm
 
 class Settings(commands.Cog, description="Setting up the bot with these!"):
     def __init__(self, bot):
@@ -248,7 +248,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             timestamp=ctx.message.created_at
         )
         laembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        view = ViewConfirm(ctx)
+        view = confirm.ViewConfirm(ctx)
         view.message = await ctx.reply(content="Are you sure you want the bot to leave:", view=view)
         await view.wait()
         if view.value:

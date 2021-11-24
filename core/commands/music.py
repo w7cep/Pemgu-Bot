@@ -1,5 +1,6 @@
 import discord, pomice, re, asyncio, datetime
 from discord.ext import commands
+from core.views import confirm, pagination
 
 URL_REG = re.compile(r"https?://(?:www\.)?.+")
 
@@ -98,7 +99,7 @@ class ViewPlayer(discord.ui.View):
                 )
                 qumbed.set_footer(text=interaction.user, icon_url=interaction.user.display_avatar.url)
                 es.append(qumbed)
-            return await self.ctx.bot.pagination(self.ctx, es).start(interaction) if len(es) > 1 else await interaction.response.send_message(embed=es[0], ephemeral=True)
+            return await pagination.ViewPagination(self.ctx, es).start(interaction) if len(es) > 1 else await interaction.response.send_message(embed=es[0], ephemeral=True)
         return await self.nowplaying(interaction)
 
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
@@ -327,7 +328,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
                 )
                 qumbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
                 es.append(qumbed)
-            return await self.ctx.bot.pagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
+            return await pagination.ViewPagination(ctx, es).start() if len(es) > 1 else await ctx.reply(embed=es[0])
         return await ctx.invoke(self.nowplaying)
 
     # Queue-Clear
@@ -337,7 +338,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
     async def queue_clear(self, ctx:commands.Context):
         if not ctx.voice_client.queue.empty():
             await ctx.invoke(self.queue)
-            view = self.bot.confirm(ctx)
+            view = confirm.ViewConfirm(ctx)
             await ctx.reply("Do you want to clear the queue", view=view)
             await view.wait()
             if view.value:

@@ -1,7 +1,6 @@
 import discord, pomice, io, textwrap, contextlib, traceback
 from discord.ext import commands
-import core.views.confirm as cum
-
+from core.views import confirm
 class Owner(commands.Cog, description="Only my Developer can use these!"):
     def __init__(self, bot):
         self.bot = bot
@@ -143,7 +142,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             description=F"{g.name} {g.id} {'No Owner' if not g.owner else g.owner}",
             timestamp=ctx.message.created_at
         )
-        view = cum.ViewConfirm(ctx)
+        view = confirm.ViewConfirm(ctx)
         view.message = await ctx.reply(content="Are you sure you want the bot to live the given guild?", embed=livesmbed, view=view)
         await view.wait()
         if view.value:
