@@ -44,14 +44,6 @@ class Moderation(commands.Cog, description="Was someone being bad?"):
             timestamp=ctx.message.created_at
         )
         aunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        uunmbed = discord.Embed(
-            color=self.bot.color,
-            title=F"Dear {user}\nUnbanned:",
-            description=F"{ctx.guild}\n{ctx.author}\n{reason}",
-            timestamp=ctx.message.created_at
-        )
-        uunmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        await user.send(embed=uunmbed)
         await ctx.guild.unban(user)
         await ctx.reply(embed=aunmbed)
 
