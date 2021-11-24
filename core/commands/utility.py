@@ -1,6 +1,6 @@
 import discord, expr, asyncio
 from discord.ext import commands
-from core.views.confirm import Confirm
+from core.views.confirm import ViewConfirm
 
 class Utility(commands.Cog, description="Useful stuff that are open to everyone"):
     def __init__(self, bot):
