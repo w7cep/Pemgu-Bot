@@ -1,6 +1,6 @@
 import discord
 
-class Confirm(discord.ui.View):
+class ViewConfirm(discord.ui.View):
     def __init__(self, ctx):
         super().__init__(timeout=None)
         self.ctx = ctx

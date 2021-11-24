@@ -67,7 +67,7 @@ async def notes_clear(self, ctx:commands.Context):
     if not notes:
         noteclearmbed.title = "You don't have any note"
         return await ctx.reply(embed=noteclearmbed)
-    view = Confirm(ctx)
+    view = ViewConfirm(ctx)
     view.message = await ctx.reply(content="Are you sure if you want to clear everything:", view=view)
     await view.wait()
     if view.value:

@@ -248,7 +248,7 @@ class Settings(commands.Cog, description="Setting up the bot with these!"):
             timestamp=ctx.message.created_at
         )
         laembed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        view = Confirm(ctx)
+        view = ViewConfirm(ctx)
         view.message = await ctx.reply(content="Are you sure you want the bot to leave:", view=view)
         await view.wait()
         if view.value:

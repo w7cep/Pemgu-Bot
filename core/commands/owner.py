@@ -143,7 +143,7 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             description=F"{g.name} {g.id} {'No Owner' if not g.owner else g.owner}",
             timestamp=ctx.message.created_at
         )
-        view = cum.Confirm(ctx)
+        view = cum.ViewConfirm(ctx)
         view.message = await ctx.reply(content="Are you sure you want the bot to live the given guild?", embed=livesmbed, view=view)
         await view.wait()
         if view.value:

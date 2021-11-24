@@ -1,7 +1,7 @@
 import discord, asyncpg, os, aiohttp, pomice, openrobot.api_wrapper, random, json
+from core.views import confirm, pagination
 import core.utils.help as help
 from discord.ext import commands
-from core.views import pagination
 
 async def create_pool_postgres():
     bot.postgres = await asyncpg.create_pool(dsn=os.getenv("DATABASE_URL"))
@@ -73,6 +73,12 @@ class PemguBase(commands.AutoShardedBot):
         colors = [0xFF0000, 0x1DB954, 0xFA243C, 0x159FBE, 0xFF5500, 0xFFFF64]
         color = random.choice(colors)
         return color
+
+    async def confirm(self, ctx):
+        return await confirm.ViewConfirm(ctx)
+
+    async def pagination(self, ctx, pages):
+        return await pagination.ViewPagination(ctx, pages).start()
 
     def trim(self, text: str, limit: int):
         text = text.strip()
