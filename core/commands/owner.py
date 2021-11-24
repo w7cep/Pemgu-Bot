@@ -95,18 +95,18 @@ class Owner(commands.Cog, description="Only my Developer can use these!"):
             for command in self.bot._commands:
                 try:
                     self.bot.reload_extension(F"core.commands.{command}")
-                    reloadmbed.description += F"✅ - {command}\n"
+                    reloadmbed.description += F"<:xof:913092545746174042> <:yon:913093094348558356> {command}\n"
                 except Exception as error:
-                    reloadmbed.description += F"❎ - {command}\n"
-                    reloadmbed.description += F"❎ - {error}\n"
+                    reloadmbed.description += F"<:xon:913093019866136636> <:yof:913092780308447235> {command}\n"
+                    reloadmbed.description += F"<:xon:913093019866136636> <:yof:913092780308447235> {error}\n"
             reloadmbed.description += F"Events:\n"
             for event in self.bot._events:
                 try:
                     self.bot.reload_extension(F"core.events.{event}")
-                    reloadmbed.description += F"✅ - {event}\n"
+                    reloadmbed.description += F"<:xof:913092545746174042> <:yon:913093094348558356> {event}\n"
                 except Exception as error:
-                    reloadmbed.description += F"❎ - {event}\n"
-                    reloadmbed.description += F"❎ - {error}\n"
+                    reloadmbed.description += F"<:xon:913093019866136636> <:yof:913092780308447235> {event}\n"
+                    reloadmbed.description += F"<:xon:913093019866136636> <:yof:913092780308447235> {error}\n"
             return await ctx.reply(embed=reloadmbed)
         reloadmbed.title = F"Reloaded {cog}."
         self.bot.reload_extension(cog)

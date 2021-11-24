@@ -248,19 +248,15 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         for permission, value in member.guild_permissions:
             permission = permission.replace("_", " ").title()
             if value:
-                ai.append(permission)
+                ai.append(F"<:xof:913092545746174042> <:yon:913093094348558356> {permission}")
             if not value:
-                di.append(permission)
+                di.append(F"<:xon:913093019866136636> <:yof:913092780308447235> {permission}")
         permsmbed = discord.Embed(
             color=self.bot.color,
             title=F"{member.name}'s Permissions",
             timestamp=ctx.message.created_at
         )
         permsmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
-        if len(ai) != 0:
-            permsmbed.add_field(name="✅ Allowed:", value="\n".join(a for a in ai))
-        if len(di) != 0:
-            permsmbed.add_field(name="❎ Denied:", value="\n".join(d for d in di))
         await ctx.reply(embed=permsmbed)
 
     # Spotify
