@@ -361,10 +361,11 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
     @commands.guild_only()
     async def emojis(self, ctx:commands.Context, *, name:str=None):
         ps = []
-        for emoji in self.bot.guilds.emojis:
-            if name:
-                if name in emoji.name.lower(): ps.append(emoji)
-            else: ps.append(emoji)
+        for guild in self.bot.guilds:
+            for emoji in guild.emojis:
+                if name:
+                    if name in emoji.name.lower(): ps.append(emoji)
+                else: ps.append(emoji)
         if not ps: return await ctx.reply(F"Couldn't find any emoji with {name}")
         es = []
         for p in ps:
