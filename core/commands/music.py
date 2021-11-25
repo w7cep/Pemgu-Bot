@@ -180,6 +180,7 @@ class Music(commands.Cog, description="Jamming out with these!"):
         channel = ctx.author.voice.channel if not channel else channel
         if not ctx.me.voice:
             if channel.permissions_for(ctx.me).connect:
+                self.bot.pomice.get_best_node(pomice.enums.NodeAlgorithm.by_ping)
                 await channel.connect(cls=pomice.Player)
                 await ctx.guild.change_voice_state(channel=channel, self_mute=False, self_deaf=True)
                 ctx.voice_client.queue = asyncio.Queue()
