@@ -29,7 +29,6 @@ async def create_node_pomice():
     await bot.wait_until_ready()
     bot.pomice = pomice.NodePool()
     spotify = os.getenv("SPOTIFY").split(", ")
-    await bot.pomice.create_node(bot=bot, host="lavalinknl.ml", port="2333", password="Raccoon", identifier="lavalinknl.ml", spotify_client_id=spotify[0], spotify_client_secret=spotify[1])
     await bot.pomice.create_node(bot=bot, host="unit1.nighthost.tech", port="23549", password="emilylava", identifier="unit1.nighthost.tech", spotify_client_id=spotify[0], spotify_client_secret=spotify[1])
     await bot.pomice.create_node(bot=bot, host="lava.link", port="80", password="mom", identifier="node1lava.link", spotify_client_id=spotify[0], spotify_client_secret=spotify[1])
     await bot.pomice.create_node(bot=bot, host="node1.cjstevenson.com", port="25503", password="lookbehindyou", identifier="node1.cjstevenson.com", spotify_client_id=spotify[0], spotify_client_secret=spotify[1])
