@@ -105,7 +105,7 @@ class ViewPlayer(discord.ui.View):
     @discord.ui.button(emoji="🔢", style=discord.ButtonStyle.grey)
     async def lyrics(self, button:discord.ui.Button, interaction:discord.Interaction):
         if self.ctx.voice_client.is_playing or self.ctx.voice_client.is_paused:
-            lyrics = await self.ctx.bot.openrobot.lyrics(self.ctx.voice_client.current.title)
+            lyrics = await self.ctx.bot.openrobot.lyrics(F"{self.ctx.voice_client.current.title}{f' - {self.ctx.voice_client.current.artist}' if not '-' in str(self.ctx.voice_client.current.title) else ''}")
             if lyrics.lyrics:
                 lymbed = discord.Embed(
                     color=self.ctx.bot.music_color,

@@ -28,7 +28,7 @@ async def create_session_aiohttp():
 async def create_node_pomice():
     await bot.wait_until_ready()
     bot.pomice = pomice.NodePool()
-    await bot.pomice.create_node(bot=bot, host="unit1.nighthost.tech", port="23549", password="emilylava", identifier="unit1.nighthost.tech", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
+    await bot.pomice.create_node(bot=bot, host="node1.cjstevenson.com", port="25503", password="lookbehindyou", identifier="node1.cjstevenson.com", spotify_client_id=os.getenv("SPOTIFY").split(", ")[0], spotify_client_secret=os.getenv("SPOTIFY").split(", ")[1])
     print("Created a Pomice Node")
 
 class PemguBase(commands.AutoShardedBot):
