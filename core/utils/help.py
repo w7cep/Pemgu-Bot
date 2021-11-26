@@ -178,6 +178,7 @@ class CustomHelp(commands.HelpCommand):
             "Music": "🎵",
             "Owner": "👑",
             "Settings": "⚙️",
+            "Tester": "🧪",
             "Utility": "🧰"
         }
 
