@@ -30,6 +30,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         abmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=abmbed, view=view)
 
+    # News
     @commands.command(name="news", aliases=["new"], help="Shows the latest news")
     async def news(self, ctx:commands.Context):
         channel = self.bot.get_channel(898287740267937813)
@@ -44,8 +45,9 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=newmbed)
 
+    # Commands
     @commands.command(name="commands", aliases=["cmds"], help="Shows every command available")
-    async def commands(self, ctx:commands.Context, option:str):
+    async def cmds(self, ctx:commands.Context, option:str):
         cmdsmbed = discord.Embed(color=discord.Color.blurple())
         cmdsmbed.set_footer(text=F"{self.bot.user} Commands")
         if option == "1":
@@ -177,6 +179,7 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         srcmbed.set_footer(text=f"{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}\n{ctx.author}", icon_url=ctx.author.display_avatar)
         await ctx.reply(embed=srcmbed)
 
+    # Raw
     @commands.command(name="raw", help="Shows the raw data for the given message from here or the given channel")
     async def raw(self, ctx:commands.Context, message_id:int, channel:discord.TextChannel=None):
         try:
