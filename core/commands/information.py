@@ -1,4 +1,4 @@
-import discord, os, sys, time, inspect, io, typing
+import discord, os, sys, time, inspect, json, io, typing
 from discord.ext import commands
 from core.views import pagination
 
@@ -29,6 +29,47 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         )
         abmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=abmbed, view=view)
+
+    @commands.command(name="news", aliases=["new"], help="Shows the latest news")
+    async def news(self, ctx:commands.Context):
+        channel = self.bot.get_channel(898287740267937813)
+        async for message in channel.history(limit=1):
+            m = "No updates!" if not message else message
+        newmbed = discord.Embed(
+            color=self.bot.color,
+            title="Latest News",
+            description=F"{m.content}\n{m.author}\n{discord.utils.format_dt(m.created_at, style='f')} ({discord.utils.format_dt(m.created_at, style='R')})",        
+            timestamp=ctx.message.created_at
+        )
+        newmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+        await ctx.reply(embed=newmbed)
+
+    @commands.command(name="commands", aliases=["cmds"], help="Shows every command available")
+    async def commands(self, ctx:commands.Context, option:str):
+        cmdsmbed = discord.Embed(color=discord.Color.blurple())
+        cmdsmbed.set_footer(text=F"{self.bot.user} Commands")
+        if option == "1":
+            cmdsmbed.description = ", ".join(f'{c}' for c in self.bot.commands)
+
+        elif option == "2":
+            c = []
+            for cmd in self.bot.commands:
+                c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
+            m = "\n".join(c)
+            cmdsmbed.description = m[0:4096]
+
+        elif option == "3":
+            c = []
+            for cog in sorted(self.bot.cogs):
+                c.append(F"{cog}")
+                if not cog.startswith("On") and not cog == "Jishaku":
+                    rcog = self.bot.get_cog(cog)
+                cmds = rcog.get_commands()
+                for cmd in cmds:
+                    c.append(F"{cmd}{'' if not cmd.signature else f' {cmd.signature}'} - {cmd.help}")
+            m = "\n".join(c)
+            cmdsmbed.description = m[:4096]
+        await ctx.reply(embed=cmdsmbed)
 
     # ServerList
     @commands.command(name="serverlist", aliases=["sl"], help="Gives the list of bot's servers")
@@ -135,6 +176,22 @@ class Information(commands.Cog, description="Stalking people is wrong and bad!")
         srcmbed.title = F"Click here for the source code of the `{prefix}{command}` command"
         srcmbed.set_footer(text=f"{location}#L{firstlineno}-L{firstlineno + len(lines) - 1}\n{ctx.author}", icon_url=ctx.author.display_avatar)
         await ctx.reply(embed=srcmbed)
+
+    @commands.command(name="raw", help="Shows the raw data for the given message from here or the given channel")
+    async def raw(self, ctx:commands.Context, message_id:int, channel:discord.TextChannel=None):
+        try:
+            channel_id = ctx.channel.id if not channel else channel.id
+            message = await self.bot.http.get_message(channel_id, message_id)
+            rawmbed = discord.Embed(
+                color=self.bot.color,
+                title="Raw Message",
+                description=F"```json\n{json.dumps(message, indent=4)}\n```",
+                timestamp=ctx.message.created_at
+            )
+            rawmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
+            await ctx.reply(embed=rawmbed)
+        except discord.NotFound:
+            return await ctx.reply("Could not find the message")
 
     # Color
     @commands.command(name="color", aliases=["clr"], help="Gives info about the given color")
