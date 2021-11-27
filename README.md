@@ -17,9 +17,9 @@ And you can change the channel with `welcome channel`
 And you can get the status for welcomer with `welcome status`
 
 These goes for goodbyer as well
-`goodbye change` and `goodbye message` and ``goodbye channel` and `goodbye status`
+`goodbye change` and `goodbye message` and `goodbye channel` and `goodbye status`
 
-![Commands](https://cdn.discordapp.com/attachments/902897998164525066/911834015315681320/unknown.png)
+![Commands](https://cdn.discordapp.com/attachments/902897998164525066/914100715494985748/unknown.png)
 
 *We are going to make a dashboard for this bot, so if you want to contribute in the dashboard-development please DM on discord @ `lvlahraam#8435`*
 
