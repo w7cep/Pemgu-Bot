@@ -12,11 +12,11 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         response = await session.json()
         sfwmbed = discord.Embed(
             color=self.bot.color,
-            url=F"https://waifu.im/preview/?image={response.get('tags')[0].get('images')[0].get('file')}",
+            url=F"https://waifu.im/preview/?image={response.get('images')[0].get('file')}",
             title="Here is your SFW Image",
             timestamp=ctx.message.created_at
         )
-        sfwmbed.set_image(url=response.get('tags')[0].get('images')[0].get('url'))
+        sfwmbed.set_image(url=response.get('images')[0].get('url'))
         sfwmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=sfwmbed)
     
@@ -28,11 +28,11 @@ class Anime(commands.Cog, description="Some Weeb shit?!"):
         response = await session.json()
         nsfwmbed = discord.Embed(
             color=self.bot.color,
-            url=F"https://waifu.im/preview/?image={response.get('tags')[0].get('images')[0].get('file')}",
+            url=F"https://waifu.im/preview/?image={response.get('images')[0].get('file')}",
             title="Here is your NSFW Image",
             timestamp=ctx.message.created_at
         )
-        nsfwmbed.set_image(url=response.get('tags')[0].get('images')[0].get('url'))
+        nsfwmbed.set_image(url=response.get('images')[0].get('url'))
         nsfwmbed.set_footer(text=ctx.author, icon_url=ctx.author.display_avatar.url)
         await ctx.reply(embed=nsfwmbed)
 
